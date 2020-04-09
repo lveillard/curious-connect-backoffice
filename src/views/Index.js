@@ -48,8 +48,18 @@ import {
 
 import Header from "components/Headers/Header.js";
 
-class Index extends React.Component {
-  constructor(props){
+
+const Index = () => {
+
+  return (<div>
+    <Header />
+
+
+     Hello </div>)
+}
+
+class TEST extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
       activeNav: 1,

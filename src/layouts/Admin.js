@@ -24,7 +24,21 @@ import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import AdminFooter from "components/Footers/AdminFooter.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 
+import { useGlobal } from "../store";
+
 import routes from "routes.js";
+
+function Test() {
+  const [globalState, globalActions] = useGlobal();
+
+  return (
+    <div className="home-wrapper">
+      ADMIN
+    </div >
+  );
+}
+
+
 
 class Admin extends React.Component {
   componentDidUpdate(e) {
@@ -67,11 +81,11 @@ class Admin extends React.Component {
           routes={routes}
           logo={{
             innerLink: "/admin/index",
-            imgSrc: require("assets/img/brand/argon-react.png"),
+            imgSrc: "/images/logo3.png",
             imgAlt: "..."
           }}
         />
-        <div className="main-content" ref="mainContent">
+        <div className="main-content" style={{ background: "#f7fafc" }} ref="mainContent">
           <AdminNavbar
             {...this.props}
             brandText={this.getBrandText(this.props.location.pathname)}

@@ -1,18 +1,38 @@
 import React from 'react'
-import { Redirect } from 'react-router-dom'
+import { Route, Redirect } from 'react-router-dom'
 
-class ProtectedRoute extends React.Component {
+import { useGlobal } from "./store";
 
-    render() {
-        const Component = this.props.component;
-        const isAuthenticated = false;
 
-        return isAuthenticated ? (
-            <Component />
-        ) : (
-                <Redirect to={{ pathname: '/auth' }} />
-            );
-    }
+
+const ProtectedRoute = ({ component: Component, ...rest }) => {
+
+    const [globalState, globalActions] = useGlobal();
+    const isAuthenticated = globalState.isAuthenticated;
+
+    return (
+        <Route {...rest} render={
+            props => {
+                if (true) {
+                    return { ...Component, props: props, rest: rest }
+                } else {
+                    return <Redirect to={
+                        {
+                            pathname: '/auth',
+                            state: {
+                                from: props.location
+                            }
+                        }
+                    } />
+                }
+            }
+        } />
+    )
 }
 
+
 export default ProtectedRoute;
+
+
+
+

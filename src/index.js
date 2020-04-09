@@ -30,11 +30,16 @@ import AdminLayout from "layouts/Admin.js";
 import AuthLayout from "layouts/Auth.js";
 import Login from "layouts/Login.js"
 
+
+
+
 ReactDOM.render(
+
+
   <BrowserRouter>
     <Switch>
       <Route path="/auth" render={props => <Login {...props} />} />
-      <ProtectedRoute path="/admin" render={props => <AdminLayout {...props} />} />
+      <ProtectedRoute path="/admin" component={<AdminLayout />} />
       <Redirect from="/" to="/admin/index" />
     </Switch>
   </BrowserRouter>,

@@ -1,5 +1,10 @@
 import React, { useState } from "react";
 
+import {
+  useHistory,
+} from "react-router-dom";
+
+
 import { useGlobal } from "../store";
 
 import {
@@ -17,16 +22,25 @@ import {
   Content,
 } from "rsuite";
 
-function Login() {
+const Login = () => {
+
+  let history = useHistory();
+
   const [globalState, globalActions] = useGlobal();
 
   function login() {
     globalActions.login();
+    history.replace("/admin");
   }
+
+
 
   return (
     <div className="home-wrapper">
-      <Container>
+      <Container style={{
+        background: "#2c3e50",
+        height: "100vh"
+      }}>
         <Content>
           <FlexboxGrid>
             <FlexboxGrid.Item componentClass={Col} colspan={24} md={12}>
@@ -100,7 +114,7 @@ function Login() {
           </FlexboxGrid>
         </Content>
       </Container>{" "}
-    </div>
+    </div >
   );
 }
 

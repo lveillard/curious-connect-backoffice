@@ -1,7 +1,7 @@
 {
   "name": "argon-dashboard-react",
   "version": "1.1.0",
-  "description": "React version of Argon Dashboard by Creative Tim",
+  "description": "CC Backoffice",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -55,8 +55,10 @@
     "react-datetime": "2.16.3",
     "react-dom": "16.12.0",
     "react-google-maps": "9.4.5",
+    "react-icons": "^3.9.0",
     "react-router-dom": "5.1.2",
     "react-scripts": "3.4.1",
+    "react-vertical-timeline-component": "^2.5.0",
     "reactstrap": "8.4.1",
     "rsuite": "^4.3.3",
     "use-global-hook": "^0.1.12"
