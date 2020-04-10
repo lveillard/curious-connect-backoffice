@@ -6,9 +6,10 @@ import "../assets/css/timeline.css"
 
 import TimeLineData from "./TimeLineData"
 
-import { FaChalkboardTeacher, FaBeer, FaPlay, FaVideo, FaWpforms, FaTasks, FaUserGraduate } from 'react-icons/fa';
+import { FaPowerOff, FaChalkboardTeacher, FaPlay, FaVideo, FaWpforms, FaTasks, FaUserGraduate } from 'react-icons/fa';
 import { AiOutlineSchedule } from 'react-icons/ai';
 import { MdWork } from 'react-icons/md'
+import { IoMdColorFilter } from 'react-icons/io'
 
 import {
   Button,
@@ -39,7 +40,7 @@ import Header from "components/Headers/Header.js";
 const TimeLine = () => {
 
   const icons = {
-    Work: <MdWork />, Teacher: <FaChalkboardTeacher />, Task: <FaTasks />, Form: <FaWpforms />, Video: <FaVideo />, Schedule: <AiOutlineSchedule />, Play: <FaPlay />
+    filter: <IoMdColorFilter />, power: <FaPowerOff />, work: <MdWork />, teacher: <FaChalkboardTeacher />, task: <FaTasks />, form: <FaWpforms />, video: <FaVideo />, schedule: <AiOutlineSchedule />, play: <FaPlay />
   }
   return (<div>
     <Header />

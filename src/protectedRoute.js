@@ -10,10 +10,11 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
     const [globalState, globalActions] = useGlobal();
     const isAuthenticated = globalState.isAuthenticated;
 
+
     return (
         <Route {...rest} render={
             props => {
-                if (isAuthenticated) {
+                if (isAuthenticated || process.env.NODE_ENV === "development") {
                     return { ...Component, props: props, rest: rest }
                 } else {
                     return <Redirect to={
