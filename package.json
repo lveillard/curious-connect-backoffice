@@ -1,11 +1,11 @@
 {
-  "name": "argon-dashboard-react",
-  "version": "1.1.0",
+  "name": "CCBO",
+  "version": "0.1",
   "description": "CC Backoffice",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/creativetimofficial/argon-dashboard-react.git"
+    "url": "git+https://github.com/lveillard/curious-connect-backoffice.git"
   },
   "keywords": [
     "react",
@@ -17,10 +17,10 @@
     "argon-dashboard",
     "argon-dashboard-react"
   ],
-  "author": "Creative Tim",
+  "author": "Loic Veillard",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/creativetimofficial/argon-dashboard-react/issues"
+    "url": "https://github.com/lveillard/curious-connect-backoffice.git"
   },
   "homepage": "https://ccbackoffice.netlify.com/",
   "scripts": {
@@ -43,6 +43,7 @@
     "not op_mini all"
   ],
   "dependencies": {
+    "@creative-tim-official/argon-dashboard-free": "^1.2.0",
     "@fortawesome/fontawesome-free": "5.12.1",
     "axios": "^0.19.2",
     "chart.js": "2.9.3",
