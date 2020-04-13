@@ -103,8 +103,7 @@ export const getUser = async (store) => {
     store.setState({ confirmedToken: false })
 
 
-
-    if (!token) { Alert.error("You're not logged!"); return false } else {
+    if (!token) { Alert.error("You're no longer logged!"); return false } else {
 
         try {
             const answer = await axios.get(

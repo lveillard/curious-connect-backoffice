@@ -8,6 +8,7 @@ import { useGlobal } from "./store";
 
 const ProtectedRoute = ({ component: Component, ...rest }) => {
 
+    const [globalState, globalActions] = useGlobal();
 
     return (
         <Route {...rest} render={

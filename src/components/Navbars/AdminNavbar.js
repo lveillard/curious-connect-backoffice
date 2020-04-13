@@ -32,9 +32,12 @@ import {
 import Menu from "./Menu"
 
 
+import { useGlobal } from "../../store";
 
 
 const AdminNavbar = (props) => {
+  const [globalState, globalActions] = useGlobal();
+
 
 
 
@@ -63,8 +66,8 @@ const AdminNavbar = (props) => {
                 </span>
                 <Media className="ml-2 d-none d-lg-block">
                   <span className="mb-0 text-sm font-weight-bold">
-                    Curious Admin
-                      </span>
+                    {globalState.user && globalState.user.name}
+                  </span>
                 </Media>
               </Media>
             </DropdownToggle>

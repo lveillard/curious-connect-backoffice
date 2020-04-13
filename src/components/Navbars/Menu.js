@@ -38,13 +38,8 @@ const Menu = () => {
   const [globalState, globalActions] = useGlobal();
 
   useEffect(() => {
-    async function fetchMyAPI() {
-      //const response = await globalActions.login.getUser()
-    }
-    fetchMyAPI()
+
   }, []);
-
-
 
 
   async function logout(e) {

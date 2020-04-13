@@ -1,22 +1,6 @@
-/*!
 
-=========================================================
-* Argon Dashboard React - v1.1.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-react
-* Copyright 2019 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-import React from "react";
-import { Route, Switch, Redirect } from "react-router-dom";
+import React, { useRef, useEffect } from "react";
+import { Route, Switch, Redirect, useLocation } from "react-router-dom";
 // reactstrap components
 import { Container } from "reactstrap";
 // core components
@@ -24,81 +8,138 @@ import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import AdminFooter from "components/Footers/AdminFooter.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 
-// import { useGlobal } from "../store";
+import TimeLine from "../views/TimeLine"
+import Profile from "../views/examples/Profile"
+import Tools from "../views/Tools"
 
-import routes from "routes.js";
 
-/*function Test() {
+import { Loader, Placeholder, Panel } from "rsuite"
+
+import { useGlobal } from "../store";
+
+const Admin = () => {
   const [globalState, globalActions] = useGlobal();
 
-  return (
-    <div className="home-wrapper">
-      ADMIN
-    </div >
-  );
-}
-*/
+
+  useEffect(() => {
+    async function fetchMyAPI() {
+      const response = await globalActions.login.getUser()
+    }
+    fetchMyAPI()
+  }, []);
 
 
-class Admin extends React.Component {
-  componentDidUpdate(e) {
+
+  useEffect(() => {
     document.documentElement.scrollTop = 0;
     document.scrollingElement.scrollTop = 0;
-    this.refs.mainContent.scrollTop = 0;
+    mainContent.current.scrollTop = 0;
+  });
+
+  const mainContent = useRef();
+  const location = useLocation()
+
+  const views = {
+    TimeLine: TimeLine,
+    Profile: Profile,
+    Tools: Tools,
+
   }
-  getRoutes = routes => {
-    return routes.map((prop, key) => {
-      if (prop.layout === "/admin") {
-        return (
-          <Route
-            path={prop.layout + prop.path}
-            component={prop.component}
-            key={key}
-          />
-        );
-      } else {
-        return null;
-      }
-    });
-  };
-  getBrandText = path => {
-    for (let i = 0; i < routes.length; i++) {
-      if (
-        this.props.location.pathname.indexOf(
-          routes[i].layout + routes[i].path
-        ) !== -1
-      ) {
-        return routes[i].name;
+  const getRouteName = () => {
+    if (globalState.user) {
+      try {
+        return globalState.user.routes.find(x => (x.layout + x.path) === location.pathname).name
+      } catch (err) {
+        // while loading location.pathname is incomplete so we will get some errors
       }
     }
-    return "Brand";
-  };
-  render() {
-    return (
-      <>
+  }
+
+  const getRoutes = () => {
+    if (globalState.user) {
+      return globalState.user.routes.map((prop, key) => {
+        if (prop.layout === "/admin") {
+
+          return (
+            <Route
+              path={prop.layout + prop.path}
+              component={views[prop.component]}
+              key={key}
+            />
+          );
+        } else {
+          return null;
+        }
+      });
+    }
+
+
+  }
+  return (
+    <>
+      {globalState.user && globalState.user.routes ? <React.Fragment>
+
+
         <Sidebar
-          {...this.props}
-          routes={routes}
+          routes={globalState.user.routes}
           logo={{
             innerLink: "/admin/index",
             imgSrc: "/images/logo3.png",
             imgAlt: "..."
           }}
         />
-        <div className="main-content" style={{ background: "#f7fafc" }} ref="mainContent">
+        <div className="main-content" style={{ background: "#f7fafc" }} ref={mainContent} >
           <AdminNavbar
-            {...this.props}
-            brandText={this.getBrandText(this.props.location.pathname)}
+            brandText={getRouteName()}
           />
           <Switch>
-            {this.getRoutes(routes)}
+            {getRoutes(globalState.user.routes)}
             <Redirect from="*" to="/admin/index" />
           </Switch>
           <Container fluid>
             <AdminFooter />
           </Container>
         </div>
-      </>
+      </React.Fragment>
+        :
+
+
+
+        <div ref={mainContent}>
+
+
+
+          <div style={{
+            background: "#2c3e50",
+          }}>
+            <Panel style={{ textAlign: "center", color: "white" }}>
+              <Loader style={{ color: "white" }} content="Loading..." vertical />
+            </Panel>
+          </div>
+
+
+);
+
+        </div>
+
+      }
+
+    </>
+  );
+
+}
+
+
+
+class Admins extends React.Component {
+  render() {
+    return (
+      <div>
+        <Sidebar
+          {...this.props}
+        />
+      </div>
+
     );
   }
 }

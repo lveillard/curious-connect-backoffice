@@ -48,9 +48,7 @@ const TimeLine = () => {
     <Header />
 
     <Container className="mt--7" fluid >
-
       <Card>
-
         <VerticalTimeline>
           {TimeLineData.map((x) => {
             return < VerticalTimelineElement key={x.title}
