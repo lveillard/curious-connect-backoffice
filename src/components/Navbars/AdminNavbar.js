@@ -36,7 +36,7 @@ import { useGlobal } from "../../store";
 
 
 const AdminNavbar = (props) => {
-  const [globalState, globalActions] = useGlobal();
+  const [globalState] = useGlobal();
 
 
 

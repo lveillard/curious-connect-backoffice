@@ -23,7 +23,7 @@ const Admin = () => {
 
   useEffect(() => {
     async function fetchMyAPI() {
-      const response = await globalActions.login.getUser()
+      await globalActions.login.getUser()
     }
     fetchMyAPI()
   }, []);

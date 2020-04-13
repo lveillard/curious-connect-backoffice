@@ -19,16 +19,9 @@ import {
 
 import Header from "components/Headers/Header.js";
 
-import { useGlobal } from "../store";
-
-
-
-
 
 const TimeLine = () => {
 
-
-  const [globalState, globalActions] = useGlobal();
 
   useEffect(() => {
     async function fetchMyAPI() {

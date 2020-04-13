@@ -1,14 +1,12 @@
 import React from 'react'
 import { Route, Redirect } from 'react-router-dom'
 
-import { useGlobal } from "./store";
 
 
 
 
 const ProtectedRoute = ({ component: Component, ...rest }) => {
 
-    const [globalState, globalActions] = useGlobal();
 
     return (
         <Route {...rest} render={
