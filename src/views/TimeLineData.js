@@ -10,7 +10,7 @@ const data = [
   },
   {
     date: "08/04/2020",
-    iconStyle: { background: '#gray', color: '#fff' },
+    iconStyle: { background: 'gray', color: '#fff' },
     position: "left",
     title: "Selection des candidats",
     iconCode: "filter"
@@ -18,7 +18,7 @@ const data = [
 
   {
     date: "08/04/2020",
-    iconStyle: { background: '#gray', color: '#fff' },
+    iconStyle: { background: 'gray', color: '#fff' },
     position: "left",
     title: "Debout du programme",
     description: "Lancement du programme d'alternance 100% a distance",

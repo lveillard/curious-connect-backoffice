@@ -15,21 +15,13 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 // reactstrap components
 import {
   DropdownMenu,
   DropdownItem,
-  UncontrolledCollapse,
-  NavbarBrand,
-  Navbar,
-  NavItem,
-  NavLink,
-  Nav,
-  Container,
-  Row,
-  Col
+
 } from "reactstrap";
 
 import {
@@ -43,27 +35,36 @@ const Menu = () => {
   let history = useHistory();
   const [globalState, globalActions] = useGlobal();
 
+  useEffect(() => {
+    async function fetchMyAPI() {
+      const response = await globalActions.login.getUser()
+    }
+    fetchMyAPI()
+  }, []);
 
-  function logout() {
 
-    globalActions.logout();
-    history.replace("/");
 
+
+  async function logout(e) {
+    e.preventDefault()
+    let answer = await globalActions.login.logout();
   }
+
+
 
   return (
 
     <React.Fragment>
       <DropdownMenu className="dropdown-menu-arrow" right>
         <DropdownItem className="noti-title" header tag="div">
-          <h7 style={{ color: "black" }} className="text-overflow m-0">Welcome!</h7>
+          <div style={{ color: "black" }} className="text-overflow m-0">Welcome {globalState.user && globalState.user.name} !</div>
         </DropdownItem>
         <DropdownItem disabled to="/admin/user-profile" tag={Link}>
           <i className="ni ni-single-02" />
           <span>My profile</span>
         </DropdownItem>
         <DropdownItem divider />
-        <DropdownItem href="#" onClick={e => e.preventDefault(), logout}>
+        <DropdownItem href="#" onClick={(e) => logout(e)} >
           <i className="ni ni-button-power" />
           <span>Logout</span>
         </DropdownItem>

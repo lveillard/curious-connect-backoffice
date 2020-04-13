@@ -24,11 +24,11 @@ import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import AdminFooter from "components/Footers/AdminFooter.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 
-import { useGlobal } from "../store";
+// import { useGlobal } from "../store";
 
 import routes from "routes.js";
 
-function Test() {
+/*function Test() {
   const [globalState, globalActions] = useGlobal();
 
   return (
@@ -37,7 +37,7 @@ function Test() {
     </div >
   );
 }
-
+*/
 
 
 class Admin extends React.Component {

@@ -58,7 +58,7 @@ const Index = () => {
      Hello </div>)
 }
 
-class TEST extends React.Component {
+/* class TEST extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -81,7 +81,6 @@ class TEST extends React.Component {
     return (
       <>
         <Header />
-        {/* Page content */}
         <Container className="mt--7" fluid>
           <Row>
             <Col className="mb-5 mb-xl-0" xl="8">
@@ -126,7 +125,6 @@ class TEST extends React.Component {
                   </Row>
                 </CardHeader>
                 <CardBody>
-                  {/* Chart */}
                   <div className="chart">
                     <Line
                       data={chartExample1[this.state.chartExample1Data]}
@@ -150,8 +148,8 @@ class TEST extends React.Component {
                   </Row>
                 </CardHeader>
                 <CardBody>
-                  {/* Chart */}
-                  <div className="chart">
+
+                <div className="chart">
                     <Bar
                       data={chartExample2.data}
                       options={chartExample2.options}
@@ -353,6 +351,6 @@ class TEST extends React.Component {
       </>
     );
   }
-}
+} */
 
 export default Index;

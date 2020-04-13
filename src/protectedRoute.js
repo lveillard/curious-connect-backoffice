@@ -5,18 +5,17 @@ import { useGlobal } from "./store";
 
 
 
-const ProtectedRoute = ({ component: Component, ...rest }) => {
 
-    const [globalState, globalActions] = useGlobal();
-    const isAuthenticated = globalState.isAuthenticated;
+const ProtectedRoute = ({ component: Component, ...rest }) => {
 
 
     return (
         <Route {...rest} render={
             props => {
-                if (isAuthenticated || process.env.NODE_ENV === "development") {
+                if (localStorage.getItem("token")) {
                     return { ...Component, props: props, rest: rest }
                 } else {
+
                     return <Redirect to={
                         {
                             pathname: '/auth',

@@ -15,15 +15,8 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import Index from "views/Index.js";
 import TimeLine from "views/TimeLine.js";
-
-import Profile from "views/examples/Profile.js";
-import Maps from "views/examples/Maps.js";
-import Register from "views/examples/Register.js";
-import Login from "views/examples/Login.js";
-import Tables from "views/examples/Tables.js";
-import Icons from "views/examples/Icons.js";
+import Profile from "views/examples/Profile"
 
 
 
@@ -34,16 +27,6 @@ var routes = [
     icon: "ni ni-tv-2 text-primary",
     component: TimeLine,
     layout: "/admin"
-  }
-]
-
-var test = [
-  {
-    path: "/index",
-    name: "Timeline",
-    icon: "ni ni-tv-2 text-primary",
-    component: Index,
-    layout: "/admin"
   },
   {
     path: "/user-profile",
@@ -51,7 +34,25 @@ var test = [
     icon: "ni ni-single-02 text-yellow",
     component: Profile,
     layout: "/admin"
-  }]
+  }
+]
 
+  /*
+  var test = [
+    {
+      path: "/index",
+      name: "Timeline",
+      icon: "ni ni-tv-2 text-primary",
+      component: Index,
+      layout: "/admin"
+    },
+    {
+      path: "/user-profile",
+      name: "User Profile",
+      icon: "ni ni-single-02 text-yellow",
+      component: Profile,
+      layout: "/admin"
+    }]
+  */
   ;
 export default routes;

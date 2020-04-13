@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import {
   useHistory,
@@ -6,6 +6,8 @@ import {
 
 
 import { useGlobal } from "../store";
+
+import API from "../utils/API"
 
 import {
   Col,
@@ -26,13 +28,32 @@ const Login = () => {
 
   let history = useHistory();
 
-  const [globalState, globalActions] = useGlobal();
 
-  function login() {
-    globalActions.login();
-    history.replace("/admin");
+  const [globalState, globalActions] = useGlobal();
+  const [inputs, setInputs] = useState({ password: "formatricesaccess", email: "formatrices@curious-connect.com" });
+  const [missingData, setMissingData] = useState();
+
+  useEffect(() => {
+
+    if (localStorage.getItem("token")) { history.replace("/admin") }
+
+  }, []);
+
+
+  async function login(e) {
+    e.preventDefault();
+    let test = await globalActions.login.login(inputs)
+    if (test) { history.replace("/admin") }
+
+
   }
 
+  const handleInputChange = (value, event) => {
+    event.persist()
+    setInputs(inputs => ({ ...inputs, [event.target.name]: value }));
+  }
+
+  const errorMessage = missingData ? 'This field is required' : null;
 
 
   return (
@@ -48,7 +69,7 @@ const Login = () => {
                 <img
                   style={{
                     zIndex: 99999999,
-                    maxHeight: "calc(50vh - 160px)",
+                    maxHeight: "calc(45vh - 160px)",
                     margin: "25px 0 25px 0"
                   }}
                   src={"/images/logo3.png"}
@@ -67,9 +88,12 @@ const Login = () => {
                 <Form fluid>
                   <FormGroup>
                     <ControlLabel>Email address</ControlLabel>
+
+
                     <InputGroup>
                       <InputGroup.Addon> 📧</InputGroup.Addon>
-                      <Input />
+                      <Input value={inputs.email} onChange={(value, event) => handleInputChange(value, event)} name="email" autoFocus={true} />
+
                     </InputGroup>
                   </FormGroup>
                   <FormGroup>
@@ -77,14 +101,23 @@ const Login = () => {
                     <InputGroup>
                       <InputGroup.Addon> 🔑 </InputGroup.Addon>
 
-                      <Input name="password" type="password" />
+                      <Input value={inputs.password} onChange={(value, event) => handleInputChange(value, event)} name="password" type="password" />
                     </InputGroup>
+                    <div
+                      style={{
+                        display: missingData && !inputs.password ? 'block' : 'none',
+                        color: 'red',
+                        marginTop: 6
+                      }}
+                    >
+                      {errorMessage}
+                    </div>
                   </FormGroup>
                   <FormGroup>
                     <br />
 
                     <ButtonToolbar style={{ textAlign: "center" }}>
-                      <Button block onClick={login} appearance="primary">
+                      <Button type="submit" block onClick={login} appearance="primary" disabled={missingData || !inputs.password || !inputs.email}>
                         Sign in
                       </Button>
                       <Button appearance="link">Forgot password?</Button>
@@ -100,10 +133,8 @@ const Login = () => {
               smHidden
             >
               <Panel
-                shaded
-                bordered
-                bodyFill
                 style={{
+                  borderRadius: "0px",
                   backgroundImage: `url("/images/loginphoto3.jpg")`,
                   backgroundSize: "cover",
                   backgroundPosition: "50%",

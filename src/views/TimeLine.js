@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { VerticalTimeline, VerticalTimelineElement } from 'react-vertical-timeline-component';
 import 'react-vertical-timeline-component/style.min.css';
@@ -11,36 +11,38 @@ import { AiOutlineSchedule } from 'react-icons/ai';
 import { MdWork } from 'react-icons/md'
 import { IoMdColorFilter } from 'react-icons/io'
 
+import API from "../utils/API"
 import {
-  Button,
   Card,
-  CardHeader,
-  CardBody,
-  NavItem,
-  NavLink,
-  Nav,
-  Progress,
-  Table,
   Container,
-  Row,
-  Col
 } from "reactstrap";
 
-// core components
-import {
-  chartOptions,
-  parseOptions,
-  chartExample1,
-  chartExample2
-} from "variables/charts.js";
-
 import Header from "components/Headers/Header.js";
+
+import { useGlobal } from "../store";
+
+
+
 
 
 const TimeLine = () => {
 
+
+  const [globalState, globalActions] = useGlobal();
+
+  useEffect(() => {
+    async function fetchMyAPI() {
+      //const response = await API.isAuth();
+      //const result = globalActions.getUser(response);
+    }
+
+    fetchMyAPI();
+
+  }, []);
+
+
   const icons = {
-    filter: <IoMdColorFilter />, power: <FaPowerOff />, work: <MdWork />, teacher: <FaChalkboardTeacher />, task: <FaTasks />, form: <FaWpforms />, video: <FaVideo />, schedule: <AiOutlineSchedule />, play: <FaPlay />
+    filter: <IoMdColorFilter />, graduate: <FaUserGraduate />, power: <FaPowerOff />, work: <MdWork />, teacher: <FaChalkboardTeacher />, task: <FaTasks />, form: <FaWpforms />, video: <FaVideo />, schedule: <AiOutlineSchedule />, play: <FaPlay />
   }
   return (<div>
     <Header />
@@ -51,9 +53,9 @@ const TimeLine = () => {
 
         <VerticalTimeline>
           {TimeLineData.map((x) => {
-            return < VerticalTimelineElement
+            return < VerticalTimelineElement key={x.title}
               contentStyle={{ borderTop: "4px solid", borderColor: x.iconStyle.background, background: "linear-gradient(85deg, rgba(249,249,249,1) 0%, rgba(236,236,236,1) 100%)" }}
-              contentArrowStyle={{ opacity: 0.5, borderRight: "7px solid", borderRightColor: x.iconStyle.background }}
+              contentArrowStyle={{ opacity: 0.5, borderRight: "7px solid", borderRightColor: x.iconStyle.background, marginTop: "-5px" }}
               className="vertical-timeline-element--work"
               date={x.date}
               iconStyle={x.iconStyle}
