@@ -3,15 +3,8 @@ import axios from "axios";
 import API from "../utils/API"
 import { Alert } from "rsuite"
 
-import React, { useHistory } from "react";
+import React, { useHistory, browserHistory } from "react";
 //import React, { useState, useEffect, useContext } from "react";
-
-
-import { Redirect } from "react-router-dom";
-
-
-
-
 
 
 const burl = "https://ccbo.glitch.me";
@@ -62,13 +55,13 @@ export const login = async (store, credentials) => {
         if (data) {
             store.setState({ confirmedToken: true })
             store.setState({ user: data });
-            return <Redirect to='/admin' />
+            return true
 
 
         } else {
             Alert.warning("Wrong!");
             localStorage.clear()
-            return <Redirect to='/auth' />
+            return false
 
 
         }
@@ -79,7 +72,6 @@ export const login = async (store, credentials) => {
 export const logout = async (store) => {
     const token = localStorage.getItem("token")
     let url = `${burl}/users/me/logout`;
-    console.log("logout: el token", token)
 
     if (!token) { return false } else {
 
@@ -91,8 +83,14 @@ export const logout = async (store) => {
                 }
             })
             localStorage.clear();
+            Alert.success("Logged out!");
+
+            return true
+
         } catch (err) {
-            console.log("bad token:", err); localStorage.clear(); return <Redirect to='/auth' />
+            console.log("bad token:", err);
+            localStorage.clear();
+            return false
         }
     }
 
@@ -121,13 +119,13 @@ export const getUser = async (store) => {
 
             const { data } = answer
             const user = data;
-            console.log("user")
             store.setState({ user });
             store.setState({ confirmedToken: true })
             console.log("store", store.state)
-            return <Redirect to='/auth' />
+            return true
 
-        } catch (err) { console.log("bad token"); localStorage.clear() }
+
+        } catch (err) { console.log("bad token:", err); localStorage.clear() }
     }
 
 

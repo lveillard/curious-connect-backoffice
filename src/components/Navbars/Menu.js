@@ -24,6 +24,8 @@ import {
 
 } from "reactstrap";
 
+import API from "../../utils/API"
+
 import {
   useHistory,
 } from "react-router-dom";
@@ -37,7 +39,7 @@ const Menu = () => {
 
   useEffect(() => {
     async function fetchMyAPI() {
-      const response = await globalActions.login.getUser()
+      //const response = await globalActions.login.getUser()
     }
     fetchMyAPI()
   }, []);
@@ -49,8 +51,6 @@ const Menu = () => {
     e.preventDefault()
     let answer = await globalActions.login.logout();
   }
-
-
 
   return (
 

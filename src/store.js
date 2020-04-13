@@ -2,11 +2,6 @@ import React, { useHistory } from "react";
 //import React, { useState, useEffect, useContext } from "react";
 
 import useGlobalHook from "use-global-hook";
-import { Alert } from 'rsuite'
-
-import { Redirect } from "react-router-dom";
-
-import API from "./utils/API"
 
 import * as actions from "./actions";
 
@@ -14,41 +9,11 @@ import * as actions from "./actions";
 const initialState = {
     lastLoginStatus: "",
     token: "",
-    confirmedToken: "",
-    counter: 0,
-
+    confirmedToken: "false",
 };
 
 
-
-
-
 const test = {
-
-    addCount: (store) => {
-
-        let oldValue = store.state.counter
-        store.setState({ counter: oldValue + 1 })
-
-    },
-
-
-
-
-
-    // helpers
-    setLoading: (store, item, value) => {
-        store.setState({ isLoading: { ...store.state.isLoading, [item]: value } });
-    },
-
-    setAuthed: (store) => {
-        store.setState({ autenticao: true })
-    },
-
-
-
-
-
     //DB
     getTimeline: (store) => {
 

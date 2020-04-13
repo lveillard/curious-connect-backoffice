@@ -7,7 +7,6 @@ import {
 
 import { useGlobal } from "../store";
 
-import API from "../utils/API"
 
 import {
   Col,
@@ -43,9 +42,9 @@ const Login = () => {
   async function login(e) {
     e.preventDefault();
     let test = await globalActions.login.login(inputs)
-    if (test) { history.replace("/admin") }
 
-
+    if (test) { history.replace("/admin"); } else {
+    }
   }
 
   const handleInputChange = (value, event) => {
