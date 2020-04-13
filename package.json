@@ -1,6 +1,6 @@
 {
-  "name": "CCBO",
-  "version": "1.2.0",
+  "name": "cc-backoffice-react",
+  "version": "0.1.0",
   "description": "CC Backoffice",
   "main": "index.js",
   "repository": {
@@ -20,7 +20,7 @@
   "author": "Loic Veillard",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/lveillard/curious-connect-backoffice.git"
+    "url": "https://github.com/lveillard/curious-connect-backoffice.git/issues"
   },
   "homepage": "https://ccbackoffice.netlify.com/",
   "scripts": {
