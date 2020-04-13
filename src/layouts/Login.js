@@ -42,7 +42,6 @@ const Login = () => {
   async function login(e) {
     e.preventDefault();
     let test = await globalActions.login.login(inputs)
-
     if (test) { history.replace("/admin"); } else {
     }
   }

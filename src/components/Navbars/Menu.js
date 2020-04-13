@@ -50,6 +50,8 @@ const Menu = () => {
   async function logout(e) {
     e.preventDefault()
     let answer = await globalActions.login.logout();
+    if (answer) { history.replace("/"); } else {
+    }
   }
 
   return (
