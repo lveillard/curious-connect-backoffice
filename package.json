@@ -1,6 +1,6 @@
 {
   "name": "CCBO",
-  "version": "0.1",
+  "version": "1.2.0",
   "description": "CC Backoffice",
   "main": "index.js",
   "repository": {
