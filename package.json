@@ -62,7 +62,7 @@
     "react-scripts": "3.4.1",
     "react-vertical-timeline-component": "^2.5.0",
     "reactstrap": "8.4.1",
-    "rsuite": "^4.3.3",
+    "rsuite": "^4.3.4",
     "use-global-hook": "^0.1.12"
   },
   "devDependencies": {
