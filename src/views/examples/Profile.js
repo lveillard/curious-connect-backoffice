@@ -39,7 +39,7 @@ import { useGlobal } from "../../store";
 
 const Profile = () => {
 
-  const [globalState, globalActions] = useGlobal();
+  const [globalState] = useGlobal();
 
   return (
     <>

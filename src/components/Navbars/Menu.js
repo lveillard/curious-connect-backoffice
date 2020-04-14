@@ -24,8 +24,6 @@ import {
 
 } from "reactstrap";
 
-import API from "../../utils/API"
-
 import {
   useHistory,
 } from "react-router-dom";

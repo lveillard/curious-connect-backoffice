@@ -25,12 +25,7 @@ import {
 
 const Login = () => {
 
-  useEffect(() => {
-    async function fetchMyAPI() {
-      await globalActions.login.getUser()
-    }
-    if (localStorage.getItem("token")) { fetchMyAPI() }
-  }, []);
+
 
 
   let history = useHistory();
@@ -38,16 +33,18 @@ const Login = () => {
 
   const [globalState, globalActions] = useGlobal();
   const [inputs, setInputs] = useState({ password: "formatricesaccess", email: "formatrices@curious-connect.com" });
-  const [missingData, setMissingData] = useState();
+  const [missingData,] = useState();
 
   useEffect(() => {
 
+
     if (localStorage.getItem("token")) { history.replace("/admin") }
 
-  }, []);
+  }, [history]);
 
 
   async function login(e) {
+    if (globalState) { }
     e.preventDefault();
     let test = await globalActions.login.login(inputs)
     if (test) { history.replace("/admin"); } else {
@@ -97,7 +94,7 @@ const Login = () => {
 
 
                     <InputGroup>
-                      <InputGroup.Addon> 📧</InputGroup.Addon>
+                      <InputGroup.Addon> <span role="img" aria-label="email">📧</span> </InputGroup.Addon>
                       <Input value={inputs.email} onChange={(value, event) => handleInputChange(value, event)} name="email" autoFocus={true} />
 
                     </InputGroup>
@@ -105,7 +102,7 @@ const Login = () => {
                   <FormGroup>
                     <ControlLabel>Password</ControlLabel>
                     <InputGroup>
-                      <InputGroup.Addon> 🔑 </InputGroup.Addon>
+                      <InputGroup.Addon> <span role="img" aria-label="key">🔑</span>  </InputGroup.Addon>
 
                       <Input value={inputs.password} onChange={(value, event) => handleInputChange(value, event)} name="password" type="password" />
                     </InputGroup>

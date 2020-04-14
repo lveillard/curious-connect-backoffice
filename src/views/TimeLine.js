@@ -11,7 +11,6 @@ import { AiOutlineSchedule } from 'react-icons/ai';
 import { MdWork } from 'react-icons/md'
 import { IoMdColorFilter } from 'react-icons/io'
 
-import API from "../utils/API"
 import {
   Card,
   Container,
@@ -25,7 +24,6 @@ const TimeLine = () => {
 
   useEffect(() => {
     async function fetchMyAPI() {
-      //const response = await API.isAuth();
       //const result = globalActions.getUser(response);
     }
 

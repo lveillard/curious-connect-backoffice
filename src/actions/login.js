@@ -3,10 +3,6 @@ import axios from "axios";
 import API from "../utils/API"
 import { Alert } from "rsuite"
 
-import React, { useHistory, browserHistory } from "react";
-//import React, { useState, useEffect, useContext } from "react";
-
-
 const burl = "https://ccbo.glitch.me";
 
 const post = (email, password) => {
@@ -23,9 +19,6 @@ const post = (email, password) => {
         }
     );
 };
-
-
-
 
 export const login = async (store, credentials) => {
     const status = "LOADING";

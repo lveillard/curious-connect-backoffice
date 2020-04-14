@@ -13,7 +13,7 @@ import Profile from "../views/examples/Profile"
 import Tools from "../views/Tools"
 
 
-import { Loader, Placeholder, Panel } from "rsuite"
+import { Loader, Panel } from "rsuite"
 
 import { useGlobal } from "../store";
 
@@ -26,7 +26,7 @@ const Admin = () => {
       await globalActions.login.getUser()
     }
     fetchMyAPI()
-  }, []);
+  }, [globalActions.login]);
 
 
 
@@ -80,6 +80,7 @@ const Admin = () => {
       {globalState.user && globalState.user.routes ? <React.Fragment>
 
 
+        {/*sidebar props?*/}
         <Sidebar
           routes={globalState.user.routes}
           logo={{
@@ -129,19 +130,5 @@ const Admin = () => {
 
 }
 
-
-
-class Admins extends React.Component {
-  render() {
-    return (
-      <div>
-        <Sidebar
-          {...this.props}
-        />
-      </div>
-
-    );
-  }
-}
 
 export default Admin;
