@@ -25,7 +25,12 @@ import {
 
 const Login = () => {
 
-
+  useEffect(() => {
+    async function fetchMyAPI() {
+      await globalActions.login.getUser()
+    }
+    if (localStorage.getItem("token")) { fetchMyAPI() }
+  }, []);
 
 
   let history = useHistory();
