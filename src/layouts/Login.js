@@ -30,6 +30,7 @@ const Login = () => {
       await globalActions.login.getUser()
     }
     if (localStorage.getItem("token")) { fetchMyAPI() }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
