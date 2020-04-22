@@ -20,6 +20,7 @@ const post = (email, password) => {
     );
 };
 
+
 export const login = async (store, credentials) => {
     const status = "LOADING";
     store.setState({ status });
@@ -32,12 +33,16 @@ export const login = async (store, credentials) => {
             store.setState({ user })
             store.setState({ token: data.token });
             store.setState({ confirmedToken: false })
+            const status = "LOADED";
+            store.setState({ status });
             Alert.success("Logged in!");
 
 
         } catch (err) {
             console.log(err);
             Alert.error("Bad credentials!");
+            const status = "FAILED";
+            store.setState({ status });
             localStorage.clear();
             return false
         }
@@ -48,12 +53,17 @@ export const login = async (store, credentials) => {
         if (data) {
             store.setState({ confirmedToken: true })
             store.setState({ user: data });
+            const status = "LOADED";
+            store.setState({ status });
             return true
 
 
         } else {
             Alert.warning("Wrong!");
             localStorage.clear()
+            store.setState({ user: data });
+            const status = "WEIRD";
+            store.setState({ status });
             return false
 
 

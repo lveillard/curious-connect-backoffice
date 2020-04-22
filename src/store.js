@@ -8,6 +8,7 @@ import * as actions from "./actions";
 
 const initialState = {
     lastLoginStatus: "",
+    loadingLogin: false,
     token: "",
     confirmedToken: "false",
 };

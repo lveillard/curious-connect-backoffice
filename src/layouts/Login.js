@@ -12,6 +12,7 @@ import {
   Col,
   FlexboxGrid,
   Panel,
+  Loader,
   Form,
   FormGroup,
   ControlLabel,
@@ -126,8 +127,9 @@ const Login = () => {
                     <br />
 
                     <ButtonToolbar style={{ textAlign: "center" }}>
-                      <Button type="submit" block onClick={login} appearance="primary" disabled={missingData || !inputs.password || !inputs.email}>
-                        Sign in
+                      <Button type="submit" block onClick={login} appearance="primary" disabled={globalState.status === "LOADING" || missingData || !inputs.password || !inputs.email}>
+                        {globalState.status === "LOADING" ? <Loader style={{ color: "white" }} />
+                          : "Sign in"}
                       </Button>
                       <Button appearance="link">Forgot password?</Button>
                     </ButtonToolbar>
