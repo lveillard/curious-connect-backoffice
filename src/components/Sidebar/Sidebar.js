@@ -59,12 +59,25 @@ var ps;
 
 class Sidebar extends React.Component {
   state = {
-    collapseOpen: false
+    collapseOpen: false,
+    dropdown: {}
   };
+
   constructor(props) {
     super(props);
     this.activeRoute.bind(this);
+
   }
+
+  toggleDropdown = (id) => {
+    if (this.state.dropdown) {
+      const current = this.state.dropdown[id] || false
+      this.setState({
+        dropdown: { ...this.state.dropdown, [id]: !current }
+      });
+    };
+  }
+
   // verifies if routeName is the one active (in browser input)
   activeRoute(routeName) {
     return this.props.location.pathname.indexOf(routeName) > -1 ? "active" : "";
@@ -118,7 +131,16 @@ class Sidebar extends React.Component {
         className="navbar-vertical fixed-left navbar-light bg-white"
         expand="md"
         id="sidenav-main"
-        style={{ boxShadow: "50px 0 5px 5px #333 !important" }}
+        style={{
+          boxShadow: "50px 0 5px 5px #333 !important",
+          borderColor: "rgba(0,0,0,.05)",
+          borderTopColor: "rgba(0, 0, 0, 0.05)",
+          borderRightColor: "rgba(0, 0, 0, 0.05)",
+          borderBottomColor: "rgba(0, 0, 0, 0.05)",
+          borderLeftColor: "rgba(0, 0, 0, 0.05)",
+          borderStyle: "solid",
+
+        }}
 
 
       >
@@ -220,7 +242,34 @@ class Sidebar extends React.Component {
               </InputGroup>
             </Form> */}
             {/* Navigation */}
-            <Nav navbar>{this.createLinks(routes)}</Nav>
+            <Nav navbar>
+
+              <NavItem>
+                <NavLink href={"#"} onClick={() => {
+                  this.toggleDropdown("test")
+                }} >
+                  <i className="ni ni-spaceship" />
+                  Test-subcategory
+                  </NavLink>
+
+
+              </NavItem>
+
+              {this.state.dropdown["test"] ? <NavItem className="ml-3">
+                <NavLink href={"#"} onClick={() => {
+                  window.open('https://www.notion.so/CC-Wiki-1e3e780bc83a45d19bff0e761efdc036', '_blank')
+                }} >
+                  <i className="ni ni-spaceship" />
+                  WIKI
+                </NavLink>
+              </NavItem> : null}
+
+
+
+              {this.createLinks(routes)}
+
+
+            </Nav>
             {/* Divider */}
             <hr className="my-3" />
             {/* Heading */}
