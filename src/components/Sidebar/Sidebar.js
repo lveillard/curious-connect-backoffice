@@ -94,26 +94,80 @@ class Sidebar extends React.Component {
       collapseOpen: false
     });
   };
+
+  createChildren = (children) => {
+
+    return children.map((x, key) => {
+
+      return <NavItem className="ml-3" key={key}>
+        <NavLink
+          to={x.layout + x.path}
+          tag={NavLinkRRD}
+          onClick={this.closeCollapse}
+          activeClassName="active"
+        >
+          <i className={x.icon} />
+          {x.name}
+        </NavLink>
+      </NavItem>
+    }
+    )
+  }
+
   // creates the links that appear in the left menu / Sidebar
   createLinks = routes => {
-    return routes.map((prop, key) => {
+
+
+    return routes.map((x, key) => {
       return (
-        <NavItem key={key}>
-          <NavLink
-            to={prop.layout + prop.path}
-            tag={NavLinkRRD}
-            onClick={this.closeCollapse}
-            activeClassName="active"
-          >
-            <i className={prop.icon} />
-            {prop.name}
-          </NavLink>
-        </NavItem>
+        //if it has no children
+        x.component ?
+          <NavItem key={key}>
+            <NavLink
+              to={x.layout + x.path}
+              tag={NavLinkRRD}
+              onClick={this.closeCollapse}
+              activeClassName="active"
+            >
+              <i className={x.icon} />
+              {x.name}
+            </NavLink>
+          </NavItem>
+          :
+          //if it has children
+          <div key={key}>
+            <NavItem>
+              <NavLink
+                onClick={() => {
+                  this.toggleDropdown(x.name);
+                }}
+              >
+                <i className={x.icon} />
+                {x.name}
+              </NavLink>
+            </NavItem>
+
+            {
+              //this.state.dropdown[x.name] 
+              true
+                ?
+
+                this.createChildren(x.children)
+
+
+                : null
+            }
+
+          </div>
+
+
+
       );
     });
   };
   render() {
     const { bgColor, routes, logo } = this.props;
+
     let navbarBrandProps;
     if (logo && logo.innerLink) {
       navbarBrandProps = {
@@ -244,30 +298,7 @@ class Sidebar extends React.Component {
             {/* Navigation */}
             <Nav navbar>
 
-              <NavItem>
-                <NavLink href={"#"} onClick={() => {
-                  this.toggleDropdown("test")
-                }} >
-                  <i className="ni ni-spaceship" />
-                  Test-subcategory
-                  </NavLink>
-
-
-              </NavItem>
-
-              {this.state.dropdown["test"] ? <NavItem className="ml-3">
-                <NavLink href={"#"} onClick={() => {
-                  window.open('https://www.notion.so/CC-Wiki-1e3e780bc83a45d19bff0e761efdc036', '_blank')
-                }} >
-                  <i className="ni ni-spaceship" />
-                  WIKI
-                </NavLink>
-              </NavItem> : null}
-
-
-
               {this.createLinks(routes)}
-
 
             </Nav>
             {/* Divider */}

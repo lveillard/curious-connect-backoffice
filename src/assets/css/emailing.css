@@ -1,0 +1,9 @@
+.dark-back input {
+    color: white;
+    background: #333;
+}
+
+.dark-back textarea {
+    color: white;
+    background: #333;
+}
