@@ -13,7 +13,7 @@ import {
 } from "reactstrap";
 
 import EmailHeader from "components/Headers/EmailHeader.js";
-import { gapi, loadAuth2 } from "gapi-script";
+import { gapi } from "gapi-script";
 
 import { Input, ControlLabel } from "rsuite";
 
@@ -25,12 +25,9 @@ import "../assets/css/emailing.css";
 
 const Tools = () => {
   const [globalState, globalActions] = useGlobal();
-  const SCOPES =
-    "https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.compose https://www.googleapis.com/auth/gmail.send";
-
-  const [auth2, setAuth2] = useState("");
 
   const [drafts, setDrafts] = useState([]);
+  const [senders, setSenders] = useState([]);
 
   const [file, setFile] = useState("");
 
@@ -40,6 +37,11 @@ const Tools = () => {
     subject: "test subject",
     message: "Hola <b>Pedro</b>.",
   });
+
+  const handleInputChange = (value, event) => {
+    event.persist();
+    setInputs((inputs) => ({ ...inputs, [event.target.name]: value }));
+  };
 
   function createDraft(userId, email, callback) {
     //preparing message
@@ -77,11 +79,6 @@ const Tools = () => {
     request.execute(callback);
   }
 
-  const handleInputChange = (value, event) => {
-    event.persist();
-    setInputs((inputs) => ({ ...inputs, [event.target.name]: value }));
-  };
-
   function listDrafts(userId, callback) {
     if (!gapi.client) {
       return null;
@@ -94,52 +91,6 @@ const Tools = () => {
       setDrafts(drafts);
       console.log("drafts", drafts);
     });
-  }
-
-  function initClient() {
-    gapi.client
-      .init({
-        apiKey: process.env.REACT_APP_API_KEY,
-        clientId: process.env.REACT_APP_CLIENT_ID,
-        discoveryDocs: [
-          "https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest",
-        ],
-        scope: SCOPES,
-      })
-      .then(
-        function () {
-          // Handle the initial sign-in state.
-          console.log(
-            "isSignedIn",
-            gapi.auth2.getAuthInstance().isSignedIn.get()
-          );
-        },
-        function (error) {
-          console.log(JSON.stringify(error, null, 2));
-        }
-      );
-  }
-
-  function getStatus(event) {
-    const status = gapi.auth2.getAuthInstance().isSignedIn.get();
-    console.log("status", status);
-  }
-
-  function listLabels() {
-    gapi.client.gmail.users.labels
-      .list({
-        userId: "me",
-      })
-      .then(function (response) {
-        var labels = response.result.labels;
-        console.log("Labels:");
-
-        if (labels && labels.length > 0) {
-          console.log(labels);
-        } else {
-          console.log("No Labels found.");
-        }
-      });
   }
 
   function prepareMsg() {
@@ -203,34 +154,10 @@ const Tools = () => {
   }
 
   useEffect(() => {
-    async function fetchMyAPI() {
-      try {
-        const auth2 = await loadAuth2(
-          "176023017425-brh21v32fs8dddrnfs608856sid7k9ks.apps.googleusercontent.com",
-          SCOPES
-        );
-        setAuth2({ auth2 });
-      } catch (error) {
-        console.log("error:", error);
-      }
-      try {
-        gapi.load("client:auth2", initClient);
-      } catch (err) {
-        console.log("error: ", err);
-      }
-      console.log("auth2", auth2);
-    }
+    /*async function fetchMyAPI() {
 
-    setAuth2(fetchMyAPI());
-    console.log(
-      decodeURIComponent(
-        escape(
-          window.atob(
-            "TUlNRS1WZXJzaW9uOiAxLjANCkRhdGU6IFRodSwgMjMgQXByIDIwMjAgMjE6MjQ6MDQgKzAyMDANCk1lc3NhZ2UtSUQ6IDxDQUdNektIX3FwcUhDR3Y1MWhBWEhQX1hqOXAwQk9YYUphWDA5TWFPNE9jK08wVDVFQ1FAbWFpbC5nbWFpbC5jb20"
-          )
-        )
-      )
-    );
+    }*/
+    //globalActions.gapi.load();
   }, []);
 
   return (
@@ -253,9 +180,9 @@ const Tools = () => {
                   <Row className="align-items-center">
                     <div className="col">
                       <h6 className="text-uppercase text-light ls-1 mb-1">
-                        TEXT-CONTENT
+                        SINGLE-EMAIL
                       </h6>
-                      <h2 className="text-white mb-0">Send test</h2>
+                      <h2 className="text-white mb-0">Send email</h2>
                     </div>
                     <div className="col"></div>
                   </Row>
@@ -357,14 +284,14 @@ const Tools = () => {
                         />
                       </FormGroup>
 
-                      <Input
+                      {/*<Input
                         value={JSON.stringify(file)}
                         name="message"
                         disabled
                         componentClass="textarea"
                         style={{ resize: "auto" }}
                         rows={10}
-                      />
+                      />*/}
                     </Form>
 
                     {/*<Input
@@ -380,7 +307,57 @@ const Tools = () => {
               </Card>
             </Col>
             <Col xl="4">
-              <Card style={{ background: "#444" }} className="shadow">
+              <Card style={{ background: "#444" }} className="shadow elements">
+                <CardHeader className="bg-transparent">
+                  <Row className="align-items-center">
+                    <div className="col">
+                      <h6 className="text-uppercase text-muted ls-1 mb-1">
+                        Senders
+                      </h6>
+                      <h2 className="mb-0 text-white">Get Senders</h2>
+                    </div>
+                  </Row>
+                </CardHeader>
+                <CardBody>
+                  <div style={{ color: "white" }}>
+                    {senders &&
+                      senders.length > 0 &&
+                      senders.map((x, key) => (
+                        <li
+                          onClick={() =>
+                            setInputs({
+                              ...inputs,
+                              sender:
+                                x.displayName + " <" + x.sendAsEmail + ">",
+                            })
+                          }
+                          key={key}
+                        >
+                          {x.sendAsEmail}
+                        </li>
+                      ))}
+                  </div>
+                  <br />
+                  <Button
+                    onClick={(e) => {
+                      gapi.client.gmail.users.settings.sendAs
+                        .list({
+                          userId: "me",
+                        })
+                        .then(function (response) {
+                          let senders = response.result.sendAs;
+                          setSenders(senders);
+                          console.log("senders", senders);
+                        });
+                    }}
+                    id="get_senders"
+                  >
+                    List Senders
+                  </Button>
+                </CardBody>
+              </Card>
+
+              <Card style={{ background: "#444" }} className="shadow mt-5">
                 <CardHeader className="bg-transparent">
                   <Row className="align-items-center">
                     <div className="col">
