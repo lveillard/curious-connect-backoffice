@@ -12,7 +12,7 @@ const UserHeader = () => {
       <div
         className="header bg-primary pb-8 pt-5 pt-lg-8 d-flex align-items-center"
         style={{
-          minHeight: "300px",
+          minHeight: "400px",
         }}
       >
         {/* Mask */}
@@ -34,7 +34,7 @@ const UserHeader = () => {
                     onClick={(e) => globalActions.gapi.handleAuth(e)}
                     id="authorize_button"
                   >
-                    Authorize
+                    Authorize GMAIL
                   </Button>
                 )}
               </div>

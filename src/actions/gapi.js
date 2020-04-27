@@ -67,6 +67,9 @@ export const handleAuth = (store) => {
         let auth = gapi.auth2.getAuthInstance();
         store.setState({ auth: auth });
         store.setState({ guser: auth.currentUser.get().getBasicProfile() });
+
+        //getSenders
+        store.actions.gapi.getSenders();
       },
       (err) => {
         console.log(err); // Erreur !
@@ -122,4 +125,16 @@ export const getDraft = (store, id, callback) => {
     //var url = URL.createObjectURL(blob);
     console.log(byteString);
   });
+};
+
+export const getSenders = (store, senders) => {
+  gapi.client.gmail.users.settings.sendAs
+    .list({
+      userId: "me",
+    })
+    .then(function (response) {
+      let senders = response.result.sendAs;
+      store.setState({ senders: senders });
+      console.log("senders", store.state);
+    });
 };

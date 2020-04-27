@@ -27,7 +27,6 @@ const Tools = () => {
   const [globalState, globalActions] = useGlobal();
 
   const [drafts, setDrafts] = useState([]);
-  const [senders, setSenders] = useState([]);
 
   const [file, setFile] = useState("");
 
@@ -320,9 +319,9 @@ const Tools = () => {
                 </CardHeader>
                 <CardBody>
                   <div style={{ color: "white" }}>
-                    {senders &&
-                      senders.length > 0 &&
-                      senders.map((x, key) => (
+                    {globalState.senders &&
+                      globalState.senders.length > 0 &&
+                      globalState.senders.map((x, key) => (
                         <li
                           onClick={() =>
                             setInputs({
@@ -340,15 +339,7 @@ const Tools = () => {
                   <br />
                   <Button
                     onClick={(e) => {
-                      gapi.client.gmail.users.settings.sendAs
-                        .list({
-                          userId: "me",
-                        })
-                        .then(function (response) {
-                          let senders = response.result.sendAs;
-                          setSenders(senders);
-                          console.log("senders", senders);
-                        });
+                      globalActions.gapi.getSenders();
                     }}
                     id="get_senders"
                   >

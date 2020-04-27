@@ -8,9 +8,13 @@ import * as actions from "./actions";
 const initialState = {
   lastLoginStatus: "",
   loadingLogin: false,
+  isLoading: { airtable: false },
   token: "",
   confirmedToken: false,
   gapiAuthed: false,
+  config: { hiddenSidebar: false },
+  size: { width: 700 },
+  readyToSendRecords: [],
 };
 
 export const useGlobal = useGlobalHook(React, initialState, actions);

@@ -20,7 +20,6 @@ import React from "react";
 import { NavLink as NavLinkRRD, Link } from "react-router-dom";
 // nodejs library to set properties for components
 import { PropTypes } from "prop-types";
-import AdminNavbar from "../Navbars/AdminNavbar"
 
 // reactstrap components
 import {
@@ -50,33 +49,32 @@ import {
   Table,
   Container,
   Row,
-  Col
+  Col,
 } from "reactstrap";
 
-import Menu from "../Navbars/Menu"
+import Menu from "../Navbars/Menu";
 
 var ps;
 
 class Sidebar extends React.Component {
   state = {
     collapseOpen: false,
-    dropdown: {}
+    dropdown: {},
   };
 
   constructor(props) {
     super(props);
     this.activeRoute.bind(this);
-
   }
 
   toggleDropdown = (id) => {
     if (this.state.dropdown) {
-      const current = this.state.dropdown[id] || false
+      const current = this.state.dropdown[id] || false;
       this.setState({
-        dropdown: { ...this.state.dropdown, [id]: !current }
+        dropdown: { ...this.state.dropdown, [id]: !current },
       });
-    };
-  }
+    }
+  };
 
   // verifies if routeName is the one active (in browser input)
   activeRoute(routeName) {
@@ -85,43 +83,41 @@ class Sidebar extends React.Component {
   // toggles collapse between opened and closed (true/false)
   toggleCollapse = () => {
     this.setState({
-      collapseOpen: !this.state.collapseOpen
+      collapseOpen: !this.state.collapseOpen,
     });
   };
+
   // closes the collapse
   closeCollapse = () => {
     this.setState({
-      collapseOpen: false
+      collapseOpen: false,
     });
   };
 
   createChildren = (children) => {
-
     return children.map((x, key) => {
-
-      return <NavItem className="ml-3" key={key}>
-        <NavLink
-          to={x.layout + x.path}
-          tag={NavLinkRRD}
-          onClick={this.closeCollapse}
-          activeClassName="active"
-        >
-          <i className={x.icon} />
-          {x.name}
-        </NavLink>
-      </NavItem>
-    }
-    )
-  }
+      return (
+        <NavItem className="ml-3" key={key}>
+          <NavLink
+            to={x.layout + x.path}
+            tag={NavLinkRRD}
+            onClick={this.closeCollapse}
+            activeClassName="active"
+          >
+            <i className={x.icon} />
+            {x.name}
+          </NavLink>
+        </NavItem>
+      );
+    });
+  };
 
   // creates the links that appear in the left menu / Sidebar
-  createLinks = routes => {
-
-
+  createLinks = (routes) => {
     return routes.map((x, key) => {
       return (
         //if it has no children
-        x.component ?
+        x.component ? (
           <NavItem key={key}>
             <NavLink
               to={x.layout + x.path}
@@ -133,7 +129,7 @@ class Sidebar extends React.Component {
               {x.name}
             </NavLink>
           </NavItem>
-          :
+        ) : (
           //if it has children
           <div key={key}>
             <NavItem>
@@ -148,20 +144,11 @@ class Sidebar extends React.Component {
             </NavItem>
 
             {
-              //this.state.dropdown[x.name] 
-              true
-                ?
-
-                this.createChildren(x.children)
-
-
-                : null
+              //this.state.dropdown[x.name]
+              true ? this.createChildren(x.children) : null
             }
-
           </div>
-
-
-
+        )
       );
     });
   };
@@ -172,12 +159,12 @@ class Sidebar extends React.Component {
     if (logo && logo.innerLink) {
       navbarBrandProps = {
         to: logo.innerLink,
-        tag: Link
+        tag: Link,
       };
     } else if (logo && logo.outterLink) {
       navbarBrandProps = {
         href: logo.outterLink,
-        target: "_blank"
+        target: "_blank",
       };
     }
     return (
@@ -193,12 +180,9 @@ class Sidebar extends React.Component {
           borderBottomColor: "rgba(0, 0, 0, 0.05)",
           borderLeftColor: "rgba(0, 0, 0, 0.05)",
           borderStyle: "solid",
-
         }}
-
-
       >
-        <Container fluid >
+        <Container fluid>
           {/* Toggler */}
           <button
             className="navbar-toggler"
@@ -238,10 +222,7 @@ class Sidebar extends React.Component {
               <DropdownToggle nav>
                 <Media className="align-items-center">
                   <span className="avatar avatar-sm rounded-circle">
-                    <img
-                      alt="..."
-                      src={"/images/logo3.png"}
-                    />
+                    <img alt="..." src={"/images/logo3.png"} />
                   </span>
                 </Media>
               </DropdownToggle>
@@ -261,10 +242,10 @@ class Sidebar extends React.Component {
                         <img alt={logo.imgAlt} src={logo.imgSrc} />
                       </Link>
                     ) : (
-                        <a href={logo.outterLink}>
-                          <img alt={logo.imgAlt} src={logo.imgSrc} />
-                        </a>
-                      )}
+                      <a href={logo.outterLink}>
+                        <img alt={logo.imgAlt} src={logo.imgSrc} />
+                      </a>
+                    )}
                   </Col>
                 ) : null}
                 <Col className="collapse-close" xs="6">
@@ -296,11 +277,7 @@ class Sidebar extends React.Component {
               </InputGroup>
             </Form> */}
             {/* Navigation */}
-            <Nav navbar>
-
-              {this.createLinks(routes)}
-
-            </Nav>
+            <Nav navbar>{this.createLinks(routes)}</Nav>
             {/* Divider */}
             <hr className="my-3" />
             {/* Heading */}
@@ -308,23 +285,29 @@ class Sidebar extends React.Component {
             {/* Navigation */}
             <Nav className="mb-md-3" navbar>
               <NavItem>
-                <NavLink href={"#"} onClick={() => {
-                  window.open('https://www.notion.so/CC-Wiki-1e3e780bc83a45d19bff0e761efdc036', '_blank')
-                }} >
+                <NavLink
+                  href={"#"}
+                  onClick={() => {
+                    window.open(
+                      "https://www.notion.so/CC-Wiki-1e3e780bc83a45d19bff0e761efdc036",
+                      "_blank"
+                    );
+                  }}
+                >
                   <i className="ni ni-spaceship" />
-WIKI                </NavLink>
+                  WIKI{" "}
+                </NavLink>
               </NavItem>
             </Nav>
-
           </Collapse>
         </Container>
-      </Navbar >
+      </Navbar>
     );
   }
 }
 
 Sidebar.defaultProps = {
-  routes: [{}]
+  routes: [{}],
 };
 
 Sidebar.propTypes = {
@@ -340,8 +323,8 @@ Sidebar.propTypes = {
     // the image src of the logo
     imgSrc: PropTypes.string.isRequired,
     // the alt for the img
-    imgAlt: PropTypes.string.isRequired
-  })
+    imgAlt: PropTypes.string.isRequired,
+  }),
 };
 
 export default Sidebar;

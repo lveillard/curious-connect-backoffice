@@ -10,8 +10,13 @@ import Sidebar from "components/Sidebar/Sidebar.js";
 import TimeLine from "../views/TimeLine";
 import Profile from "../views/examples/Profile";
 import Tools from "../views/Tools";
+import BulkEmail from "../views/BulkEmail";
+import ToDo from "../views/ToDo";
+
+import "../assets/css/admin.css";
 
 import { Loader, Panel } from "rsuite";
+import { BsBoxArrowLeft, BsBoxArrowRight } from "react-icons/bs";
 
 import { useGlobal } from "../store";
 
@@ -25,32 +30,30 @@ const Admin = () => {
     fetchMyAPI();
   }, [globalActions.login]);
 
+  //scroll to top only when the route changes
   useEffect(() => {
     document.documentElement.scrollTop = 0;
     document.scrollingElement.scrollTop = 0;
     mainContent.current.scrollTop = 0;
-  });
+  }, []);
 
   const mainContent = useRef();
   const location = useLocation();
+
+  //when location changes, change route and scroll top
+  useEffect(() => {
+    globalActions.routes.setRoute(location);
+    document.documentElement.scrollTop = 0;
+    document.scrollingElement.scrollTop = 0;
+    mainContent.current.scrollTop = 0;
+  }, [location]);
 
   const views = {
     TimeLine: TimeLine,
     Profile: Profile,
     Tools: Tools,
-  };
-  const getRouteName = () => {
-    if (globalState.user) {
-      try {
-        //TO-DO not working with children routes
-        return globalState.user.routes.find(
-          (x) => x.layout + x.path === location.pathname
-        ).name;
-      } catch (err) {
-        // while loading location.pathname is incomplete so we will get some errors
-        // console.log("No rute name")
-      }
-    }
+    BulkEmail: BulkEmail,
+    ToDo: ToDo,
   };
 
   const getRoutes = () => {
@@ -84,20 +87,44 @@ const Admin = () => {
       {globalState.user && globalState.user.routes ? (
         <React.Fragment>
           {/*sidebar props?*/}
-          <Sidebar
-            routes={globalState.user.routes}
-            logo={{
-              innerLink: "/admin/index",
-              imgSrc: "/images/logo3.png",
-              imgAlt: "...",
-            }}
-          />
+
+          {(!globalState.config.hiddenSidebar ||
+            globalState.size.width <= 767) && (
+            <Sidebar
+              routes={globalState.user.routes}
+              logo={{
+                innerLink: "/admin/index",
+                imgSrc: "/images/logo3.png",
+                imgAlt: "...",
+              }}
+            />
+          )}
+
           <div
             className="main-content"
             style={{ background: "#f7fafc" }}
             ref={mainContent}
           >
-            <AdminNavbar brandText={getRouteName()} />
+            <AdminNavbar
+              brandText={globalActions.routes.getRouteName(location)}
+            />
+
+            {globalState.size.width > 767 && !globalState.config.hiddenSidebar && (
+              <div className="sideclose">
+                <BsBoxArrowLeft
+                  onClick={() => globalActions.config.toggleSidebar()}
+                />{" "}
+              </div>
+            )}
+
+            {globalState.size.width > 767 && globalState.config.hiddenSidebar && (
+              <div className="sideopen">
+                <BsBoxArrowRight
+                  onClick={() => globalActions.config.toggleSidebar()}
+                />{" "}
+              </div>
+            )}
+
             <Switch>
               {getRoutes(globalState.user.routes)}
               <Redirect from="*" to="/admin/index" />
