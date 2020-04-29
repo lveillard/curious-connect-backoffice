@@ -15,7 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from 'react';
+import React from "react";
 
 import ReactDOM from "react-dom";
 
@@ -24,10 +24,8 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import "assets/scss/argon-dashboard-react.scss";
 import "rsuite/dist/styles/rsuite-default.css";
 
-import App from "./app"
+import "react-toastify/dist/ReactToastify.css";
 
-ReactDOM.render(
+import App from "./app";
 
-  <App />,
-  document.getElementById("root")
-);
+ReactDOM.render(<App />, document.getElementById("root"));

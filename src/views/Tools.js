@@ -12,14 +12,14 @@ import {
   Col,
 } from "reactstrap";
 
+import { toast } from "react-toastify";
+
 import EmailHeader from "components/Headers/EmailHeader.js";
 import { gapi } from "gapi-script";
 
 import { Input, ControlLabel } from "rsuite";
 
 import { useGlobal } from "../store";
-
-import MIMEText from "mimetext";
 
 import "../assets/css/emailing.css";
 
@@ -44,7 +44,13 @@ const Tools = () => {
 
   function createDraft(userId, email, callback) {
     //preparing message
-    const raw = prepareMsg();
+    const raw = globalActions.mailing.prepareMsg(
+      inputs.sender,
+      inputs.recipient,
+      inputs.subject,
+      inputs.message,
+      file
+    );
 
     //create draft
     var request = gapi.client.gmail.users.drafts.create({
@@ -56,23 +62,6 @@ const Tools = () => {
             .replace(/\//g, "_")
             .replace(/\+/g, "-"),
         },
-      },
-    });
-    request.execute(callback);
-  }
-
-  function sendMessage(userId, email, callback) {
-    //preparing message
-    const raw = prepareMsg();
-
-    //sending the message
-    var request = gapi.client.gmail.users.messages.send({
-      userId: "me",
-      resource: {
-        raw: window
-          .btoa(unescape(encodeURIComponent(raw)))
-          .replace(/\//g, "_")
-          .replace(/\+/g, "-"),
       },
     });
     request.execute(callback);
@@ -90,25 +79,6 @@ const Tools = () => {
       setDrafts(drafts);
       console.log("drafts", drafts);
     });
-  }
-
-  function prepareMsg() {
-    const message = new MIMEText();
-    message.setSender(inputs.sender);
-    message.setRecipient(inputs.recipient);
-    message.setSubject(inputs.subject);
-    message.setMessage(inputs.message);
-
-    if (file) {
-      const attatchment = {
-        type: file.type,
-        filename: file.name,
-        base64Data: file.base64.substring(file.base64.search(",") + 1),
-      };
-      message.setAttachments([attatchment]);
-    }
-
-    return message.asRaw();
   }
 
   function toByteStream(event) {
@@ -259,7 +229,45 @@ const Tools = () => {
                             textTransform: "uppercase",
                           }}
                           className="float-right"
-                          onClick={(e) => sendMessage(e)}
+                          onClick={async (e) =>
+                            globalActions.gapi.sendMessage(
+                              await globalActions.mailing.prepareMsg(
+                                inputs.sender,
+                                inputs.recipient,
+                                inputs.subject,
+                                inputs.message,
+                                file
+                              ),
+                              (answer) => {
+                                if (answer.error) {
+                                  //on error actions
+                                  console.log(answer.error);
+
+                                  toast.error("Error:" + answer.error.message, {
+                                    position: "top-right",
+                                    autoClose: 2000,
+                                    hideProgressBar: false,
+                                    closeOnClick: true,
+                                    pauseOnHover: true,
+                                    draggable: true,
+                                    progress: undefined,
+                                  });
+                                } else {
+                                  //on success actions
+                                  console.log(answer);
+                                  toast.success("Message sent!", {
+                                    position: "top-right",
+                                    autoClose: 2000,
+                                    hideProgressBar: false,
+                                    closeOnClick: true,
+                                    pauseOnHover: true,
+                                    draggable: true,
+                                    progress: undefined,
+                                  });
+                                }
+                              }
+                            )
+                          }
                           id="send_message"
                         >
                           <b> Send Message</b>

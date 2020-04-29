@@ -59,13 +59,25 @@ export const getStudents = (store) => {
 };
 
 export const getReadyToSendEmails = (store, filter) => {
+  // loading
   store.setState({
     isLoading: { ...store.state.isLoading, readyToSendRecords: true },
   });
 
+  // as we are refreshing, reset last pack of emails
+  store.setState({
+    readyToSendRecords: [],
+  });
+
+  //reset also state related to last pack of emails
+  store.actions.mailing.ReadyToSendSetConfig({
+    sendersChecked: false,
+    atLeastOneReady: false,
+  });
+
   const selectBase = {
     maxRecords: 100,
-    view: "Send",
+    view: "SendBO",
   };
 
   const formula =
@@ -87,7 +99,7 @@ export const getReadyToSendEmails = (store, filter) => {
           window.hola = x;
           return {
             id: x.id,
-            status: x.get("status"),
+            status: "Loaded",
             company: x.get("target.companyName"),
             targetAddress: x.get("target.email"),
             senderAddress: x.get("sender.email")[0],

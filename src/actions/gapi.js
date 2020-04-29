@@ -63,7 +63,6 @@ export const handleAuth = (store) => {
     .then(
       () => {
         store.setState({ gapiAuthed: true }); // Succès !
-        console.log("auth2", gapi.auth2);
         let auth = gapi.auth2.getAuthInstance();
         store.setState({ auth: auth });
         store.setState({ guser: auth.currentUser.get().getBasicProfile() });
@@ -135,6 +134,20 @@ export const getSenders = (store, senders) => {
     .then(function (response) {
       let senders = response.result.sendAs;
       store.setState({ senders: senders });
-      console.log("senders", store.state);
     });
+};
+
+export const sendMessage = (store, raw, callback) => {
+  //sending the message
+
+  var request = gapi.client.gmail.users.messages.send({
+    userId: "me",
+    resource: {
+      raw: window
+        .btoa(unescape(encodeURIComponent(raw)))
+        .replace(/\//g, "_")
+        .replace(/\+/g, "-"),
+    },
+  });
+  request.execute((answer) => callback(answer));
 };

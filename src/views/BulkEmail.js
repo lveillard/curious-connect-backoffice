@@ -22,7 +22,7 @@ import {
   Badge,
 } from "reactstrap";
 
-import { Checkbox } from "rsuite";
+import { Checkbox, Whisper, Tooltip } from "rsuite";
 
 import Select from "react-select";
 
@@ -50,10 +50,10 @@ const BulkEmail = (props) => {
     Sending: "bg-warning",
     Ready: "bg-info",
     Error: "bg-danger",
+    Loaded: "bg-primary",
   };
 
   useEffect(() => {
-    console.log(globalState);
     //get list of students
     globalActions.airtable.getStudents();
   }, []);
@@ -242,33 +242,36 @@ const BulkEmail = (props) => {
                           Refresh
                         </Button>
 
-                        {globalState.gapiAuthed && (
-                          <Button
-                            className="float-right"
-                            color="danger"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              globalActions.mailing.checkSenders();
-                            }}
-                            size="sm"
-                          >
-                            Check senders
-                          </Button>
-                        )}
+                        {globalState.gapiAuthed &&
+                          globalState.readyToSendRecords &&
+                          globalState.readyToSendRecords.length > 0 && (
+                            <Button
+                              className="float-right"
+                              color="danger"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                globalActions.mailing.checkSenders();
+                              }}
+                              size="sm"
+                            >
+                              Check senders
+                            </Button>
+                          )}
 
-                        {globalState.gapiAuthed && (
-                          <Button
-                            className="float-right"
-                            color="warning"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              globalActions.mailing.checkSenders();
-                            }}
-                            size="sm"
-                          >
-                            SEND
-                          </Button>
-                        )}
+                        {globalState.gapiAuthed &&
+                          globalState.readyToSendConfig.atLeastOneReady && (
+                            <Button
+                              className="float-right"
+                              color="warning"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                globalActions.mailing.sendBulk();
+                              }}
+                              size="sm"
+                            >
+                              SEND
+                            </Button>
+                          )}
                       </ButtonGroup>
                     </Col>
                   </CardHeader>
@@ -277,18 +280,22 @@ const BulkEmail = (props) => {
                     responsive
                   >
                     <thead className="thead-dark">
-                      <tr>
+                      <tr className="fina">
                         <th
                           scope="col"
                           style={{
-                            width: "10px",
+                            width: "47px",
                           }}
                         >
-                          <Checkbox
-                            onChange={(e, v) =>
-                              globalActions.mailing.selectAllReadyToSendEmail(v)
-                            }
-                          ></Checkbox>
+                          {globalState.readyToSendConfig.atLeastOneReady && (
+                            <Checkbox
+                              onChange={(e, v) =>
+                                globalActions.mailing.selectAllReadyToSendEmail(
+                                  v
+                                )
+                              }
+                            ></Checkbox>
+                          )}
                         </th>
                         <th scope="col">Company</th>
                         <th scope="col">Addresses</th>
@@ -312,14 +319,17 @@ const BulkEmail = (props) => {
                         globalState.readyToSendRecords.map((x, key) => (
                           <tr key={key} className="fina">
                             <th scope="row">
-                              <Checkbox
-                                checked={x.isSelected}
-                                onChange={(e) =>
-                                  globalActions.mailing.selectReadyToSendEmail(
-                                    x.id
-                                  )
-                                }
-                              />
+                              {x.status === "Ready" && (
+                                <Checkbox
+                                  checked={x.isSelected}
+                                  onChange={(e) =>
+                                    globalActions.mailing.setPropertyReadyToSendEmail(
+                                      x.id,
+                                      "isSelected"
+                                    )
+                                  }
+                                />
+                              )}
                             </th>
                             <th scope="row"> {x.company}</th>
                             <td>
@@ -338,10 +348,17 @@ const BulkEmail = (props) => {
                               </div>
                             </td>
                             <td>
-                              <Badge color="" className="badge-dot mr-4">
-                                <i className={dict[x.status]} />
-                                {x.status}
-                              </Badge>
+                              <Whisper
+                                style={x.errorMessage && { cursor: "pointer" }}
+                                placement="right"
+                                trigger="hover"
+                                speaker={<Tooltip>{x.errorMessage}</Tooltip>}
+                              >
+                                <Badge color="" className="badge-dot mr-4">
+                                  <i className={dict[x.status]} />
+                                  {x.status}
+                                </Badge>
+                              </Whisper>
                             </td>
                             <td
                               style={{
@@ -353,6 +370,22 @@ const BulkEmail = (props) => {
                                 <div
                                   style={{ cursor: "pointer" }}
                                   className="text-center raise"
+                                  onClick={async () => {
+                                    globalActions.gapi.sendMessage(
+                                      await globalActions.mailing.prepareMsg(
+                                        x.senderAddress,
+                                        x.targetAddress,
+                                        x.emailObject,
+                                        x.emailContent,
+                                        x.emailAttachments
+                                      ),
+                                      (answer) =>
+                                        globalActions.mailing.sendCallback(
+                                          answer,
+                                          x.id
+                                        )
+                                    );
+                                  }}
                                 >
                                   <RiMailSendLine />{" "}
                                   <div

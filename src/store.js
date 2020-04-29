@@ -15,6 +15,11 @@ const initialState = {
   config: { hiddenSidebar: false },
   size: { width: 700 },
   readyToSendRecords: [],
+  readyToSendConfig: {
+    atLeastOneSelected: false,
+    atLeastOneReady: false,
+    sendersChecked: false,
+  },
 };
 
 export const useGlobal = useGlobalHook(React, initialState, actions);
