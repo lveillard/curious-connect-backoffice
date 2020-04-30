@@ -100,7 +100,7 @@ const BulkEmail = (props) => {
                           (globalState.currentStudent &&
                             globalState.currentStudent.files[0].thumbnails.large
                               .url) ||
-                          "https://www.brandeps.com/logo-download/A/Airtable-logo-vector-01.svg"
+                          "https://seeklogo.com/images/A/airtable-logo-216B9AF035-seeklogo.com.png"
                         }
                       />
                     </a>

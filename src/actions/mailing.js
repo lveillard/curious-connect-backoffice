@@ -195,34 +195,6 @@ export const prepareMsg = async (
   return Msg.asRaw();
 };
 
-export const prepareBulkMsg = (store) => {
-  //get all ready messages
-  const bulkReady = store.state.readyToSendRecords.filter(
-    (x) => x.status === "Ready" && x.isSelected === true
-  );
-
-  // if messages, prepare them
-  if (bulkReady.length > 0) {
-    const raw = bulkReady.map((x) =>
-      store.actions.mailing.prepareMsg(
-        x.senderAddress,
-        x.targetAddress,
-        x.emailObject,
-        x.emailContent,
-        x.emailAttachments
-      )
-    );
-
-    store.setState({
-      readyToSendRaws: raw,
-    });
-  } else {
-    store.setState({
-      readyToSendRaws: [],
-    });
-  }
-};
-
 export const sendCallback = (store, answer, id) => {
   if (answer.error) {
     //on error actions
@@ -244,19 +216,40 @@ export const sendCallback = (store, answer, id) => {
   }
 };
 
-export const sendBulk = (store) => {
+export const sendBulk = async (store) => {
+  //get all ready messages
+  const bulkReady = store.state.readyToSendRecords.filter(
+    (x) => x.status === "Ready" && x.isSelected === true
+  );
+
+  console.log("bulkReady", bulkReady);
+
+  if (bulkReady.length > 0) {
+    for (const x of bulkReady) {
+      store.actions.gapi.sendMessage(
+        await store.actions.mailing.prepareMsg(
+          x.senderAddress,
+          x.targetAddress,
+          x.emailObject,
+          x.emailContent,
+          x.emailAttachments
+        ),
+        (answer) => store.actions.mailing.sendCallback(answer, x.id)
+      );
+    }
+  }
+
   //prepare bulk
-  store.actions.mailing.prepareBulkMsg();
 
   //validate bulk
   //some validation
 
-  if (store.state.readyToSendRaws && store.state.readyToSendRaws.length > 0) {
-    //sendMessages
-    store.state.readyToSendRaws.map((x) =>
-      store.actions.gapi.sendMessage(x, (answer) =>
-        store.actions.mailing.sendCallback(answer, x.id)
-      )
-    );
-  }
+  //if (store.state.readyToSendRaws && store.state.readyToSendRaws.length > 0) {
+  //sendMessages
+  //store.state.readyToSendRaws.map((x) =>
+  //store.actions.gapi.sendMessage(x, (answer) =>
+  //store.actions.mailing.sendCallback(answer, x.id)
+  //)
+  // );
+  //}
 };
