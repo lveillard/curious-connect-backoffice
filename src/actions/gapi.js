@@ -151,3 +151,11 @@ export const sendMessage = (store, raw, callback) => {
   });
   request.execute((answer) => callback(answer));
 };
+
+export const sendMessagePromise = (store, raw) => {
+  return new Promise((resolve, reject) => {
+    store.actions.gapi.sendMessage(raw, (answer) => {
+      resolve(answer);
+    });
+  });
+};

@@ -22,7 +22,7 @@
   "bugs": {
     "url": "https://github.com/lveillard/curious-connect-backoffice.git/issues"
   },
-  "homepage": "https://ccbackoffice.netlify.com/",
+  "homepage": "https://bo.curious-connect.com/",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

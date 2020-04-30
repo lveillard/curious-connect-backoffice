@@ -130,16 +130,6 @@ export const prepareAirtableFile = (store, airtableFiles) => {
   };
 
   return null;
-  // url to bytestream
-  /*
-        let fileInfo = {
-        name: file.name,
-        type: file.type,
-        size: Math.round(file.size / 1000) + " kB",
-        base64: reader.result,
-        file: file,
-      };
-        */
 };
 
 export const prepareMsg = async (
@@ -206,50 +196,62 @@ export const sendCallback = (store, answer, id) => {
     });
   } else {
     //on success actions
-    console.log(answer);
     store.actions.mailing.setBulkPropertyReadyToSendEmail(id, {
       status: "Sent",
       threadId: answer.threadID,
     });
-    //refrescamos
-    store.actions.airtable.getReadyToSendEmails();
+
+    //we change the record
+
+    store.actions.airtable.updateField(id, "threadId", answer.id);
+    store.actions.airtable.updateField(id, "status", "Sent");
+
+    //refresh only that record
   }
 };
 
-export const sendBulk = async (store) => {
+// please don't forget to modify also the send methods with the send button in bulkEmail.js
+//To-do unify both
+export const sendEmailsBulk = async (store) => {
   //get all ready messages
   const bulkReady = store.state.readyToSendRecords.filter(
     (x) => x.status === "Ready" && x.isSelected === true
   );
 
-  console.log("bulkReady", bulkReady);
-
   if (bulkReady.length > 0) {
-    for (const x of bulkReady) {
-      store.actions.gapi.sendMessage(
-        await store.actions.mailing.prepareMsg(
-          x.senderAddress,
-          x.targetAddress,
-          x.emailObject,
-          x.emailContent,
-          x.emailAttachments
-        ),
-        (answer) => store.actions.mailing.sendCallback(answer, x.id)
+    for (let x of bulkReady) {
+      // put the message on loading
+      store.actions.mailing.setBulkPropertyReadyToSendEmail(x.id, {
+        status: "Sending",
+      });
+
+      // name structure if fullName provided
+      const senderNamedAddress = x.senderFullName
+        ? x.senderFullName + "<" + x.senderAddress + ">"
+        : x.senderAddress;
+
+      //body structure & attach signature
+      const contentBR = x.emailContent.replace(/(\r\n|\n|\r)/gm, "<br>");
+      const greySignature =
+        '<div style="color: #777777;">' +
+        "<br/> <br/>--- <br/>" +
+        x.senderSignature +
+        "</div>";
+      const signatured = contentBR + greySignature;
+
+      console.log("precall", x.id);
+
+      const MSG = await store.actions.mailing.prepareMsg(
+        senderNamedAddress,
+        x.targetAddress,
+        x.emailObject,
+        signatured,
+        x.emailAttachments
       );
+      const answer = await store.actions.gapi.sendMessagePromise(MSG);
+      const cb = store.actions.mailing.sendCallback(answer, x.id);
+
+      // TO-do: recharge the status to check that it went fine?
     }
   }
-
-  //prepare bulk
-
-  //validate bulk
-  //some validation
-
-  //if (store.state.readyToSendRaws && store.state.readyToSendRaws.length > 0) {
-  //sendMessages
-  //store.state.readyToSendRaws.map((x) =>
-  //store.actions.gapi.sendMessage(x, (answer) =>
-  //store.actions.mailing.sendCallback(answer, x.id)
-  //)
-  // );
-  //}
 };

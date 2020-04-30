@@ -58,6 +58,26 @@ export const getStudents = (store) => {
     );
 };
 
+export const updateField = (store, id, field, value) => {
+  base("Emails").update(
+    [
+      {
+        id: id,
+        fields: {
+          [field]: value,
+        },
+      },
+    ],
+    function (err, records) {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      records.forEach(function (record) {});
+    }
+  );
+};
+
 export const getReadyToSendEmails = (store, filter) => {
   // loading
   store.setState({
