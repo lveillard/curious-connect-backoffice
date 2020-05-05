@@ -12,3 +12,11 @@
   color: rgb(255, 252, 160);
   transform: translateY(-0.15em);
 }
+
+.nav-tabs {
+  border-bottom: 0px;
+}
+
+.nav-tabs .nav-link:hover {
+  border-bottom: 0px;
+}

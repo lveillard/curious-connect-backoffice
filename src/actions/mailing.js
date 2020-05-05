@@ -24,7 +24,7 @@ export const checkSenders = (store) => {
 
   //set all not matched to errors
   errors.map((x) =>
-    store.actions.mailing.setBulkPropertyReadyToSendEmail(x.id, {
+    store.actions.mailing.setRecordProperty(x.id, {
       status: "Error",
       errorMessage: "Unmatched sender",
     })
@@ -34,7 +34,7 @@ export const checkSenders = (store) => {
   good
     .filter((x) => x.status === "Error" || x.status === "Loaded")
     .map((x) =>
-      store.actions.mailing.setBulkPropertyReadyToSendEmail(x.id, {
+      store.actions.mailing.setRecordProperty(x.id, {
         status: "Ready",
       })
     );
@@ -77,24 +77,44 @@ export const setPropertyReadyToSendEmail = (
   });
 };
 
-export const setBulkPropertyReadyToSendEmail = (store, id, object) => {
+export const setRecordProperty = (store, id, object) => {
   // so basically this method changes a given property
   // for bolean properties you can either give the boolean value or don't give nothing
   // if nothing is provided, the boolean just switches
 
-  const current = store.state.readyToSendRecords.find((x) => x.id === id);
-  const rest = store.state.readyToSendRecords.filter((x) => x.id !== id);
+  const readyToSend = store.state.readyToSendRecords.find((x) => x.id === id);
+  const restReadyToSend = store.state.readyToSendRecords.filter(
+    (x) => x.id !== id
+  );
 
-  //inmutable magic + sort
-  store.setState({
-    readyToSendRecords: rest
-      .concat({
-        ...current,
-        ...object,
-      })
-      .slice()
-      .sort((a, b) => a.sortNumber - b.sortNumber),
-  });
+  const sent = store.state.sentRecords.find((x) => x.id === id);
+  const restSent = store.state.sentRecords.filter((x) => x.id !== id);
+
+  if (readyToSend) {
+    //inmutable magic + sort
+    store.setState({
+      readyToSendRecords: restReadyToSend
+        .concat({
+          ...readyToSend,
+          ...object,
+        })
+        .slice()
+        .sort((a, b) => a.sortNumber - b.sortNumber),
+    });
+  }
+
+  if (sent) {
+    //inmutable magic + sort
+    store.setState({
+      sentRecords: restSent
+        .concat({
+          ...sent,
+          ...object,
+        })
+        .slice()
+        .sort((a, b) => a.sortNumber - b.sortNumber),
+    });
+  }
 };
 
 export const selectAllReadyToSendEmail = (store, boolean) => {
@@ -116,6 +136,11 @@ export const selectAllReadyToSendEmail = (store, boolean) => {
       .slice()
       .sort((a, b) => a.sortNumber - b.sortNumber),
   });
+
+  console.log(
+    "selected",
+    store.state.readyToSendRecords.filter((x) => x.isSelected === true)
+  );
 };
 
 export const prepareAirtableFile = (store, airtableFiles) => {
@@ -146,7 +171,7 @@ export const prepareMsg = async (
   Msg.setSubject(subject);
   Msg.setMessage(message);
 
-  if (attached.length > 0 && attached[0].url) {
+  if (attached && attached.length > 0 && attached[0].url) {
     //airtable file
 
     const answer = await axios.get(attached[0].url, {
@@ -190,13 +215,22 @@ export const sendCallback = (store, answer, id) => {
     //on error actions
     console.log(answer.error.message);
 
-    store.actions.mailing.setBulkPropertyReadyToSendEmail(id, {
+    store.actions.mailing.setRecordProperty(id, {
       status: "Error",
       errorMessage: answer.error.message,
     });
+
+    //update airtable
+    store.actions.airtable.updateField(
+      id,
+      "error.message",
+      answer.error.message
+    );
+    store.actions.airtable.updateField(id, "status", "Error");
   } else {
     //on success actions
-    store.actions.mailing.setBulkPropertyReadyToSendEmail(id, {
+    console.log(answer);
+    store.actions.mailing.setRecordProperty(id, {
       status: "Sent",
       threadId: answer.threadID,
     });
@@ -221,7 +255,7 @@ export const sendEmailsBulk = async (store) => {
   if (bulkReady.length > 0) {
     for (let x of bulkReady) {
       // put the message on loading
-      store.actions.mailing.setBulkPropertyReadyToSendEmail(x.id, {
+      store.actions.mailing.setRecordProperty(x.id, {
         status: "Sending",
       });
 
@@ -254,4 +288,52 @@ export const sendEmailsBulk = async (store) => {
       // TO-do: recharge the status to check that it went fine?
     }
   }
+};
+
+export const checkBounced = async (store, record) => {
+  console.log("store", store);
+  console.log("record", record);
+  // if no thread, no bounced
+  if (!record.threadId) {
+    return false;
+  }
+
+  // get thread
+  const a = await store.actions.gapi.getThread(record.threadId);
+
+  // check if bounced
+  if (!a.messages[1]) {
+    return false;
+  } else {
+    if (a.messages[1].labelIds.includes("Label_5687749278126997160")) {
+      // update state to bounced in local
+      store.actions.mailing.setRecordProperty(record.id, {
+        status: "Bounced",
+      });
+
+      // update field in airtable
+      store.actions.airtable.updateField(record.id, "status", "Bounced");
+      return true;
+    } else {
+      return false;
+    }
+  }
+};
+
+export const checkAllBounced = async (store) => {
+  console.log(store.state);
+
+  let checkedArray = await Promise.all(
+    store.state.sentRecords.map(async (x) => {
+      try {
+        console.log("isBounced", isBounced);
+        console.log("x", x);
+        let isBounced = await store.actions.mailing.checkBounced(x);
+        return isBounced;
+      } catch (e) {
+        console.log(e);
+      }
+    })
+  );
+  console.log(checkedArray);
 };

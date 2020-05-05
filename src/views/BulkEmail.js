@@ -4,21 +4,23 @@ import {
   Row,
   Col,
   Card,
+  CardFooter,
   CardHeader,
   CardBody,
   Button,
   Container,
-  Form,
   ButtonGroup,
-  Label,
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
   Table,
-  Progress,
+  PaginationLink,
+  PaginationItem,
+  Pagination,
+  NavItem,
+  NavLink,
+  Nav,
   UncontrolledDropdown,
-  UncontrolledTooltip,
-  Media,
   Badge,
 } from "reactstrap";
 
@@ -28,35 +30,41 @@ import Select from "react-select";
 
 import EmailHeader from "components/Headers/EmailHeader.js";
 
-import { gapi } from "gapi-script";
-
-import { Input, ControlLabel } from "rsuite";
-
 import { useGlobal } from "../store";
 
-import MIMEText from "mimetext";
-
 import { RiMailSendLine } from "react-icons/ri";
+import { MdQueryBuilder, MdDoneAll } from "react-icons/md";
 
 import "../assets/css/bulk-emailing.css";
 
 const BulkEmail = (props) => {
   const [globalState, globalActions] = useGlobal();
 
-  const [student, setStudent] = useGlobal();
+  function paginate(array, page_size, page_number) {
+    // human-readable page numbers usually start with 1, so we reduce 1 in the first argument
+    return array.slice((page_number - 1) * page_size, page_number * page_size);
+  }
 
-  const dict = {
+  const dictStatus = {
     Sent: "bg-success",
     Sending: "bg-warning",
     Ready: "bg-info",
     Error: "bg-danger",
     Loaded: "bg-primary",
+    Bounced: "bg-danger",
+  };
+
+  const dictArrays = {
+    sent: "sentRecords",
+    readyToSend: "readyToSendRecords",
   };
 
   useEffect(() => {
     //get list of students
     globalActions.airtable.getStudents();
     globalActions.airtable.getReadyToSendEmails();
+    globalActions.airtable.getSentEmails();
+    console.log("state", globalState);
   }, [globalState.selectedStudent]);
 
   return (
@@ -136,18 +144,24 @@ const BulkEmail = (props) => {
                   <Row>
                     <div className="col">
                       <div className="card-profile-stats d-flex justify-content-center mt-md-5">
-                        {globalState.currentStudent && (
+                        {globalState.sentRecords && (
                           <>
                             <div>
-                              <span className="heading">100</span>
+                              <span className="heading">
+                                {globalState.sentMetrics.sentCount}
+                              </span>
                               <span className="description">Sent</span>
                             </div>
                             <div>
-                              <span className="heading">80</span>
+                              <span className="heading">
+                                {globalState.sentMetrics.companies}
+                              </span>
                               <span className="description">Companies</span>
                             </div>
                             <div>
-                              <span className="heading">5</span>
+                              <span className="heading">
+                                {globalState.sentMetrics.bounced}
+                              </span>
                               <span className="description">Bounced</span>
                             </div>
                           </>
@@ -218,11 +232,133 @@ const BulkEmail = (props) => {
                 </CardBody>
               </Card>
             </Col>
+
             <Col className="order-xl-1" xl="8">
               <Row>
                 <div className="col">
-                  <Card className="bg-default shadow">
-                    <CardHeader className="bg-transparent d-flex border-0">
+                  <Card
+                    style={{
+                      background: "transparent",
+                      borderTop: "0px",
+                    }}
+                  >
+                    <Nav tabs syle={{ background: "transparent" }}>
+                      <NavItem
+                        style={{
+                          background:
+                            globalState.subView.bulkEmail === "readyToSend"
+                              ? "#152849"
+                              : "#172d52",
+                          borderTopRightRadius: "6px",
+                          borderTopLeftRadius: "6px",
+                          width: "50%",
+                          textAlign: "center",
+                          color: "white",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <NavLink
+                          style={{ height: "48px" }}
+                          onClick={() => {
+                            globalActions.config.setSubView(
+                              "bulkEmail",
+                              "readyToSend"
+                            );
+                          }}
+                        >
+                          <h5
+                            style={{
+                              color:
+                                !(
+                                  globalState.subView.bulkEmail ===
+                                  "readyToSend"
+                                ) && "#ccc",
+                              fontSize:
+                                !(
+                                  globalState.subView.bulkEmail ===
+                                  "readyToSend"
+                                ) && "16px",
+                              fontWeight:
+                                !(
+                                  globalState.subView.bulkEmail ===
+                                  "readyToSend"
+                                ) && "100",
+                              transitionDuration: "0.3s",
+                              paddingTop: "6px",
+                            }}
+                          >
+                            <MdQueryBuilder
+                              style={{
+                                color: "#ffd600",
+                                marginBottom: "2px",
+                                marginRight: "1px",
+                              }}
+                            />{" "}
+                            To send
+                          </h5>
+                        </NavLink>
+                      </NavItem>
+                      <NavItem
+                        style={{
+                          background:
+                            globalState.subView.bulkEmail === "sent"
+                              ? "#152849"
+                              : "#172d52",
+                          borderRight: "solid 1px #5e72e4",
+                          borderTopRightRadius: "6px",
+                          borderTopLeftRadius: "6px",
+                          width: "50%",
+                          textAlign: "center",
+                          color: "white",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <NavLink
+                          style={{ height: "48px" }}
+                          onClick={() => {
+                            globalActions.config.setSubView(
+                              "bulkEmail",
+                              "sent"
+                            );
+                          }}
+                        >
+                          <h5
+                            style={{
+                              color:
+                                !(globalState.subView.bulkEmail === "sent") &&
+                                "#ccc",
+                              fontSize:
+                                !(globalState.subView.bulkEmail === "sent") &&
+                                "16px",
+                              fontWeight:
+                                !(globalState.subView.bulkEmail === "sent") &&
+                                "100",
+                              transitionDuration: "0.3s",
+                              paddingTop: "6px",
+                            }}
+                          >
+                            {" "}
+                            <MdDoneAll
+                              style={{
+                                color: "#2dce89",
+                                marginBottom: "2px",
+                                marginRight: "1px",
+                              }}
+                            />{" "}
+                            Sent
+                          </h5>
+                        </NavLink>
+                      </NavItem>
+                    </Nav>
+                    <CardHeader
+                      style={{
+                        marginRight: "1px",
+                        background: "#152849",
+
+                        // background: globalState.subView.bulkEmail==="readyToSend" ? "#152849" : "#172d52",
+                      }}
+                      className=" d-flex border-0"
+                    >
                       <Col xs="5">
                         <h3 className="text-white mb-0">Bulk email</h3>
                         <h6 className="text-white mb-0">
@@ -246,6 +382,7 @@ const BulkEmail = (props) => {
                             onClick={(e) => {
                               e.preventDefault();
                               globalActions.airtable.getReadyToSendEmails();
+                              globalActions.airtable.getSentEmails();
                             }}
                             size="sm"
                           >
@@ -253,6 +390,7 @@ const BulkEmail = (props) => {
                           </Button>
 
                           {globalState.gapiAuthed &&
+                            globalState.subView.bulkEmail === "readyToSend" &&
                             globalState.readyToSendRecords &&
                             globalState.readyToSendRecords.length > 0 && (
                               <Button
@@ -269,6 +407,24 @@ const BulkEmail = (props) => {
                             )}
 
                           {globalState.gapiAuthed &&
+                            globalState.subView.bulkEmail === "sent" &&
+                            globalState.sentRecords &&
+                            globalState.sentRecords.length > 0 && (
+                              <Button
+                                className="float-right"
+                                color="danger"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  globalActions.mailing.checkAllBounced();
+                                }}
+                                size="sm"
+                              >
+                                Check bounced
+                              </Button>
+                            )}
+
+                          {globalState.gapiAuthed &&
+                            globalState.subView.bulkEmail === "readyToSend" &&
                             globalState.readyToSendConfig.atLeastOneReady && (
                               <Button
                                 className="float-right"
@@ -299,11 +455,11 @@ const BulkEmail = (props) => {
                           >
                             {globalState.readyToSendConfig.atLeastOneReady && (
                               <Checkbox
-                                onChange={(e, v) =>
+                                onChange={(e, v) => {
                                   globalActions.mailing.selectAllReadyToSendEmail(
                                     v
-                                  )
-                                }
+                                  );
+                                }}
                               ></Checkbox>
                             )}
                           </th>
@@ -326,12 +482,16 @@ const BulkEmail = (props) => {
                       </thead>
                       <tbody>
                         {!(
-                          globalState.readyToSendRecords &&
-                          globalState.readyToSendRecords.length > 0
+                          globalState[
+                            dictArrays[globalState.subView.bulkEmail]
+                          ] &&
+                          globalState[dictArrays[globalState.subView.bulkEmail]]
+                            .length > 0
                         ) ? (
                           <tr className="fina">
                             <td style={{ textAlign: "center" }} colSpan={4}>
-                              {globalState.isLoading.readyToSendRecords ? (
+                              {globalState.isLoading.readyToSendRecords ||
+                              globalState.isLoading.sentRecords ? (
                                 <b> Loading...</b>
                               ) : (
                                 "No pending emails: Try to refresh, change sender or add messages in Airtable "
@@ -339,7 +499,14 @@ const BulkEmail = (props) => {
                             </td>
                           </tr>
                         ) : (
-                          globalState.readyToSendRecords.map((x, key) => (
+                          // we get the good array depending on the subview
+                          paginate(
+                            globalState[
+                              dictArrays[globalState.subView.bulkEmail]
+                            ],
+                            450,
+                            1
+                          ).map((x, key) => (
                             <tr key={key} className="fina">
                               <th scope="row">
                                 {x.status === "Ready" && (
@@ -377,10 +544,28 @@ const BulkEmail = (props) => {
                                   }
                                   placement="right"
                                   trigger="hover"
-                                  speaker={<Tooltip>{x.errorMessage}</Tooltip>}
+                                  speaker={
+                                    <Tooltip
+                                      style={
+                                        !x.errorMessage
+                                          ? { display: "none" }
+                                          : null
+                                      }
+                                    >
+                                      {x.errorMessage}
+                                    </Tooltip>
+                                  }
                                 >
-                                  <Badge color="" className="badge-dot mr-4">
-                                    <i className={dict[x.status]} />
+                                  <Badge
+                                    style={{ cursor: "pointer" }}
+                                    onClick={() => {
+                                      x.status === "Sent" &&
+                                        globalActions.mailing.checkBounced(x);
+                                    }}
+                                    color=""
+                                    className="badge-dot mr-4"
+                                  >
+                                    <i className={dictStatus[x.status]} />
                                     {x.status}
                                   </Badge>
                                 </Whisper>
@@ -397,7 +582,7 @@ const BulkEmail = (props) => {
                                       style={{ cursor: "pointer" }}
                                       className="text-center raise"
                                       onClick={async () => {
-                                        globalActions.mailing.setBulkPropertyReadyToSendEmail(
+                                        globalActions.mailing.setRecordProperty(
                                           x.id,
                                           {
                                             status: "Sending",
@@ -492,6 +677,33 @@ const BulkEmail = (props) => {
                         )}
                       </tbody>
                     </Table>
+                    <CardFooter className="py-4 bg-default">
+                      <nav>
+                        <Pagination
+                          className="pagination justify-content-end mb-0"
+                          listClassName="justify-content-end mb-0"
+                        >
+                          <PaginationItem className="disabled">
+                            <PaginationLink
+                              href="#"
+                              onClick={(e) => e.preventDefault()}
+                              tabIndex="-1"
+                            >
+                              <i className="fas fa-angle-left" />
+                              <span className="sr-only">Previous</span>
+                            </PaginationLink>
+                          </PaginationItem>
+
+                          {[...Array(5).keys()].map((x, key) => (
+                            <PaginationItem key={key}>
+                              <PaginationLink href="#" onClick={(e) => {}}>
+                                {x + 1}
+                              </PaginationLink>
+                            </PaginationItem>
+                          ))}
+                        </Pagination>
+                      </nav>
+                    </CardFooter>
                   </Card>
                 </div>
               </Row>

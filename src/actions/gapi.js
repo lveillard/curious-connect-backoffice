@@ -159,3 +159,16 @@ export const sendMessagePromise = (store, raw) => {
     });
   });
 };
+
+export const getThread = (store, id) => {
+  return new Promise((resolve, reject) => {
+    var thread = gapi.client.gmail.users.threads.get({
+      userId: "me",
+      id: id,
+    });
+
+    thread.execute((answer) => {
+      resolve(answer);
+    });
+  });
+};

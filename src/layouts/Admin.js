@@ -89,7 +89,7 @@ const Admin = () => {
           {/*sidebar props?*/}
 
           {(!globalState.config.hiddenSidebar ||
-            globalState.size.width <= 767) && (
+            globalState.config.size.width <= 767) && (
             <Sidebar
               routes={globalState.user.routes}
               logo={{
@@ -109,21 +109,23 @@ const Admin = () => {
               brandText={globalActions.routes.getRouteName(location)}
             />
 
-            {globalState.size.width > 767 && !globalState.config.hiddenSidebar && (
-              <div className="sideclose">
-                <BsBoxArrowLeft
-                  onClick={() => globalActions.config.toggleSidebar()}
-                />{" "}
-              </div>
-            )}
+            {globalState.config.size.width > 767 &&
+              !globalState.config.hiddenSidebar && (
+                <div className="sideclose">
+                  <BsBoxArrowLeft
+                    onClick={() => globalActions.config.toggleSidebar()}
+                  />{" "}
+                </div>
+              )}
 
-            {globalState.size.width > 767 && globalState.config.hiddenSidebar && (
-              <div className="sideopen">
-                <BsBoxArrowRight
-                  onClick={() => globalActions.config.toggleSidebar()}
-                />{" "}
-              </div>
-            )}
+            {globalState.config.size.width > 767 &&
+              globalState.config.hiddenSidebar && (
+                <div className="sideopen">
+                  <BsBoxArrowRight
+                    onClick={() => globalActions.config.toggleSidebar()}
+                  />{" "}
+                </div>
+              )}
 
             <Switch>
               {getRoutes(globalState.user.routes)}
