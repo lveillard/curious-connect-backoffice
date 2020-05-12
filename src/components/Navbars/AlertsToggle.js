@@ -16,62 +16,50 @@
 
 */
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
 // reactstrap components
 import {
+  UncontrolledDropdown,
+  DropdownToggle,
   DropdownMenu,
   DropdownItem,
-
 } from "reactstrap";
 
-import {
-  useHistory,
-} from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 import { useGlobal } from "../../store";
 
-const Menu = () => {
-
+const AlertsToggle = () => {
   let history = useHistory();
   const [globalState, globalActions] = useGlobal();
 
-  useEffect(() => {
-
-  }, []);
-
+  useEffect(() => {}, []);
 
   async function logout(e) {
-    e.preventDefault()
+    e.preventDefault();
     let answer = await globalActions.login.logout();
-    if (answer) { history.replace("/"); } else {
+    if (answer) {
+      history.replace("/");
+    } else {
     }
   }
 
   return (
-
-    <React.Fragment>
-      <DropdownMenu className="dropdown-menu-arrow" right>
-        <DropdownItem className="noti-title" header tag="div">
-          <div style={{ color: "black" }} className="text-overflow m-0">Welcome {globalState.user && globalState.user.name} !</div>
-        </DropdownItem>
-        <DropdownItem disabled to="/admin/user-profile" tag={Link}>
-          <i className="ni ni-single-02" />
-          <span>My profile</span>
-        </DropdownItem>
+    <UncontrolledDropdown nav>
+      <DropdownToggle nav className="nav-link-icon">
+        <i className="ni ni-bell-55" />
+      </DropdownToggle>
+      <DropdownMenu
+        aria-labelledby="navbar-default_dropdown_1"
+        className="dropdown-menu-arrow"
+        right
+      >
+        <DropdownItem>Action</DropdownItem>
+        <DropdownItem>Another action</DropdownItem>
         <DropdownItem divider />
-        <DropdownItem href="#" onClick={(e) => logout(e)} >
-          <i className="ni ni-button-power" />
-          <span>Logout</span>
-        </DropdownItem>
+        <DropdownItem>Something else here</DropdownItem>
       </DropdownMenu>
-
-    </React.Fragment>
-
-
+    </UncontrolledDropdown>
   );
+};
 
-}
-
-
-
-export default Menu;
+export default AlertsToggle;

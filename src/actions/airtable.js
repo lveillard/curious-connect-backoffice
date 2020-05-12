@@ -1,16 +1,67 @@
 import Airtable from "airtable";
 import { StrictMode } from "react";
 
-var base = new Airtable({
+var EMAIL = new Airtable({
   apiKey: process.env.REACT_APP_AIRTABLE_API_KEY,
 }).base("apptv83SksACULEvd");
+
+var DB = new Airtable({
+  apiKey: process.env.REACT_APP_AIRTABLE_API_KEY,
+}).base("appD02ssA6X5GhyXg");
+
+export const getPrograms = (store) => {
+  store.setState({ isLoading: { ...store.state.isLoading, airtable: true } });
+
+  let programs = [];
+
+  DB("Programs")
+    .select({
+      //filterByFormula: "From = 'jean.richard.loubacky@gmail.com'",
+      // Selecting the first 3 records in Preparation:
+      // we will need to filter by school
+      maxRecords: 100,
+      view: "Main",
+    })
+    .eachPage(
+      function page(records, fetchNextPage) {
+        // This function (`page`) will get called for each page of records.
+
+        let pagePrograms = records.map((x) => {
+          return {
+            programCode: x.get("programCode"),
+            school: x.get("school"),
+            start: x.get("date.start"),
+            value: x.get("programCode"),
+            label: x.get("programName"),
+          };
+        });
+
+        //TO-DO find a way to do this in an inmutable way
+        programs = programs.concat(pagePrograms);
+
+        fetchNextPage();
+      },
+      function done(err) {
+        if (err) {
+          console.error(err);
+          return;
+        } else {
+          store.setState({
+            isLoading: { ...store.state.isLoading, airtable: false },
+          });
+
+          store.setState({ programs: programs });
+        }
+      }
+    );
+};
 
 export const getStudents = (store) => {
   store.setState({ isLoading: { ...store.state.isLoading, airtable: true } });
 
   let students = [];
 
-  base("Students")
+  EMAIL("Students")
     .select({
       //filterByFormula: "From = 'jean.richard.loubacky@gmail.com'",
       // Selecting the first 3 records in Preparation:
@@ -60,7 +111,7 @@ export const getStudents = (store) => {
 
 export const updateField = (store, id, field, value) => {
   console.log(id, field, value);
-  base("Emails").update(
+  EMAIL("Emails").update(
     [
       {
         id: id,
@@ -112,7 +163,7 @@ export const getReadyToSendEmails = (store, filter) => {
 
   let emails = [];
 
-  base("Emails")
+  EMAIL("Emails")
     .select(selectFinal)
     .eachPage(
       function page(records, fetchNextPage) {
@@ -191,7 +242,7 @@ export const getSentEmails = (store, filter) => {
 
   let emails = [];
 
-  base("Emails")
+  EMAIL("Emails")
     .select(selectFinal)
     .eachPage(
       function page(records, fetchNextPage) {

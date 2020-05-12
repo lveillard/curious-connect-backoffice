@@ -4,6 +4,7 @@ import { Route, Switch, Redirect, useLocation } from "react-router-dom";
 import { Container } from "reactstrap";
 // core components
 import AdminNavbar from "components/Navbars/AdminNavbar.js";
+
 import AdminFooter from "components/Footers/AdminFooter.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 
@@ -11,6 +12,8 @@ import TimeLine from "../views/TimeLine";
 import Profile from "../views/examples/Profile";
 import Tools from "../views/Tools";
 import BulkEmail from "../views/BulkEmail";
+import Students from "../views/Students";
+
 import ToDo from "../views/ToDo";
 
 import "../assets/css/admin.css";
@@ -54,6 +57,7 @@ const Admin = () => {
     Tools: Tools,
     BulkEmail: BulkEmail,
     ToDo: ToDo,
+    Students: Students,
   };
 
   const getRoutes = () => {
@@ -90,14 +94,7 @@ const Admin = () => {
 
           {(!globalState.config.hiddenSidebar ||
             globalState.config.size.width <= 767) && (
-            <Sidebar
-              routes={globalState.user.routes}
-              logo={{
-                innerLink: "/admin/index",
-                imgSrc: "/images/logo3.png",
-                imgAlt: "...",
-              }}
-            />
+            <Sidebar routes={globalState.user.routes} />
           )}
 
           <div
@@ -113,7 +110,9 @@ const Admin = () => {
               !globalState.config.hiddenSidebar && (
                 <div className="sideclose">
                   <BsBoxArrowLeft
-                    onClick={() => globalActions.config.toggleSidebar()}
+                    onClick={() =>
+                      globalActions.config.setConfig("hiddenSidebar")
+                    }
                   />{" "}
                 </div>
               )}
@@ -122,7 +121,9 @@ const Admin = () => {
               globalState.config.hiddenSidebar && (
                 <div className="sideopen">
                   <BsBoxArrowRight
-                    onClick={() => globalActions.config.toggleSidebar()}
+                    onClick={() =>
+                      globalActions.config.setConfig("hiddenSidebar")
+                    }
                   />{" "}
                 </div>
               )}

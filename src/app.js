@@ -21,6 +21,8 @@ const App = () => {
       const size = getSize();
       globalActions.config.setSize(size);
     }
+    //run it onPageLoad
+    handleResize();
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);

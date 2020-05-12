@@ -32,3 +32,13 @@ export const setCurrentStudent = (store, selected) => {
 
   store.setState({ currentStudent: data });
 };
+
+export const setCurrentProgram = (store, selected) => {
+  if (selected === null) {
+    store.setState({ selectedStudent: null });
+    store.setState({ currentStudent: null });
+    return;
+  }
+
+  store.setState({ currentProgram: selected });
+};

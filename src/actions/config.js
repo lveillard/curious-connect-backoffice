@@ -1,10 +1,11 @@
 // config helpers, modals, subviews and toggles
 
-export const toggleSidebar = (store) => {
+export const setConfig = (store, config, value) => {
+  //if a value is provided puts a value on the config thing, if not, toggles the current (for boolean)
   store.setState({
     config: {
       ...store.state.config,
-      hiddenSidebar: !store.state.config.hiddenSidebar,
+      [config]: value ? value : !store.state.config[config],
     },
   });
 };

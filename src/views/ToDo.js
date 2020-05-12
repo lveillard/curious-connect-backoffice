@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Button } from "reactstrap";
+import { Card, Container } from "reactstrap";
 
 import EmailHeader from "components/Headers/EmailHeader.js";
 
@@ -21,11 +21,18 @@ const ToDo = () => {
 
   return (
     <>
-      <li> Bulk email sender </li>
-      <li> Permissions by component: protected component </li>
-      <li> Todo view </li>
-      <li> Airtable data: retrieve from express and not client</li>
-      <li> Make candidate view for formatrices</li>
+      <div className="bg-gradient-success" style={{ height: "200px" }}>
+        {" "}
+      </div>
+      <Container className="mt--5" fluid>
+        <Card>
+          <li> Bulk email sender </li>
+          <li> Permissions by component: protected component </li>
+          <li> Todo view </li>
+          <li> Airtable data: retrieve from express and not client</li>
+          <li> Make candidate view for formatrices</li>
+        </Card>
+      </Container>
     </>
   );
 };

@@ -10,7 +10,7 @@ const UserHeader = () => {
   return (
     <>
       <div
-        className="header bg-primary pb-8 pt-5 pt-lg-8 d-flex align-items-center"
+        className="header bg-gradient-primary pb-8 pt-5 pt-lg-8 d-flex align-items-center"
         style={{
           minHeight: "400px",
         }}

@@ -16,10 +16,12 @@
 
 */
 /*eslint-disable*/
-import React from "react";
-import { NavLink as NavLinkRRD, Link } from "react-router-dom";
+import React, { useEffect } from "react";
+import { NavLink as NavLinkRRD, Link, useLocation } from "react-router-dom";
 // nodejs library to set properties for components
 import { PropTypes } from "prop-types";
+
+import { useGlobal } from "../../store";
 
 // reactstrap components
 import {
@@ -52,279 +54,160 @@ import {
   Col,
 } from "reactstrap";
 
-import Menu from "../Navbars/Menu";
+import Select from "react-select";
+
+import MenuToggle from "../Navbars/MenuToggle";
+import AlertsToggle from "../Navbars/AlertsToggle";
+
+import Route from "./Route";
 
 var ps;
-
-class Sidebar extends React.Component {
-  state = {
-    collapseOpen: false,
-    dropdown: {},
-  };
-
-  constructor(props) {
-    super(props);
-    this.activeRoute.bind(this);
-  }
-
-  toggleDropdown = (id) => {
-    if (this.state.dropdown) {
-      const current = this.state.dropdown[id] || false;
-      this.setState({
-        dropdown: { ...this.state.dropdown, [id]: !current },
-      });
-    }
-  };
-
-  // verifies if routeName is the one active (in browser input)
-  activeRoute(routeName) {
-    return this.props.location.pathname.indexOf(routeName) > -1 ? "active" : "";
-  }
-  // toggles collapse between opened and closed (true/false)
-  toggleCollapse = () => {
-    this.setState({
-      collapseOpen: !this.state.collapseOpen,
-    });
-  };
-
-  // closes the collapse
-  closeCollapse = () => {
-    this.setState({
-      collapseOpen: false,
-    });
-  };
-
-  createChildren = (children) => {
-    return children.map((x, key) => {
-      return (
-        <NavItem className="ml-3" key={key}>
-          <NavLink
-            to={x.layout + x.path}
-            tag={NavLinkRRD}
-            onClick={this.closeCollapse}
-            activeClassName="active"
-          >
-            <i className={x.icon} />
-            {x.name}
-          </NavLink>
-        </NavItem>
-      );
-    });
-  };
-
-  // creates the links that appear in the left menu / Sidebar
-  createLinks = (routes) => {
-    return routes.map((x, key) => {
-      return (
-        //if it has no children
-        x.component ? (
-          <NavItem key={key}>
-            <NavLink
-              to={x.layout + x.path}
-              tag={NavLinkRRD}
-              onClick={this.closeCollapse}
-              activeClassName="active"
-            >
-              <i className={x.icon} />
-              {x.name}
-            </NavLink>
-          </NavItem>
-        ) : (
-          //if it has children
-          <div key={key}>
-            <NavItem>
-              <NavLink
-                onClick={() => {
-                  this.toggleDropdown(x.name);
-                }}
-              >
-                <i className={x.icon} />
-                {x.name}
-              </NavLink>
-            </NavItem>
-
-            {
-              //this.state.dropdown[x.name]
-              true ? this.createChildren(x.children) : null
-            }
-          </div>
-        )
-      );
-    });
-  };
-  render() {
-    const { bgColor, routes, logo } = this.props;
-
-    let navbarBrandProps;
-    if (logo && logo.innerLink) {
-      navbarBrandProps = {
-        to: logo.innerLink,
-        tag: Link,
-      };
-    } else if (logo && logo.outterLink) {
-      navbarBrandProps = {
-        href: logo.outterLink,
-        target: "_blank",
-      };
-    }
-    return (
-      <Navbar
-        className="navbar-vertical fixed-left navbar-light bg-white"
-        expand="md"
-        id="sidenav-main"
-        style={{
-          boxShadow: "50px 0 5px 5px #333 !important",
-          borderColor: "rgba(0,0,0,.05)",
-          borderTopColor: "rgba(0, 0, 0, 0.05)",
-          borderRightColor: "rgba(0, 0, 0, 0.05)",
-          borderBottomColor: "rgba(0, 0, 0, 0.05)",
-          borderLeftColor: "rgba(0, 0, 0, 0.05)",
-          borderStyle: "solid",
-        }}
-      >
-        <Container fluid>
-          {/* Toggler */}
-          <button
-            className="navbar-toggler"
-            type="button"
-            onClick={this.toggleCollapse}
-          >
-            <span className="navbar-toggler-icon" />
-          </button>
-          {/* Brand */}
-          {logo ? (
-            <NavbarBrand className="pt-0" {...navbarBrandProps}>
-              <img
-                alt={logo.imgAlt}
-                className="navbar-brand-img"
-                src={logo.imgSrc}
-              />
-            </NavbarBrand>
-          ) : null}
-          {/* User */}
-          <Nav className="align-items-center d-md-none">
-            <UncontrolledDropdown nav>
-              <DropdownToggle nav className="nav-link-icon">
-                <i className="ni ni-bell-55" />
-              </DropdownToggle>
-              <DropdownMenu
-                aria-labelledby="navbar-default_dropdown_1"
-                className="dropdown-menu-arrow"
-                right
-              >
-                <DropdownItem>Action</DropdownItem>
-                <DropdownItem>Another action</DropdownItem>
-                <DropdownItem divider />
-                <DropdownItem>Something else here</DropdownItem>
-              </DropdownMenu>
-            </UncontrolledDropdown>
-            <UncontrolledDropdown nav>
-              <DropdownToggle nav>
-                <Media className="align-items-center">
-                  <span className="avatar avatar-sm rounded-circle">
-                    <img alt="..." src={"/images/logo3.png"} />
-                  </span>
-                </Media>
-              </DropdownToggle>
-
-              <Menu />
-            </UncontrolledDropdown>
-          </Nav>
-          {/* Collapse */}
-          <Collapse navbar isOpen={this.state.collapseOpen}>
-            {/* Collapse header */}
-            <div className="navbar-collapse-header d-md-none">
-              <Row>
-                {logo ? (
-                  <Col className="collapse-brand" xs="6">
-                    {logo.innerLink ? (
-                      <Link to={logo.innerLink}>
-                        <img alt={logo.imgAlt} src={logo.imgSrc} />
-                      </Link>
-                    ) : (
-                      <a href={logo.outterLink}>
-                        <img alt={logo.imgAlt} src={logo.imgSrc} />
-                      </a>
-                    )}
-                  </Col>
-                ) : null}
-                <Col className="collapse-close" xs="6">
-                  <button
-                    className="navbar-toggler"
-                    type="button"
-                    onClick={this.toggleCollapse}
-                  >
-                    <span />
-                    <span />
-                  </button>
-                </Col>
-              </Row>
-            </div>
-            {/* Form
-            <Form className="mt-4 mb-3 d-md-none">
-              <InputGroup className="input-group-rounded input-group-merge">
-                <Input
-                  aria-label="Search"
-                  className="form-control-rounded form-control-prepended"
-                  placeholder="Search"
-                  type="search"
-                />
-                <InputGroupAddon addonType="prepend">
-                  <InputGroupText>
-                    <span className="fa fa-search" />
-                  </InputGroupText>
-                </InputGroupAddon>
-              </InputGroup>
-            </Form> */}
-            {/* Navigation */}
-            <Nav navbar>{this.createLinks(routes)}</Nav>
-            {/* Divider */}
-            <hr className="my-3" />
-            {/* Heading */}
-            <h6 className="navbar-heading text-muted">Documentation</h6>
-            {/* Navigation */}
-            <Nav className="mb-md-3" navbar>
-              <NavItem>
-                <NavLink
-                  href={"#"}
-                  onClick={() => {
-                    window.open(
-                      "https://www.notion.so/CC-Wiki-1e3e780bc83a45d19bff0e761efdc036",
-                      "_blank"
-                    );
-                  }}
-                >
-                  <i className="ni ni-spaceship" />
-                  WIKI{" "}
-                </NavLink>
-              </NavItem>
-            </Nav>
-          </Collapse>
-        </Container>
-      </Navbar>
-    );
-  }
-}
-
-Sidebar.defaultProps = {
-  routes: [{}],
+let logo = {
+  innerLink: "/admin/index",
+  imgSrc: "/images/logo3.png",
+  imgAlt: "...",
 };
 
-Sidebar.propTypes = {
-  // links that will be displayed inside the component
-  routes: PropTypes.arrayOf(PropTypes.object),
-  logo: PropTypes.shape({
-    // innerLink is for links that will direct the user within the app
-    // it will be rendered as <Link to="...">...</Link> tag
-    innerLink: PropTypes.string,
-    // outterLink is for links that will direct the user outside the app
-    // it will be rendered as simple <a href="...">...</a> tag
-    outterLink: PropTypes.string,
-    // the image src of the logo
-    imgSrc: PropTypes.string.isRequired,
-    // the alt for the img
-    imgAlt: PropTypes.string.isRequired,
-  }),
+const Sidebar = () => {
+  const [globalState, globalActions] = useGlobal();
+  const location = useLocation();
+
+  useEffect(() => {
+    globalActions.airtable.getPrograms();
+  }, []);
+
+  return (
+    <Navbar
+      className="navbar-vertical fixed-left navbar-light bg-white"
+      expand="md"
+      id="sidenav-main"
+      style={{
+        boxShadow: "50px 0 5px 5px #333 !important",
+        borderColor: "rgba(0,0,0,.05)",
+        borderTopColor: "rgba(0, 0, 0, 0.05)",
+        borderRightColor: "rgba(0, 0, 0, 0.05)",
+        borderBottomColor: "rgba(0, 0, 0, 0.05)",
+        borderLeftColor: "rgba(0, 0, 0, 0.05)",
+        borderStyle: "solid",
+      }}
+    >
+      <Container fluid>
+        {/* Toggler */}
+        <button
+          className="navbar-toggler"
+          type="button"
+          onClick={() => globalActions.config.setConfig("toggledSidebar")}
+        >
+          <span className="navbar-toggler-icon" />
+        </button>
+
+        {/* Brand */}
+        {logo ? (
+          <NavbarBrand className="pt-0" to={logo.innerLink} tag={Link}>
+            <img
+              alt={logo.imgAlt}
+              className="navbar-brand-img"
+              src={logo.imgSrc}
+            />
+          </NavbarBrand>
+        ) : null}
+
+        {/*Program selector*/}
+
+        <Container
+          style={
+            globalState.config.size.width >= 768
+              ? {
+                  width: "100%",
+                  padding: "0px",
+                }
+              : { width: "60%" }
+          }
+        >
+          {" "}
+          <Select
+            className="selector"
+            classNamePrefix="select"
+            isDisabled={false}
+            isLoading={false}
+            isClearable
+            isSearchable
+            onChange={(selected, type) => {
+              globalActions.routes.setCurrentProgram(selected);
+              if (type.action === "clear")
+                globalActions.routes.setCurrentProgram(null);
+            }} // value={globalState.selectedStudent}
+            options={globalState.programs}
+          />{" "}
+        </Container>
+
+        {/* User */}
+        <Nav className="align-items-center d-md-none">
+          <AlertsToggle />
+          <MenuToggle sidebar />
+        </Nav>
+
+        {/* Collapse */}
+
+        <Collapse navbar isOpen={globalState.config.toggledSidebar}>
+          {/* Collapse header */}
+          <div className="navbar-collapse-header d-md-none">
+            <Row>
+              {/*Logo*/}
+              {logo ? (
+                <Col className="collapse-brand" xs="6">
+                  <Link to={logo.innerLink}>
+                    <img alt={logo.imgAlt} src={logo.imgSrc} />
+                  </Link>
+                </Col>
+              ) : null}
+
+              <Col className="collapse-close" xs="6">
+                <button
+                  className="navbar-toggler"
+                  type="button"
+                  onClick={() =>
+                    globalActions.config.setConfig("toggledSidebar")
+                  }
+                >
+                  <span />
+                  <span />
+                </button>
+              </Col>
+            </Row>
+          </div>
+
+          {/* Navigation */}
+          <Nav navbar>
+            {globalState.user.routes.map((route, key) => (
+              <Route key={key} route={route} />
+            ))}
+          </Nav>
+          {/* Divider */}
+          <hr className="my-3" />
+          {/* Heading */}
+          <h6 className="navbar-heading text-muted">Documentation</h6>
+          {/* Navigation */}
+          <Nav className="mb-md-3" navbar>
+            <NavItem>
+              <NavLink
+                href={"#"}
+                onClick={() => {
+                  window.open(
+                    "https://www.notion.so/CC-Wiki-1e3e780bc83a45d19bff0e761efdc036",
+                    "_blank"
+                  );
+                }}
+              >
+                <i className="ni ni-spaceship" />
+                WIKI{" "}
+              </NavLink>
+            </NavItem>
+          </Nav>
+        </Collapse>
+      </Container>
+    </Navbar>
+  );
 };
 
 export default Sidebar;
