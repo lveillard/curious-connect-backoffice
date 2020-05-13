@@ -5,5 +5,6 @@ import * as gapi from "./gapi";
 import * as airtable from "./airtable";
 import * as config from "./config";
 import * as mailing from "./mailing";
+import * as generator from "./generator";
 
-export { login, user, routes, gapi, airtable, config, mailing };
+export { login, user, routes, gapi, airtable, config, mailing, generator };

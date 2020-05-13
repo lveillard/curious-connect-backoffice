@@ -12,6 +12,8 @@ import TimeLine from "../views/TimeLine";
 import Profile from "../views/examples/Profile";
 import Tools from "../views/Tools";
 import BulkEmail from "../views/BulkEmail";
+import EmailGenerator from "../views/EmailGenerator";
+
 import Students from "../views/Students";
 
 import ToDo from "../views/ToDo";
@@ -58,6 +60,7 @@ const Admin = () => {
     BulkEmail: BulkEmail,
     ToDo: ToDo,
     Students: Students,
+    EmailGenerator: EmailGenerator,
   };
 
   const getRoutes = () => {
