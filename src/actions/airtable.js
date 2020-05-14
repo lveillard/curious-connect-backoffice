@@ -110,7 +110,7 @@ export const getStudents = (store) => {
 };
 
 export const updateField = (store, id, field, value) => {
-  console.log(id, field, value);
+  //console.log(id, field, value);
   EMAIL("Emails").update(
     [
       {
@@ -298,6 +298,9 @@ export const getSentEmails = (store, filter) => {
           const bounced = store.state.sentRecords.filter(
             (x) => x.status === "Bounced"
           ).length;
+          const limits = store.state.sentRecords.filter(
+            (x) => x.status === "Limits"
+          ).length;
           const companies = new Set(
             store.state.sentRecords.map((x) => x.company)
           ).size;
@@ -308,6 +311,7 @@ export const getSentEmails = (store, filter) => {
               companies: companies,
               bounced: bounced,
               sentCount: sentCount,
+              limits: limits,
             },
           });
         }

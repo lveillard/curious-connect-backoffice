@@ -247,6 +247,10 @@ export const sendCallback = (store, answer, id) => {
 // please don't forget to modify also the send methods with the send button in bulkEmail.js
 //To-do unify both
 export const sendEmailsBulk = async (store) => {
+  store.setState({
+    isLoading: { ...store.state.isLoading, bulkSender: true },
+  });
+
   //get all ready messages
   const bulkReady = store.state.readyToSendRecords.filter(
     (x) => x.status === "Ready" && x.isSelected === true
@@ -288,52 +292,93 @@ export const sendEmailsBulk = async (store) => {
       // TO-do: recharge the status to check that it went fine?
     }
   }
+
+  store.setState({
+    isLoading: { ...store.state.isLoading, bulkSender: false },
+  });
 };
 
 export const checkBounced = async (store, record) => {
-  console.log("store", store);
-  console.log("record", record);
+  //show loading
+  store.actions.mailing.setRecordProperty(record.id, {
+    status: "Checking",
+  });
+
+  const oldStatus = store.state.sentRecords.filter((x) => x.id === record.id)
+    .status;
+
   // if no thread, no bounced
   if (!record.threadId) {
-    return false;
+    return "no threadId";
   }
 
   // get thread
   const a = await store.actions.gapi.getThread(record.threadId);
-
   // check if bounced
   if (!a.messages[1]) {
-    return false;
+    store.actions.mailing.setRecordProperty(record.id, {
+      status: "Sent",
+    });
+
+    return "no answer";
   } else {
-    if (a.messages[1].labelIds.includes("Label_5687749278126997160")) {
-      // update state to bounced in local
+    //if limits => set as limits, not bounced
+    if (a.messages[1].labelIds.includes("Label_5336612657409450789")) {
+      let oldStatus = store.state.sentRecords.filter((x) => x.id === record.id)
+        .status;
+
+      // update state to limits in local
       store.actions.mailing.setRecordProperty(record.id, {
-        status: "Bounced",
+        status: "Limits",
       });
 
-      // update field in airtable
-      store.actions.airtable.updateField(record.id, "status", "Bounced");
-      return true;
+      // update field in airtable only if it is not already as limits
+      if (oldStatus !== "Limits") {
+        store.actions.airtable.updateField(record.id, "status", "Limits");
+      }
+      return "limits";
     } else {
-      return false;
+      //if bounced => set as bounced
+      if (a.messages[1].labelIds.includes("Label_5687749278126997160")) {
+        // update state to bounced in local
+        store.actions.mailing.setRecordProperty(record.id, {
+          status: "Bounced",
+        });
+
+        // update field in airtable only if it is not already as bounced
+        if (oldStatus !== "Bounced") {
+          store.actions.airtable.updateField(record.id, "status", "Bounced");
+        }
+        return "bounced";
+      } else {
+        store.actions.mailing.setRecordProperty(record.id, {
+          status: "Sent",
+        });
+
+        return "answerNotBounced";
+      }
     }
   }
 };
 
 export const checkAllBounced = async (store) => {
-  console.log(store.state);
+  store.setState({
+    isLoading: { ...store.state.isLoading, bounceChecker: true },
+  });
 
   let checkedArray = await Promise.all(
     store.state.sentRecords.map(async (x) => {
       try {
-        console.log("isBounced", isBounced);
-        console.log("x", x);
         let isBounced = await store.actions.mailing.checkBounced(x);
         return isBounced;
       } catch (e) {
+        console.log("Error en:", x);
         console.log(e);
       }
     })
   );
   console.log(checkedArray);
+  store.setState({
+    isLoading: { ...store.state.isLoading, bounceChecker: false },
+  });
 };

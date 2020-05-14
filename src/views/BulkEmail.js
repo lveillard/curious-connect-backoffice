@@ -24,7 +24,7 @@ import {
   Badge,
 } from "reactstrap";
 
-import { Checkbox, Whisper, Tooltip } from "rsuite";
+import { Loader, Checkbox, Whisper, Tooltip } from "rsuite";
 
 import Select from "react-select";
 
@@ -48,10 +48,12 @@ const BulkEmail = (props) => {
   const dictStatus = {
     Sent: "bg-success",
     Sending: "bg-warning",
+    Checking: "bg-warning",
     Ready: "bg-info",
     Error: "bg-danger",
     Loaded: "bg-primary",
     Bounced: "bg-danger",
+    Limits: "bg-orange",
   };
 
   const dictArrays = {
@@ -158,6 +160,13 @@ const BulkEmail = (props) => {
                               </span>
                               <span className="description">Companies</span>
                             </div>
+                            <div>
+                              <span className="heading">
+                                {globalState.sentMetrics.limits}
+                              </span>
+                              <span className="description">limits</span>
+                            </div>
+
                             <div>
                               <span className="heading">
                                 {globalState.sentMetrics.bounced}
@@ -412,6 +421,7 @@ const BulkEmail = (props) => {
                             globalState.sentRecords.length > 0 && (
                               <Button
                                 className="float-right"
+                                disabled={globalState.isLoading.bounceChecker}
                                 color="danger"
                                 onClick={(e) => {
                                   e.preventDefault();
@@ -419,7 +429,14 @@ const BulkEmail = (props) => {
                                 }}
                                 size="sm"
                               >
-                                Check bounced
+                                {globalState.isLoading.bounceChecker ? (
+                                  <Loader
+                                    style={{ color: "white" }}
+                                    content="Checking..."
+                                  />
+                                ) : (
+                                  "Check bounced"
+                                )}
                               </Button>
                             )}
 
@@ -428,6 +445,7 @@ const BulkEmail = (props) => {
                             globalState.readyToSendConfig.atLeastOneReady && (
                               <Button
                                 className="float-right"
+                                disabled={globalState.isLoading.bulkSender}
                                 color="warning"
                                 onClick={(e) => {
                                   e.preventDefault();
@@ -435,7 +453,14 @@ const BulkEmail = (props) => {
                                 }}
                                 size="sm"
                               >
-                                SEND
+                                {globalState.isLoading.bulkSender ? (
+                                  <Loader
+                                    style={{ color: "white" }}
+                                    content="Checking..."
+                                  />
+                                ) : (
+                                  "SEND"
+                                )}
                               </Button>
                             )}
                         </ButtonGroup>

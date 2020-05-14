@@ -8,7 +8,13 @@ import * as actions from "./actions";
 const initialState = {
   lastLoginStatus: "",
   loadingLogin: false,
-  isLoading: { airtable: false, readyToSendRecords: false, sentRecords: false },
+  isLoading: {
+    airtable: false,
+    readyToSendRecords: false,
+    sentRecords: false,
+    bounceChecker: false,
+    bulkSender: false,
+  },
   token: "",
   currentProgram: null,
   confirmedToken: false,
