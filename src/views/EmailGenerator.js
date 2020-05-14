@@ -10,6 +10,7 @@ import {
   Form,
   Input,
   Container,
+  Alert as Info,
   Row,
   Col,
 } from "reactstrap";
@@ -94,7 +95,13 @@ const EmailGenerator = () => {
               </CardHeader>
               <CardBody>
                 <Form>
-                  <h6 className="heading-small text-muted mb-4">Information</h6>
+                  <h6 className="heading-small text-muted">Target data</h6>
+                  <Info className="mb-4" color="primary" fade={false}>
+                    - You can use complex names or family names like
+                    "Jean-Philippe" <br /> - You can use up 3 names / family
+                    names
+                    <br /> - You can use special letters like è, ô, ï...
+                  </Info>
                   <div className="pl-lg-4">
                     <Row>
                       <Col lg="6">
@@ -108,7 +115,7 @@ const EmailGenerator = () => {
                           <Input
                             className="form-control-alternative"
                             id="input-name"
-                            placeholder="Ray"
+                            placeholder="Raïmond-philippe Samuel"
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
@@ -126,7 +133,7 @@ const EmailGenerator = () => {
                           <Input
                             className="form-control-alternative"
                             id="input-last-name"
-                            placeholder="Tomlinson"
+                            placeholder="Tomlinson García"
                             type="text"
                             value={familyName}
                             onChange={(e) => setFamilyName(e.target.value)}

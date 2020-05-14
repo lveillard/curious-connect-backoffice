@@ -29,7 +29,7 @@ export const generate = (
     .trim()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-zA-Z0-9_-\s]/g, "")
+    .replace(/[^a-zA-Z_-\s]/g, "")
     .replace(/[_]/g, "-")
     .split(" ");
 
@@ -38,7 +38,7 @@ export const generate = (
     .trim()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-zA-Z0-9_-\s]/g, "")
+    .replace(/[^a-zA-Z_-\s]/g, "")
     .replace(/[-_]/g, " ")
     .split(" ");
 
