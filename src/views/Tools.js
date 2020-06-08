@@ -67,6 +67,40 @@ const Tools = () => {
     request.execute(callback);
   }
 
+  function loadFile(event) {
+    const File = event.target.files[0];
+
+    var reader = new FileReader();
+
+    reader.onload = function (event) {
+      let fileInfo = {
+        name: File.name,
+        type: File.type,
+        size: Math.round(File.size / 1000) + " kB",
+        base64: reader.result,
+        file: File,
+      };
+
+      // var arrayBuffer = event.target.result,
+      //  array = new Uint8Array(arrayBuffer),
+      // binaryString = String.fromCharCode.apply(String, array);
+
+      // setFile(binaryString);
+      setFile(fileInfo);
+    };
+
+    reader.onerror = function (error) {
+      console.log("Error: ", error);
+    };
+
+    //reader.readAsArrayBuffer(event.target.files[0]);
+    try {
+      reader.readAsDataURL(File);
+    } catch (e) {
+      console.log(event);
+    }
+  }
+
   function listDrafts(userId, callback) {
     if (!gapi.client) {
       return null;
@@ -79,35 +113,6 @@ const Tools = () => {
       setDrafts(drafts);
       console.log("drafts", drafts);
     });
-  }
-
-  function toByteStream(event) {
-    const file = event.target.files[0];
-
-    var reader = new FileReader();
-
-    reader.onload = function (event) {
-      let fileInfo = {
-        name: file.name,
-        type: file.type,
-        size: Math.round(file.size / 1000) + " kB",
-        base64: reader.result,
-        file: file,
-      };
-
-      // var arrayBuffer = event.target.result,
-      //  array = new Uint8Array(arrayBuffer),
-      // binaryString = String.fromCharCode.apply(String, array);
-
-      // setFile(binaryString);
-      setFile(fileInfo);
-    };
-    reader.onerror = function (error) {
-      console.log("Error: ", error);
-    };
-
-    //reader.readAsArrayBuffer(event.target.files[0]);
-    reader.readAsDataURL(file);
   }
 
   function listThreads() {
@@ -281,12 +286,15 @@ const Tools = () => {
                           {" "}
                           Attatchment{" "}
                         </ControlLabel>
+
+                        {/*setFile(globalActions.helpers.toByteStream(e));*/}
+
                         <Input
                           type="file"
                           name="file"
                           id="file"
                           onChange={(v, e) => {
-                            toByteStream(e);
+                            loadFile(e);
                           }}
                         />
                       </FormGroup>

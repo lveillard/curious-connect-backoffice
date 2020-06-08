@@ -21,7 +21,7 @@ const initialState = {
   gapiAuthed: false,
   config: { toggledSidebar: false, hiddenSidebar: false, size: { width: 700 } },
   sentRecords: [],
-  sentMetrics: { companies: 0, bounced: 0, sentCount: 0 },
+  sentMetrics: { companies: 0, bounced: 0, sentCount: 0, limits: 0 },
   subView: { bulkEmail: "readyToSend" },
   mailGenerator: { emailList: [] },
   readyToSendRecords: [],
@@ -30,6 +30,7 @@ const initialState = {
     atLeastOneReady: false,
     sendersChecked: false,
   },
+  templates: [],
 };
 
 export const useGlobal = useGlobalHook(React, initialState, actions);

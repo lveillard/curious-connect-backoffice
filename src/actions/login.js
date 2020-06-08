@@ -1,13 +1,13 @@
+import { SERVER_URL } from "../utils/constants";
+
 import axios from "axios";
 
 import API from "../utils/API";
 import { Alert } from "rsuite";
 
-const burl = "https://ccbo.glitch.me";
-
 const post = (email, password) => {
   return axios.post(
-    `${burl}/users/login`,
+    `${SERVER_URL}/users/login`,
     {
       email,
       password,
@@ -69,7 +69,7 @@ export const login = async (store, credentials) => {
 
 export const logout = async (store) => {
   const token = localStorage.getItem("token");
-  let url = `${burl}/users/me/logout`;
+  let url = `${SERVER_URL}/users/me/logout`;
 
   if (!token) {
     return false;
@@ -107,7 +107,7 @@ export const getUser = async (store) => {
     return false;
   } else {
     try {
-      const answer = await axios.get(`${burl}/users/me`, {
+      const answer = await axios.get(`${SERVER_URL}/users/me`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,

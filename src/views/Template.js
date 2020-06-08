@@ -8,7 +8,7 @@ import { useGlobal } from "../store";
 
 import "../assets/css/emailing.css";
 
-np; //steps:
+//steps:
 // 1) Copy template
 // 2) Update Admin.js => Import + update variable views
 // 3) Update routes in the server https://glitch.com/edit/#!/ccbo?path=routes%2Froutes.js%3A1%3A0

@@ -1,5 +1,5 @@
+import { SERVER_URL } from "../utils/constants";
 import MIMEText from "mimetext";
-
 import axios from "axios";
 
 export const ReadyToSendSetConfig = (store, object) => {
@@ -381,4 +381,34 @@ export const checkAllBounced = async (store) => {
   store.setState({
     isLoading: { ...store.state.isLoading, bounceChecker: false },
   });
+};
+
+export const getTemplates = async (store) => {
+  console.log("constants", SERVER_URL);
+
+  const token = localStorage.getItem("token");
+  let url = `${SERVER_URL}/templates/all`;
+
+  if (!token) {
+    return false;
+  } else {
+    try {
+      const answer = await axios.get(`${SERVER_URL}/templates/all`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      });
+
+      const { data } = answer;
+      store.setState({
+        templates: data,
+      });
+      return true;
+    } catch (err) {
+      console.log("bad token:", err);
+      localStorage.clear();
+      return false;
+    }
+  }
 };

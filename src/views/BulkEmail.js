@@ -422,6 +422,10 @@ const BulkEmail = (props) => {
                               <Button
                                 className="float-right"
                                 disabled={globalState.isLoading.bounceChecker}
+                                style={{
+                                  paddingTop: "0px",
+                                  paddingBottom: "0px",
+                                }}
                                 color="danger"
                                 onClick={(e) => {
                                   e.preventDefault();
@@ -431,7 +435,11 @@ const BulkEmail = (props) => {
                               >
                                 {globalState.isLoading.bounceChecker ? (
                                   <Loader
-                                    style={{ color: "white" }}
+                                    style={{
+                                      padding: "0px",
+                                      margin: "0px",
+                                      color: "white",
+                                    }}
                                     content="Checking..."
                                   />
                                 ) : (
@@ -446,6 +454,10 @@ const BulkEmail = (props) => {
                               <Button
                                 className="float-right"
                                 disabled={globalState.isLoading.bulkSender}
+                                style={{
+                                  paddingTop: "0px",
+                                  paddingBottom: "0px",
+                                }}
                                 color="warning"
                                 onClick={(e) => {
                                   e.preventDefault();
@@ -455,8 +467,12 @@ const BulkEmail = (props) => {
                               >
                                 {globalState.isLoading.bulkSender ? (
                                   <Loader
-                                    style={{ color: "white" }}
-                                    content="Checking..."
+                                    style={{
+                                      padding: "0px",
+                                      margin: "0px",
+                                      color: "white",
+                                    }}
+                                    content="Sending..."
                                   />
                                 ) : (
                                   "SEND"

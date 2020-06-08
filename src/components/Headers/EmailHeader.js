@@ -4,7 +4,7 @@ import React from "react";
 import { Button, Container, Row } from "reactstrap";
 import { useGlobal } from "../../store";
 
-const UserHeader = () => {
+const EmailHeader = (props) => {
   const [globalState, globalActions] = useGlobal();
 
   return (
@@ -23,7 +23,9 @@ const UserHeader = () => {
             <Row>
               <div className="col-xl">
                 {" "}
-                <h1 className="display-2 text-white">Emailing</h1>{" "}
+                <h1 className="display-2 text-white">
+                  {props.title || "Emailing"}
+                </h1>{" "}
               </div>
               <div className="col-xl d-flex flex-column">
                 {" "}
@@ -91,4 +93,4 @@ const UserHeader = () => {
   );
 };
 
-export default UserHeader;
+export default EmailHeader;

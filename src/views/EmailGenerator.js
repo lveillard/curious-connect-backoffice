@@ -98,7 +98,7 @@ const EmailGenerator = () => {
                   <h6 className="heading-small text-muted">Target data</h6>
                   <Info className="mb-4" color="primary" fade={false}>
                     - You can use complex names or family names like
-                    "Jean-Philippe" <br /> - You can use up 3 names / family
+                    "Jean-Philippe" <br /> - You can use up to 3 names / family
                     names
                     <br /> - You can use special letters like è, ô, ï...
                   </Info>

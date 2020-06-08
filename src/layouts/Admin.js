@@ -13,6 +13,7 @@ import Profile from "../views/examples/Profile";
 import Tools from "../views/Tools";
 import BulkEmail from "../views/BulkEmail";
 import EmailGenerator from "../views/EmailGenerator";
+import Templater from "../views/Templater";
 
 import Students from "../views/Students";
 
@@ -58,6 +59,7 @@ const Admin = () => {
     Profile: Profile,
     Tools: Tools,
     BulkEmail: BulkEmail,
+    Templater: Templater,
     ToDo: ToDo,
     Students: Students,
     EmailGenerator: EmailGenerator,
