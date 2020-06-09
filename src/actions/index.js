@@ -7,6 +7,7 @@ import * as config from "./config";
 import * as mailing from "./mailing";
 import * as generator from "./generator";
 import * as helpers from "./helpers";
+import * as bulkSender from "./bulkSender";
 
 export {
   login,
@@ -16,6 +17,7 @@ export {
   airtable,
   config,
   mailing,
+  bulkSender,
   generator,
   helpers,
 };

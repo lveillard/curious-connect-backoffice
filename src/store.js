@@ -8,6 +8,10 @@ import * as actions from "./actions";
 const initialState = {
   lastLoginStatus: "",
   loadingLogin: false,
+  bulkSender: {
+    currentStudent: null,
+    selectedStudent: null,
+  },
   isLoading: {
     airtable: false,
     readyToSendRecords: false,

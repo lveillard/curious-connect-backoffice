@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from "react";
 
-import {
-  useHistory,
-} from "react-router-dom";
-
+import { useHistory } from "react-router-dom";
 
 import { useGlobal } from "../store";
-
 
 import {
   Col,
@@ -25,53 +21,57 @@ import {
 } from "rsuite";
 
 const Login = () => {
-
   useEffect(() => {
     async function fetchMyAPI() {
-      await globalActions.login.getUser()
+      await globalActions.login.getUser();
     }
-    if (localStorage.getItem("token")) { fetchMyAPI() }
+    if (localStorage.getItem("token")) {
+      fetchMyAPI();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-
   let history = useHistory();
 
-
   const [globalState, globalActions] = useGlobal();
-  const [inputs, setInputs] = useState({ password: "formatricesaccess", email: "formatrices@curious-connect.com" });
-  const [missingData,] = useState();
+  const [inputs, setInputs] = useState({
+    password: "formatricesaccess",
+    email: "formatrices@curious-connect.com",
+  });
+  const [missingData] = useState();
 
   useEffect(() => {
-
-
-    if (localStorage.getItem("token")) { history.replace("/admin") }
-
+    if (localStorage.getItem("token")) {
+      history.replace("/admin");
+    }
   }, [history]);
 
-
   async function login(e) {
-    if (globalState) { }
+    if (globalState) {
+    }
     e.preventDefault();
-    let test = await globalActions.login.login(inputs)
-    if (test) { history.replace("/admin"); } else {
+    let test = await globalActions.login.login(inputs);
+    if (test) {
+      history.replace("/admin");
+    } else {
     }
   }
 
   const handleInputChange = (value, event) => {
-    event.persist()
-    setInputs(inputs => ({ ...inputs, [event.target.name]: value }));
-  }
+    event.persist();
+    setInputs((inputs) => ({ ...inputs, [event.target.name]: value }));
+  };
 
-  const errorMessage = missingData ? 'This field is required' : null;
-
+  const errorMessage = missingData ? "This field is required" : null;
 
   return (
     <div className="home-wrapper">
-      <Container style={{
-        background: "#2c3e50",
-        height: "100vh"
-      }}>
+      <Container
+        style={{
+          background: "#2c3e50",
+          height: "100vh",
+        }}
+      >
         <Content>
           <FlexboxGrid>
             <FlexboxGrid.Item componentClass={Col} colspan={24} md={12}>
@@ -80,7 +80,7 @@ const Login = () => {
                   style={{
                     zIndex: 99999999,
                     maxHeight: "calc(45vh - 160px)",
-                    margin: "25px 0 25px 0"
+                    margin: "25px 0 25px 0",
                   }}
                   src={"/images/logo3.png"}
                   alt="holi"
@@ -99,25 +99,48 @@ const Login = () => {
                   <FormGroup>
                     <ControlLabel>Email address</ControlLabel>
 
-
                     <InputGroup>
-                      <InputGroup.Addon> <span role="img" aria-label="email">📧</span> </InputGroup.Addon>
-                      <Input value={inputs.email} onChange={(value, event) => handleInputChange(value, event)} name="email" autoFocus={true} />
-
+                      <InputGroup.Addon>
+                        {" "}
+                        <span role="img" aria-label="email">
+                          📧
+                        </span>{" "}
+                      </InputGroup.Addon>
+                      <Input
+                        value={inputs.email}
+                        onChange={(value, event) =>
+                          handleInputChange(value, event)
+                        }
+                        name="email"
+                        autoFocus={true}
+                      />
                     </InputGroup>
                   </FormGroup>
                   <FormGroup>
                     <ControlLabel>Password</ControlLabel>
                     <InputGroup>
-                      <InputGroup.Addon> <span role="img" aria-label="key">🔑</span>  </InputGroup.Addon>
+                      <InputGroup.Addon>
+                        {" "}
+                        <span role="img" aria-label="key">
+                          🔑
+                        </span>{" "}
+                      </InputGroup.Addon>
 
-                      <Input value={inputs.password} onChange={(value, event) => handleInputChange(value, event)} name="password" type="password" />
+                      <Input
+                        value={inputs.password}
+                        onChange={(value, event) =>
+                          handleInputChange(value, event)
+                        }
+                        name="password"
+                        type="password"
+                      />
                     </InputGroup>
                     <div
                       style={{
-                        display: missingData && !inputs.password ? 'block' : 'none',
-                        color: 'red',
-                        marginTop: 6
+                        display:
+                          missingData && !inputs.password ? "block" : "none",
+                        color: "red",
+                        marginTop: 6,
                       }}
                     >
                       {errorMessage}
@@ -127,9 +150,23 @@ const Login = () => {
                     <br />
 
                     <ButtonToolbar style={{ textAlign: "center" }}>
-                      <Button type="submit" block onClick={login} appearance="primary" disabled={globalState.status === "LOADING" || missingData || !inputs.password || !inputs.email}>
-                        {globalState.status === "LOADING" ? <Loader style={{ color: "white" }} />
-                          : "Sign in"}
+                      <Button
+                        type="submit"
+                        block
+                        onClick={login}
+                        appearance="primary"
+                        disabled={
+                          globalState.status === "LOADING" ||
+                          missingData ||
+                          !inputs.password ||
+                          !inputs.email
+                        }
+                      >
+                        {globalState.status === "LOADING" ? (
+                          <Loader style={{ color: "white" }} />
+                        ) : (
+                          "Sign in"
+                        )}
                       </Button>
                       <Button appearance="link">Forgot password?</Button>
                     </ButtonToolbar>
@@ -149,15 +186,15 @@ const Login = () => {
                   backgroundImage: `url("/images/loginphoto3.jpg")`,
                   backgroundSize: "cover",
                   backgroundPosition: "50%",
-                  height: "100vh"
+                  height: "100vh",
                 }}
               />
             </FlexboxGrid.Item>
           </FlexboxGrid>
         </Content>
       </Container>{" "}
-    </div >
+    </div>
   );
-}
+};
 
 export default Login;

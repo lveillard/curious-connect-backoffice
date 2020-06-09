@@ -17,7 +17,7 @@ export const setRoute = (store, location) => {
   store.setState({ currentRoute: route });
 };
 
-export const setCurrentStudent = (store, selected) => {
+/* export const setCurrentStudent = (store, selected) => {
   if (selected === null) {
     store.setState({ selectedStudent: null });
     store.setState({ currentStudent: null });
@@ -32,13 +32,23 @@ export const setCurrentStudent = (store, selected) => {
 
   store.setState({ currentStudent: data });
 };
+*/
 
 export const setCurrentProgram = (store, selected) => {
   if (selected === null) {
-    store.setState({ selectedStudent: null });
-    store.setState({ currentStudent: null });
+    store.actions.bulkSender.setCurrentStudent(null);
+    store.actions.airtable.getStudents();
+    store.setState({ currentProgram: null });
+
     return;
   }
 
+  //when selecting a program, remove current student
+  store.actions.bulkSender.setCurrentStudent(null);
+
+  //then activate selected program
   store.setState({ currentProgram: selected });
+
+  //and get all the students
+  store.actions.airtable.getStudents();
 };
