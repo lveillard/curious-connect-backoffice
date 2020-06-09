@@ -125,10 +125,11 @@ const Sidebar = () => {
           }
         >
           {" "}
+          {/* Disabled while loading sentRecords or they will override asynchronously */}
           <Select
             className="selector"
             classNamePrefix="select"
-            isDisabled={false}
+            isDisabled={globalState.isLoading.sentRecords}
             isLoading={false}
             isClearable
             isSearchable
@@ -136,7 +137,7 @@ const Sidebar = () => {
               globalActions.routes.setCurrentProgram(selected);
               if (type.action === "clear")
                 globalActions.routes.setCurrentProgram(null);
-            }} // value={globalState.selectedStudent}
+            }}
             options={globalState.programs}
           />{" "}
         </Container>

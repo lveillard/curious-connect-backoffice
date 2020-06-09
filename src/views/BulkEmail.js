@@ -67,7 +67,7 @@ const BulkEmail = (props) => {
     globalActions.airtable.getReadyToSendEmails();
     globalActions.airtable.getSentEmails();
     console.log("state", globalState);
-  }, [globalState.selectedStudent]);
+  }, [globalState.bulkSender.selectedStudent, globalState.currentProgram]);
 
   return (
     <>
@@ -83,22 +83,22 @@ const BulkEmail = (props) => {
                     <div className="card-profile-image">
                       <a
                         href={
-                          globalState.currentStudent &&
-                          globalState.currentStudent.files[0].url
+                          globalState.bulkSender.currentStudent &&
+                          globalState.bulkSender.currentStudent.files[0].url
                         }
                         download="hello"
                         onClick={(e) => {
                           e.preventDefault();
 
-                          globalState.currentStudent &&
+                          globalState.bulkSender.currentStudent &&
                             window.open(
-                              globalState.currentStudent.files[0].url
+                              globalState.bulkSender.currentStudent.files[0].url
                             );
                         }}
                       >
                         <img
                           style={
-                            globalState.currentStudent && {
+                            globalState.bulkSender.currentStudent && {
                               marginTop: "135px",
                               clip: "rect(0px,250px,77px,0px)",
                               maxWidth: "250px",
@@ -108,14 +108,14 @@ const BulkEmail = (props) => {
                           width="170px"
                           alt="..."
                           className={
-                            !globalState.currentStudent
+                            !globalState.bulkSender.currentStudent
                               ? "rounded-circle"
                               : "meh"
                           }
                           src={
-                            (globalState.currentStudent &&
-                              globalState.currentStudent.files[0].thumbnails
-                                .large.url) ||
+                            (globalState.bulkSender.currentStudent &&
+                              globalState.bulkSender.currentStudent.files[0]
+                                .thumbnails.large.url) ||
                             "https://seeklogo.com/images/A/airtable-logo-216B9AF035-seeklogo.com.png"
                           }
                         />
@@ -146,35 +146,39 @@ const BulkEmail = (props) => {
                   <Row>
                     <div className="col">
                       <div className="card-profile-stats d-flex justify-content-center mt-md-5">
-                        {globalState.sentRecords && (
-                          <>
-                            <div>
-                              <span className="heading">
-                                {globalState.sentMetrics.sentCount}
-                              </span>
-                              <span className="description">Sent</span>
-                            </div>
-                            <div>
-                              <span className="heading">
-                                {globalState.sentMetrics.companies}
-                              </span>
-                              <span className="description">Companies</span>
-                            </div>
-                            <div>
-                              <span className="heading">
-                                {globalState.sentMetrics.limits}
-                              </span>
-                              <span className="description">limits</span>
-                            </div>
+                        {globalState.isLoading.sentRecords &&
+                          "Loading stats..."}
 
-                            <div>
-                              <span className="heading">
-                                {globalState.sentMetrics.bounced}
-                              </span>
-                              <span className="description">Bounced</span>
-                            </div>
-                          </>
-                        )}
+                        {globalState.sentRecords &&
+                          !globalState.isLoading.sentRecords && (
+                            <>
+                              <div>
+                                <span className="heading">
+                                  {globalState.sentMetrics.sentCount}
+                                </span>
+                                <span className="description">Sent</span>
+                              </div>
+                              <div>
+                                <span className="heading">
+                                  {globalState.sentMetrics.companies}
+                                </span>
+                                <span className="description">Companies</span>
+                              </div>
+                              <div>
+                                <span className="heading">
+                                  {globalState.sentMetrics.limits}
+                                </span>
+                                <span className="description">limits</span>
+                              </div>
+
+                              <div>
+                                <span className="heading">
+                                  {globalState.sentMetrics.bounced}
+                                </span>
+                                <span className="description">Bounced</span>
+                              </div>
+                            </>
+                          )}
                       </div>
                     </div>
                   </Row>
@@ -188,11 +192,11 @@ const BulkEmail = (props) => {
                       isClearable
                       isSearchable
                       onChange={(selected, type) => {
-                        globalActions.routes.setCurrentStudent(selected);
+                        globalActions.bulkSender.setCurrentStudent(selected);
                         if (type.action === "clear")
-                          globalActions.routes.setCurrentStudent(null);
+                          globalActions.bulkSender.setCurrentStudent(null);
                       }}
-                      value={globalState.selectedStudent}
+                      value={globalState.bulkSender.selectedStudent}
                       options={
                         globalState.students &&
                         globalState.students.map((x) => {
@@ -204,12 +208,14 @@ const BulkEmail = (props) => {
                       }
                     />
                   </div>
-                  {globalState.currentStudent && (
+                  {globalState.bulkSender.currentStudent && (
                     <div className="text-center">
                       <h3>
-                        {globalState.selectedStudent.label}
+                        {globalState.bulkSender.selectedStudent.label}
                         <span className="h5 font-weight-light">
-                          {" (" + globalState.currentStudent.age + ")"}
+                          {" (" +
+                            globalState.bulkSender.currentStudent.age +
+                            ")"}
                         </span>
                       </h3>
                       <div className="h5 font-weight-300">
@@ -218,11 +224,11 @@ const BulkEmail = (props) => {
                       </div>
                       <div className="h5 mt-4">
                         <i className="ni business_briefcase-24 mr-2" />
-                        {globalState.currentStudent.formation}
+                        {globalState.bulkSender.currentStudent.formation}
                       </div>
                       <div>
                         <i className="ni education_hat mr-2" />
-                        {globalState.currentStudent.school}
+                        {globalState.bulkSender.currentStudent.school}
                       </div>
                       <hr className="my-4" />
 
@@ -232,10 +238,12 @@ const BulkEmail = (props) => {
                           textAlign: "justify",
                         }}
                       >
-                        {globalState.currentStudent.emailContent}
+                        {globalState.bulkSender.currentStudent.emailContent}
                       </div>
                       <p> ------------------- </p>
-                      <p>{globalState.currentStudent.emailSignature}</p>
+                      <p>
+                        {globalState.bulkSender.currentStudent.emailSignature}
+                      </p>
                     </div>
                   )}
                 </CardBody>
@@ -275,7 +283,7 @@ const BulkEmail = (props) => {
                             );
                           }}
                         >
-                          <h5
+                          <div
                             style={{
                               color:
                                 !(
@@ -283,10 +291,8 @@ const BulkEmail = (props) => {
                                   "readyToSend"
                                 ) && "#ccc",
                               fontSize:
-                                !(
-                                  globalState.subView.bulkEmail ===
-                                  "readyToSend"
-                                ) && "16px",
+                                globalState.subView.bulkEmail ===
+                                  "readyToSend" && "18px",
                               fontWeight:
                                 !(
                                   globalState.subView.bulkEmail ===
@@ -304,7 +310,7 @@ const BulkEmail = (props) => {
                               }}
                             />{" "}
                             To send
-                          </h5>
+                          </div>
                         </NavLink>
                       </NavItem>
                       <NavItem
@@ -331,14 +337,14 @@ const BulkEmail = (props) => {
                             );
                           }}
                         >
-                          <h5
+                          <div
                             style={{
                               color:
                                 !(globalState.subView.bulkEmail === "sent") &&
                                 "#ccc",
                               fontSize:
-                                !(globalState.subView.bulkEmail === "sent") &&
-                                "16px",
+                                globalState.subView.bulkEmail === "sent" &&
+                                "18px",
                               fontWeight:
                                 !(globalState.subView.bulkEmail === "sent") &&
                                 "100",
@@ -355,7 +361,7 @@ const BulkEmail = (props) => {
                               }}
                             />{" "}
                             Sent
-                          </h5>
+                          </div>
                         </NavLink>
                       </NavItem>
                     </Nav>
@@ -371,8 +377,9 @@ const BulkEmail = (props) => {
                       <Col xs="5">
                         <h3 className="text-white mb-0">Bulk email</h3>
                         <h6 className="text-white mb-0">
-                          {globalState.selectedStudent
-                            ? "Sender: " + globalState.selectedStudent.label
+                          {globalState.bulkSender.selectedStudent
+                            ? "Sender: " +
+                              globalState.bulkSender.selectedStudent.label
                             : "All senders"}
                         </h6>
                       </Col>

@@ -29,6 +29,7 @@ export const getPrograms = (store) => {
         let pagePrograms = records.map((x) => {
           return {
             programCode: x.get("programCode"),
+            programCodeShort: x.get("programCodeShort"),
             school: x.get("school"),
             start: x.get("date.start"),
             value: x.get("programCode"),
@@ -61,13 +62,19 @@ export const getStudents = (store) => {
 
   let students = [];
 
+  let query = store.state.currentProgram
+    ? {
+        filterByFormula: `{program.code} = '${store.state.currentProgram.programCodeShort}'`,
+        maxRecords: 100,
+        view: "Students",
+      }
+    : {
+        maxRecords: 100,
+        view: "Students",
+      };
+
   EMAIL("Students")
-    .select({
-      //filterByFormula: "From = 'jean.richard.loubacky@gmail.com'",
-      // Selecting the first 3 records in Preparation:
-      maxRecords: 100,
-      view: "Students",
-    })
+    .select(query)
     .eachPage(
       function page(records, fetchNextPage) {
         // This function (`page`) will get called for each page of records.
@@ -104,6 +111,7 @@ export const getStudents = (store) => {
           });
 
           store.setState({ students: students });
+          console.log("hola");
         }
       }
     );
@@ -153,8 +161,10 @@ export const getReadyToSendEmails = (store, filter) => {
   };
 
   const formula =
-    filter || store.state.currentStudent
-      ? "{sender.email} = '" + store.state.currentStudent.emailSender + "'"
+    filter || store.state.bulkSender.currentStudent
+      ? "{sender.email} = '" +
+        store.state.bulkSender.currentStudent.emailSender +
+        "'"
       : null;
 
   const selectFinal = formula
@@ -213,7 +223,7 @@ export const getReadyToSendEmails = (store, filter) => {
     );
 };
 
-export const getSentEmails = (store, filter) => {
+export const getSentEmails = (store) => {
   // loading
   store.setState({
     isLoading: { ...store.state.isLoading, sentRecords: true },
@@ -231,10 +241,32 @@ export const getSentEmails = (store, filter) => {
     view: "Sent",
   };
 
+  // Program only =>  sender.programCodeShort =   store.state.currentProgram.programCodeShort
+  // Student only =>
+  // both
+
   const formula =
-    filter || store.state.currentStudent
-      ? "{sender.email} = '" + store.state.currentStudent.emailSender + "'"
-      : null;
+    // program and student
+    store.state.bulkSender.currentStudent && store.state.currentProgram
+      ? "AND( {sender.programCodeShort} = '" +
+        store.state.currentProgram.programCodeShort +
+        "', {sender.email} = '" +
+        store.state.bulkSender.currentStudent.emailSender +
+        "')"
+      : // only currentStudent
+      store.state.bulkSender.currentStudent
+      ? "{sender.email} = '" +
+        store.state.bulkSender.currentStudent.emailSender +
+        "'"
+      : //only current program
+      store.state.currentProgram
+      ? "{sender.programCodeShort} = '" +
+        store.state.currentProgram.programCodeShort +
+        "'"
+      : //if none of them
+        null;
+
+  console.log("formula", formula);
 
   const selectFinal = formula
     ? { ...selectBase, ...{ filterByFormula: formula } }
@@ -292,7 +324,7 @@ export const getSentEmails = (store, filter) => {
             isLoading: { ...store.state.isLoading, sentRecords: false },
           });
 
-          console.log("records", store.state.sentRecords);
+          console.log("getSentEmails-records", store.state.sentRecords);
 
           const sentCount = store.state.sentRecords.length;
           const bounced = store.state.sentRecords.filter(
