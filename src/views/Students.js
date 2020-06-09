@@ -111,7 +111,7 @@ const Students = () => {
         <iframe
           title="students"
           className="airtable-embed"
-          src="https://airtable.com/embed/shrkxgArNn0Ckw2J1?backgroundColor=purple&viewControls=on"
+          src="https://airtable.com/embed/shrCGXdl1svUUbEHp?backgroundColor=purple&viewControls=on"
           width="100%"
           height="800"
           style={{ background: "transparent" }}
