@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 
-import { Button } from "reactstrap";
+//import { Button } from "reactstrap";
 
-import EmailHeader from "components/Headers/EmailHeader.js";
+//import EmailHeader from "components/Headers/EmailHeader.js";
 
 import { useGlobal } from "../store";
 import styled from "styled-components";

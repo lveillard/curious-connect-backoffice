@@ -11,9 +11,12 @@ import "./index.css";
 
 import App from "./app";
 
-ReactDOM.render(
+//Too many errors from dependencies
+/*ReactDOM.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
   document.getElementById("root")
-);
+);*/
+
+ReactDOM.render(<App />, document.getElementById("root"));

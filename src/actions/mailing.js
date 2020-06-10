@@ -148,11 +148,11 @@ export const prepareAirtableFile = (store, airtableFiles) => {
 
   console.log("file", firstFile);
 
-  const fileInfo = {
+  /* const fileInfo = {
     name: firstFile.filename,
     type: firstFile.type,
     size: firstFile.size,
-  };
+  }; */
 
   return null;
 };
@@ -287,7 +287,7 @@ export const sendEmailsBulk = async (store) => {
         x.emailAttachments
       );
       const answer = await store.actions.gapi.sendMessagePromise(MSG);
-      const cb = store.actions.mailing.sendCallback(answer, x.id);
+      //const cb = store.actions.mailing.sendCallback(answer, x.id);
 
       // TO-do: recharge the status to check that it went fine?
     }
@@ -387,7 +387,7 @@ export const getTemplates = async (store) => {
   console.log("constants", SERVER_URL);
 
   const token = localStorage.getItem("token");
-  let url = `${SERVER_URL}/templates/all`;
+  // let url = `${SERVER_URL}/templates/all`;
 
   if (!token) {
     return false;

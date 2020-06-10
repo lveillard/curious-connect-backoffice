@@ -9,14 +9,14 @@ import {
   FormGroup,
   Container,
   Row,
-  Alert as Info,
   Col,
 } from "reactstrap";
 
 import { Input, ControlLabel } from "rsuite";
 
 import { toast } from "react-toastify";
-import { Loader, Checkbox, Whisper, Tooltip } from "rsuite";
+// import { Loader, Checkbox, Whisper, Tooltip } from "rsuite";
+
 import Select from "react-select";
 
 import EmailHeader from "components/Headers/EmailHeader.js";
@@ -27,7 +27,7 @@ import "../assets/css/emailing.css";
 
 const Templater = () => {
   const [globalState, globalActions] = useGlobal();
-  const [senders, setSenders] = useState([]);
+  // const [senders, setSenders] = useState([]);
   const [inputs, setInputs] = useState({
     senderName: "",
     senderEmail: "",
