@@ -1,4 +1,4 @@
-import { RiChat1Line } from "react-icons/ri";
+// import { RiChat1Line } from "react-icons/ri";
 
 const templater = ["N1", "N1.F1", "NI1.F1", "NI1.F1.F2", "N1.FI1", "N1.F1.F2"];
 

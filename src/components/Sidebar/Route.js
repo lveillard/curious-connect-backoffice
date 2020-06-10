@@ -58,7 +58,7 @@ const Route = (props) => {
   const [globalState, globalActions] = useGlobal();
 
   useEffect(() => {
-    console.log("props", props);
+    //console.log("props", props);
   }, []);
 
   return (

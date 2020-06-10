@@ -37,7 +37,7 @@ export default {
         });
         return answer;
       } catch (err) {
-        console.log("bad token");
+        console.log("bad token or user without routes", err);
         localStorage.clear();
       }
     }

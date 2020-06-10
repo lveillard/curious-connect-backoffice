@@ -1,60 +1,33 @@
 import Airtable from "airtable";
-import { StrictMode } from "react";
+import { SERVER_URL } from "../utils/constants";
+import axios from "axios";
 
+//to-do to be moved to the server
 var EMAIL = new Airtable({
   apiKey: process.env.REACT_APP_AIRTABLE_API_KEY,
 }).base("apptv83SksACULEvd");
 
-var DB = new Airtable({
-  apiKey: process.env.REACT_APP_AIRTABLE_API_KEY,
-}).base("appD02ssA6X5GhyXg");
-
-export const getPrograms = (store) => {
-  store.setState({ isLoading: { ...store.state.isLoading, airtable: true } });
-
-  let programs = [];
-
-  DB("Programs")
-    .select({
-      //filterByFormula: "From = 'jean.richard.loubacky@gmail.com'",
-      // Selecting the first 3 records in Preparation:
-      // we will need to filter by school
-      maxRecords: 100,
-      view: "Main",
-    })
-    .eachPage(
-      function page(records, fetchNextPage) {
-        // This function (`page`) will get called for each page of records.
-
-        let pagePrograms = records.map((x) => {
-          return {
-            programCode: x.get("programCode"),
-            programCodeShort: x.get("programCodeShort"),
-            school: x.get("school"),
-            start: x.get("date.start"),
-            value: x.get("programCode"),
-            label: x.get("programName"),
-          };
-        });
-
-        //TO-DO find a way to do this in an inmutable way
-        programs = programs.concat(pagePrograms);
-
-        fetchNextPage();
+export const getPrograms = async (store) => {
+  try {
+    const token = localStorage.getItem("token");
+    const answer = await axios.get(`${SERVER_URL}/programs/all`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
       },
-      function done(err) {
-        if (err) {
-          console.error(err);
-          return;
-        } else {
-          store.setState({
-            isLoading: { ...store.state.isLoading, airtable: false },
-          });
+    });
+    const { data } = answer;
 
-          store.setState({ programs: programs });
-        }
-      }
-    );
+    //set the programs
+    store.setState({ programs: data.programs });
+    // select first value by default
+    store.actions.routes.setCurrentProgram(data.programs[0]);
+  } catch (err) {
+    console.log(err);
+  }
+  store.setState({
+    isLoading: { ...store.state.isLoading, airtable: false },
+  });
 };
 
 export const getStudents = (store) => {
@@ -111,7 +84,6 @@ export const getStudents = (store) => {
           });
 
           store.setState({ students: students });
-          console.log("hola");
         }
       }
     );
