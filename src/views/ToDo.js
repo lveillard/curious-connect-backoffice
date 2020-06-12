@@ -16,7 +16,6 @@ const ToDo = () => {
     /*async function fetchMyAPI() {
 
     }*/
-    //globalActions.gapi.load();
   }, []);
 
   return (

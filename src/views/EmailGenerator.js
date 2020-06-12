@@ -29,7 +29,6 @@ const EmailGenerator = () => {
     /*async function fetchMyAPI() {
 
     }*/
-    //globalActions.gapi.load();
   }, []);
 
   return (

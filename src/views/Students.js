@@ -99,7 +99,6 @@ const Students = () => {
     /*async function fetchMyAPI() {
 
     }*/
-    //globalActions.gapi.load();
   }, []);
 
   return (

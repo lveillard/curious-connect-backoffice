@@ -2,7 +2,6 @@ import { SERVER_URL } from "../utils/constants";
 
 import axios from "axios";
 
-import API from "../utils/API";
 import { Alert } from "rsuite";
 
 const post = (email, password) => {
@@ -18,6 +17,26 @@ const post = (email, password) => {
       },
     }
   );
+};
+
+export const isAuth = async (store) => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    return false;
+  } else {
+    try {
+      const answer = await axios.get(`${SERVER_URL}/users/me`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      });
+      return answer;
+    } catch (err) {
+      console.log("bad token or user without routes", err);
+      localStorage.clear();
+    }
+  }
 };
 
 export const login = async (store, credentials) => {
@@ -44,9 +63,8 @@ export const login = async (store, credentials) => {
       return false;
     }
   }
-
   try {
-    const { data } = await API.isAuth();
+    const { data } = await store.actions.login.isAuth();
     if (data) {
       store.setState({ confirmedToken: true });
       store.setState({ user: data });
@@ -119,8 +137,9 @@ export const getUser = async (store) => {
       store.setState({ user });
       store.setState({ confirmedToken: true });
 
-      //save some time by initiating gapi
+      //initialize gapi + check if already logged in
       store.actions.gapi.load();
+
       return true;
     } catch (err) {
       console.log("bad token:", err);

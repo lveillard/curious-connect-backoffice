@@ -384,8 +384,6 @@ export const checkAllBounced = async (store) => {
 };
 
 export const getTemplates = async (store) => {
-  console.log("constants", SERVER_URL);
-
   const token = localStorage.getItem("token");
   // let url = `${SERVER_URL}/templates/all`;
 

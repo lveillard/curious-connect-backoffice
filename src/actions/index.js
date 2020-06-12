@@ -8,6 +8,7 @@ import * as mailing from "./mailing";
 import * as generator from "./generator";
 import * as helpers from "./helpers";
 import * as bulkSender from "./bulkSender";
+import * as server from "./server";
 
 export {
   login,
@@ -20,4 +21,5 @@ export {
   bulkSender,
   generator,
   helpers,
+  server,
 };

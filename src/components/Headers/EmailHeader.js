@@ -66,7 +66,7 @@ const EmailHeader = (props) => {
                             width="48"
                             height="48"
                             alt="holi"
-                            src="https://lh4.googleusercontent.com/-fWT46h7Z8As/AAAAAAAAAAI/AAAAAAAAAAA/AAKWJJP6XP26_GHoMbGbaCiUovDGjD_55g/s96-c/photo.jpg"
+                            src={globalState.guser.getImageUrl()}
                           />{" "}
                         </div>
                       </div>

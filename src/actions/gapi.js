@@ -1,79 +1,52 @@
-import { gapi } from "gapi-script";
+import { gapi, loadAuth2 } from "gapi-script";
 
 const SCOPES =
   "https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.compose https://www.googleapis.com/auth/gmail.send";
 
 export const initClient = (store) => {
-  gapi.client
-    .init({
-      apiKey: process.env.REACT_APP_API_KEY,
-      clientId: process.env.REACT_APP_CLIENT_ID,
-      discoveryDocs: [
-        "https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest",
-      ],
-      scope: SCOPES,
-    })
-    .then(
-      function () {
-        //Listen for sign-in changes
-        gapi.auth2.getAuthInstance().isSignedIn.listen((isSignedIn) => {
-          if (isSignedIn) {
-            store.setState({ isSignedIn: true });
-          } else {
-            store.setState({ isSignedIn: true });
-          }
-        });
-
-        // Handle the initial sign-in state.
-
-        if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
-          store.setState({ isSignedIn: true });
-        } else {
-          store.setState({ isSignedIn: true });
-        }
-      },
-      function (error) {
-        console.log(JSON.stringify(error, null, 2));
-      }
-    );
+  gapi.client.init({
+    apiKey: process.env.REACT_APP_API_KEY,
+    clientId: process.env.REACT_APP_CLIENT_ID,
+    discoveryDocs: [
+      "https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest",
+    ],
+    scope: SCOPES,
+  });
 };
 
-export const load = (store) => {
-  /*
-    const authy = async () => {
-    let auth = await loadAuth2(process.env.REACT_APP_CLIENT_ID, SCOPES);
-    console.log(auth.isSignedIn.get());
-    store.setState({ auth: auth });
-  };
-*/
+export const load = async (store) => {
+  try {
+    //init the GAPI (not required to log in or check login, but yes for using gapi.client)
+    gapi.load("client:auth2", store.actions.gapi.initClient);
 
-  gapi.load("client:auth2", store.actions.gapi.initClient);
+    // init auth2 object
+    let auth2 = await loadAuth2(process.env.REACT_APP_CLIENT_ID, SCOPES);
 
-  //check if it is already signed in order to dodge login
-  //authy();
+    //checking if already logged
+    if (auth2.isSignedIn.get()) {
+      store.setState({ gapiAuthed: true }); // Succès !
+      let auth = auth2;
+      store.setState({ auth: auth.currentUser.get() });
+      store.setState({ guser: auth.currentUser.get().getBasicProfile() });
+    }
+  } catch (err) {
+    console.log(err);
+  }
 };
 
-export const handleAuth = (store) => {
+export const handleAuth = async (store) => {
   // first step of auth is already done
   // store.actions.gapi.load(); in tools.js
 
-  gapi.auth2
-    .getAuthInstance()
-    .signIn()
-    .then(
-      () => {
-        store.setState({ gapiAuthed: true }); // Succès !
-        let auth = gapi.auth2.getAuthInstance();
-        store.setState({ auth: auth });
-        store.setState({ guser: auth.currentUser.get().getBasicProfile() });
-
-        //getSenders
-        store.actions.gapi.getSenders();
-      },
-      (err) => {
-        console.log(err); // Erreur !
-      }
-    );
+  try {
+    let auth2 = await loadAuth2(process.env.REACT_APP_CLIENT_ID, SCOPES);
+    await auth2.signIn();
+    store.setState({ gapiAuthed: true }); // Succès !
+    store.setState({ auth: auth2 });
+    store.setState({ guser: auth2.currentUser.get().getBasicProfile() });
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 export const handleSignout = (store) => {
@@ -87,10 +60,10 @@ export const handleSignout = (store) => {
     });
 };
 
-export const getStatus = (store) => {
+/* export const getStatus = (store) => {
   const status = gapi.auth2.getAuthInstance().isSignedIn.get();
   console.log("status", status);
-};
+}; */
 
 export const getLabels = (store) => {
   gapi.client.gmail.users.labels

@@ -253,9 +253,6 @@ const Templater = () => {
                     <FormGroup>
                       <Button
                         color="primary"
-                        style={{
-                          textTransform: "uppercase",
-                        }}
                         className="float-right"
                         onClick={async (e) =>
                           globalActions.gapi.sendMessage(
@@ -298,7 +295,7 @@ const Templater = () => {
                         }
                         id="send_message"
                       >
-                        <b> Send Message</b>
+                        Send Message
                       </Button>
                     </FormGroup>
                   </Form>

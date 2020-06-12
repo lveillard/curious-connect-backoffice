@@ -22,7 +22,6 @@ const Template = () => {
     /*async function fetchMyAPI() {
 
     }*/
-    //globalActions.gapi.load();
   }, []);
 
   return (

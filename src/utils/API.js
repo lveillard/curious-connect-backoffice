@@ -1,4 +1,4 @@
-import { SERVER_URL } from "../utils/constants";
+/*import { SERVER_URL } from "../utils/constants";
 
 import axios from "axios";
 const headers = {
@@ -62,3 +62,4 @@ export default {
     }
   },
 };
+*/

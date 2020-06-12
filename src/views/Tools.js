@@ -131,7 +131,6 @@ const Tools = () => {
     /*async function fetchMyAPI() {
 
     }*/
-    //globalActions.gapi.load();
   }, []);
 
   return (
