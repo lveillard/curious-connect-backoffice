@@ -12,6 +12,10 @@ export const ReadyToSendSetConfig = (store, object) => {
 };
 
 export const checkSenders = (store) => {
+  if (!store.state.senders) {
+    console.log("error in checksenders");
+    return false;
+  }
   //find records with no matching senders
   const errors = store.state.readyToSendRecords.filter(
     (x) => !store.state.senders.some((y) => x.senderAddress === y.sendAsEmail)

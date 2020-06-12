@@ -16,6 +16,8 @@ export const initClient = (store) => {
 
 export const load = async (store) => {
   try {
+    //to-do LOADING thing
+
     //init the GAPI (not required to log in or check login, but yes for using gapi.client)
     gapi.load("client:auth2", store.actions.gapi.initClient);
 
@@ -28,6 +30,11 @@ export const load = async (store) => {
       let auth = auth2;
       store.setState({ auth: auth.currentUser.get() });
       store.setState({ guser: auth.currentUser.get().getBasicProfile() });
+
+      //load senders
+      store.actions.gapi.getSenders();
+
+      //to-do LOADING done
     }
   } catch (err) {
     console.log(err);
@@ -99,15 +106,20 @@ export const getDraft = (store, id, callback) => {
   });
 };
 
-export const getSenders = (store, senders) => {
-  gapi.client.gmail.users.settings.sendAs
-    .list({
-      userId: "me",
-    })
-    .then(function (response) {
-      let senders = response.result.sendAs;
-      store.setState({ senders: senders });
-    });
+export const getSenders = async (store) => {
+  let response = await store.actions.gapi.getSendersPromise();
+  let senders = response.result.sendAs;
+  store.setState({ senders: senders });
+};
+
+export const getSendersPromise = (store, raw) => {
+  return new Promise((resolve, reject) => {
+    gapi.client.gmail.users.settings.sendAs
+      .list({
+        userId: "me",
+      })
+      .then((answer) => resolve(answer));
+  });
 };
 
 export const sendMessage = (store, raw, callback) => {

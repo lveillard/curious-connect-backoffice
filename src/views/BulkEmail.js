@@ -65,7 +65,7 @@ const BulkEmail = (props) => {
     //get list of students
     globalActions.airtable.getStudents();
     globalActions.airtable.getReadyToSendEmails();
-    globalActions.airtable.getSentEmails();
+    //globalActions.airtable.getSentEmails();
     console.log("state", globalState);
   }, [globalState.bulkSender.selectedStudent, globalState.currentProgram]);
 
@@ -412,9 +412,9 @@ const BulkEmail = (props) => {
                               <Button
                                 className="float-right"
                                 color="danger"
-                                onClick={(e) => {
+                                onClick={async (e) => {
                                   e.preventDefault();
-                                  globalActions.mailing.checkSenders();
+                                  await globalActions.mailing.checkSenders();
                                 }}
                                 size="sm"
                               >

@@ -139,7 +139,6 @@ export const getUser = async (store) => {
 
       //initialize gapi + check if already logged in
       store.actions.gapi.load();
-
       return true;
     } catch (err) {
       console.log("bad token:", err);
