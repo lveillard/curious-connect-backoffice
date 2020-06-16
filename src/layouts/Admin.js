@@ -15,8 +15,8 @@ import BulkEmail from "../views/BulkEmail";
 import EmailGenerator from "../views/EmailGenerator";
 import Templater from "../views/Templater";
 import Server from "../views/Server";
-
 import Students from "../views/Students";
+import Linkedin from "../views/Linkedin";
 
 import ToDo from "../views/ToDo";
 
@@ -65,6 +65,7 @@ const Admin = () => {
     Students: Students,
     EmailGenerator: EmailGenerator,
     Server: Server,
+    Linkedin: Linkedin,
   };
 
   const getRoutes = () => {

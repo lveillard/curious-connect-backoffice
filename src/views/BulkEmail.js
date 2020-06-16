@@ -20,6 +20,7 @@ import {
   NavItem,
   NavLink,
   Nav,
+  UncontrolledTooltip,
   UncontrolledDropdown,
   Badge,
 } from "reactstrap";
@@ -473,16 +474,20 @@ const BulkEmail = (props) => {
                                 size="sm"
                               >
                                 {globalState.isLoading.bulkSender ? (
-                                  <Loader
-                                    style={{
-                                      padding: "0px",
-                                      margin: "0px",
-                                      color: "white",
-                                    }}
-                                    content="Sending..."
-                                  />
+                                  <React.Fragment>
+                                    <Loader
+                                      content="Sending..."
+                                      style={{
+                                        padding: "0px",
+                                        margin: "0px",
+                                        color: "white",
+                                      }}
+                                    />
+                                  </React.Fragment>
                                 ) : (
-                                  "SEND"
+                                  <div style={{ fontWeight: "700" }}>
+                                    Send'em!
+                                  </div>
                                 )}
                               </Button>
                             )}
@@ -608,7 +613,9 @@ const BulkEmail = (props) => {
                                     style={{ cursor: "pointer" }}
                                     onClick={() => {
                                       x.status === "Sent" &&
-                                        globalActions.mailing.checkBounced(x);
+                                        console.log(
+                                          globalActions.mailing.checkBounced(x)
+                                        );
                                     }}
                                     color=""
                                     className="badge-dot mr-4"
@@ -687,7 +694,7 @@ const BulkEmail = (props) => {
                                 <UncontrolledDropdown>
                                   <DropdownToggle
                                     className="btn-icon-only text-light"
-                                    href="#pablo"
+                                    href="#"
                                     role="button"
                                     size="sm"
                                     color=""

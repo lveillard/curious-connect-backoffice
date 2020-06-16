@@ -34,6 +34,7 @@ const initialState = {
     atLeastOneReady: false,
     sendersChecked: false,
   },
+  server: { status: { local: false, server: false } },
   templates: [],
 };
 

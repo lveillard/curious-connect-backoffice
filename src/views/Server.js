@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 import {
   Button,
@@ -8,6 +8,7 @@ import {
   Form,
   FormGroup,
   Container,
+  Badge,
   Row,
   Col,
 } from "reactstrap";
@@ -15,6 +16,8 @@ import {
 import { SERVER_URL } from "../utils/constants";
 
 import { Input, ControlLabel, Checkbox } from "rsuite";
+
+import { UncontrolledTooltip, Tooltip } from "reactstrap";
 
 import EmailHeader from "components/Headers/EmailHeader.js";
 
@@ -34,15 +37,22 @@ const Server = () => {
   const [globalState, globalActions] = useGlobal();
   const [url, setUrl] = useState("/users/me");
   const [local, setLocal] = useState(false);
+  const [payload, setPayload] = useState({
+    active: false,
+    data:
+      '{"token":"AQ", "linkedinUrl":"https://www.linkedin.com/in/loic-veillard/"}',
+  });
   const [reqMode, setReqMode] = useState({ value: "GET", label: "GET" });
   const [answer, setAnswer] = useState("");
 
   useEffect(() => {
-    /*async function fetchMyAPI() {
-
-    }*/
+    // check server status
+    async function checkServers() {
+      const server = await globalActions.server.isAvailable(false);
+      const local = await globalActions.server.isAvailable(true);
+    }
+    checkServers();
   }, []);
-
   return (
     <>
       <div className="bg-gradient-danger" style={{ height: "200px" }}>
@@ -55,7 +65,64 @@ const Server = () => {
               <CardHeader className="bg-white border-0">
                 <Row className="align-items-center">
                   <Col xs="6">
-                    <h3 className="mb-0">Server Status</h3>
+                    <h3 className="mb-0">Server Status </h3>
+                    <Badge
+                      style={{
+                        cursor: "pointer",
+                        fontSize: "0.7rem",
+                        verticalAlign: "bottom",
+                      }}
+                      color=""
+                      className="badge-dot mr-4"
+                    >
+                      <b>MAIN</b>
+                      <i
+                        style={{
+                          verticalAlign: "inherit",
+                          width: "0.8rem",
+                          height: "0.8rem",
+                          marginLeft: "3px",
+                          marginRight: "0px",
+                        }}
+                        className={
+                          globalState.server.status.server === true
+                            ? "bg-success"
+                            : "bg-danger"
+                        }
+                      />{" "}
+                      {globalState.server.status.server === true
+                        ? "Running"
+                        : "Stopped"}
+                    </Badge>
+                    <Badge
+                      style={{
+                        cursor: "pointer",
+                        fontSize: "0.7rem",
+                        verticalAlign: "bottom",
+                      }}
+                      color=""
+                      className="badge-dot mr-4"
+                    >
+                      <b>LOCAL</b>
+                      <i
+                        style={{
+                          verticalAlign: "inherit",
+                          width: "0.8rem",
+                          height: "0.8rem",
+                          marginLeft: "3px",
+                          marginRight: "0px",
+                        }}
+                        className={
+                          globalState.server.status.local === true
+                            ? "bg-success"
+                            : "bg-danger"
+                        }
+                      />{" "}
+                      {globalState.server.status.local === true
+                        ? "Running"
+                        : "Stopped"}
+                    </Badge>
+
                     <Checkbox
                       checked={local}
                       onChange={(e, v) => {
@@ -70,7 +137,18 @@ const Server = () => {
                   <Col className="text-right" xs="6">
                     <FormGroup>
                       {" "}
-                      <Button color="primary" onClick={(e) => {}} size="sm">
+                      <Button
+                        color="primary"
+                        onClick={async (e) => {
+                          const server = await globalActions.server.isAvailable(
+                            false
+                          );
+                          const local = await globalActions.server.isAvailable(
+                            true
+                          );
+                        }}
+                        size="sm"
+                      >
                         Refresh
                       </Button>{" "}
                     </FormGroup>
@@ -105,6 +183,20 @@ const Server = () => {
                             { value: "POST", label: "POST" },
                           ]}
                         />
+                        {reqMode.value === "GET" && (
+                          <Checkbox
+                            checked={payload.active}
+                            onChange={(e, v) => {
+                              setPayload({
+                                data: payload.data,
+                                active: !payload.active,
+                              });
+                            }}
+                          >
+                            {" "}
+                            Payload
+                          </Checkbox>
+                        )}
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel className="form-control-label">
@@ -121,19 +213,23 @@ const Server = () => {
                         />
                       </FormGroup>
 
-                      {reqMode.value === "POST" && (
+                      {(reqMode.value === "POST" ||
+                        payload.active === true) && (
                         <FormGroup>
                           <ControlLabel className="form-control-label">
-                            params
+                            Params
                           </ControlLabel>
                           <Input
                             style={{
                               width: "100%",
                               resize: "vertical",
                             }}
-                            value={url}
+                            value={payload.data}
                             onChange={(value, event) => {
-                              setUrl(value);
+                              setPayload({
+                                data: value,
+                                active: payload.active,
+                              });
                             }}
                             name="message"
                             componentClass="textarea"
@@ -151,7 +247,11 @@ const Server = () => {
                             style={{
                               resize: "vertical",
                               color:
-                                answer.type === "error" ? "#f5365c" : "#2dce89",
+                                answer.type === "error"
+                                  ? "#f5365c"
+                                  : answer.res === "Loading..."
+                                  ? "#ffd600"
+                                  : "#2dce89",
                             }}
                             value={JSON.stringify(
                               answer.res.data ? answer.res.data : answer.res
@@ -168,8 +268,13 @@ const Server = () => {
                           className="float-right"
                           onClick={async (e) => {
                             try {
+                              setAnswer({ res: "Loading..." });
                               setAnswer(
-                                await globalActions.server.GET(url, local)
+                                await globalActions.server.GET(
+                                  url,
+                                  local,
+                                  payload.data
+                                )
                               );
                             } catch (err) {
                               console.log(err);

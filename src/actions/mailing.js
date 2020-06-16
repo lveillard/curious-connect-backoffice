@@ -231,9 +231,9 @@ export const sendCallback = (store, answer, id) => {
       answer.error.message
     );
     store.actions.airtable.updateField(id, "status", "Error");
+    return { Status: "Error", error: answer.error.message, item: answer };
   } else {
     //on success actions
-    console.log(answer);
     store.actions.mailing.setRecordProperty(id, {
       status: "Sent",
       threadId: answer.threadID,
@@ -245,6 +245,9 @@ export const sendCallback = (store, answer, id) => {
     store.actions.airtable.updateField(id, "status", "Sent");
 
     //refresh only that record
+
+    // return answer
+    return { Status: "Sent", item: answer };
   }
 };
 
@@ -291,8 +294,9 @@ export const sendEmailsBulk = async (store) => {
         x.emailAttachments
       );
       const answer = await store.actions.gapi.sendMessagePromise(MSG);
-      //const cb = store.actions.mailing.sendCallback(answer, x.id);
 
+      const cb = store.actions.mailing.sendCallback(answer, x.id);
+      console.log("reuslt:", cb);
       // TO-do: recharge the status to check that it went fine?
     }
   }
@@ -313,6 +317,11 @@ export const checkBounced = async (store, record) => {
 
   // if no thread, no bounced
   if (!record.threadId) {
+    store.actions.mailing.setRecordProperty(record.id, {
+      status: "Error",
+      errorMessage: "no thread id",
+    });
+
     return "no threadId";
   }
 
