@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Button,
@@ -14,6 +14,8 @@ import {
 } from "reactstrap";
 
 import { SERVER_URL } from "../utils/constants";
+
+import JsonViewer from "../components/jsonViewer";
 
 import { Input, ControlLabel, Checkbox } from "rsuite";
 
@@ -37,10 +39,13 @@ const Server = () => {
   const [globalState, globalActions] = useGlobal();
   const [url, setUrl] = useState("/users/me");
   const [local, setLocal] = useState(false);
+
   const [payload, setPayload] = useState({
     active: false,
-    data:
-      '{"token":"AQ", "linkedinUrl":"https://www.linkedin.com/in/loic-veillard/"}',
+    data: {
+      token: "AQ",
+      linkedinUrl: "https://www.linkedin.com/in/loic-veillard/",
+    },
   });
   const [reqMode, setReqMode] = useState({ value: "GET", label: "GET" });
   const [answer, setAnswer] = useState("");
@@ -53,6 +58,7 @@ const Server = () => {
     }
     checkServers();
   }, []);
+
   return (
     <>
       <div className="bg-gradient-danger" style={{ height: "200px" }}>
@@ -183,20 +189,6 @@ const Server = () => {
                             { value: "POST", label: "POST" },
                           ]}
                         />
-                        {reqMode.value === "GET" && (
-                          <Checkbox
-                            checked={payload.active}
-                            onChange={(e, v) => {
-                              setPayload({
-                                data: payload.data,
-                                active: !payload.active,
-                              });
-                            }}
-                          >
-                            {" "}
-                            Payload
-                          </Checkbox>
-                        )}
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel className="form-control-label">
@@ -211,6 +203,20 @@ const Server = () => {
                           style={{ resize: "auto" }}
                           rows={10}
                         />
+                        {reqMode.value === "GET" && (
+                          <Checkbox
+                            checked={payload.active}
+                            onChange={(e, v) => {
+                              setPayload({
+                                data: payload.data,
+                                active: !payload.active,
+                              });
+                            }}
+                          >
+                            {" "}
+                            Add parameters
+                          </Checkbox>
+                        )}
                       </FormGroup>
 
                       {(reqMode.value === "POST" ||
@@ -219,26 +225,41 @@ const Server = () => {
                           <ControlLabel className="form-control-label">
                             Params
                           </ControlLabel>
-                          <Input
-                            style={{
-                              width: "100%",
-                              resize: "vertical",
+
+                          <JsonViewer
+                            name="Params"
+                            src={payload.data}
+                            permissions={{
+                              edit: true,
+                              add: true,
+                              delete: true,
+                              copy: false,
                             }}
-                            value={payload.data}
-                            onChange={(value, event) => {
+                            onChangeJSON={(e) =>
                               setPayload({
-                                data: value,
+                                data: e.updated_src,
                                 active: payload.active,
-                              });
-                            }}
-                            name="message"
-                            componentClass="textarea"
-                            rows={5}
+                              })
+                            }
                           />
                         </FormGroup>
                       )}
 
                       {answer && (
+                        <FormGroup>
+                          <ControlLabel className="form-control-label">
+                            Answer
+                          </ControlLabel>{" "}
+                          <JsonViewer
+                            type="answer"
+                            name={answer.type}
+                            src={answer}
+                            collapsed={true}
+                          />
+                        </FormGroup>
+                      )}
+
+                      {false && (
                         <FormGroup>
                           <ControlLabel className="form-control-label">
                             Answer
@@ -249,12 +270,13 @@ const Server = () => {
                               color:
                                 answer.type === "error"
                                   ? "#f5365c"
-                                  : answer.res === "Loading..."
+                                  : answer.res === "loading..."
                                   ? "#ffd600"
                                   : "#2dce89",
                             }}
                             value={JSON.stringify(
-                              answer.res.data ? answer.res.data : answer.res
+                              //answer.res.data ? answer.res.data : answer.res
+                              answer
                             )}
                             componentClass="textarea"
                             rows={10}
@@ -268,7 +290,7 @@ const Server = () => {
                           className="float-right"
                           onClick={async (e) => {
                             try {
-                              setAnswer({ res: "Loading..." });
+                              setAnswer({ type: "loading..." });
                               setAnswer(
                                 await globalActions.server.GET(
                                   url,

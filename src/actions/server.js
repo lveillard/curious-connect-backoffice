@@ -29,11 +29,25 @@ export const GET = async (store, dir, local, params) => {
 
   try {
     const answer = await axios(config);
-    return { res: answer, type: "success" };
+    return {
+      res: answer,
+      type: answer.data.type || "success",
+      status:
+        (answer.res && answer.res.status) || answer.status || "status error",
+      message:
+        answer.data && answer.data.type === "error"
+          ? answer.data.message
+          : "it worked!",
+    };
   } catch (err) {
-    console.log("errorcito", err.response);
+    console.log("Error response:", err.response);
     console.log("bad token or user without routes", err);
-    return { res: err.message, type: "error" };
+    return {
+      res: err.response,
+      status: err.response.status,
+      message: err.response.data.message,
+      type: "error",
+    };
   }
 };
 

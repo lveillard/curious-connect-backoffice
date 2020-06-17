@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 
 import EmailHeader from "components/Headers/EmailHeader.js";
+import JsonViewer from "../components/jsonViewer";
 
 import { useGlobal } from "../store";
+
+import { ControlLabel, Checkbox } from "rsuite";
 
 import {
   Button,
@@ -28,10 +31,17 @@ import "../assets/css/emailing.css";
 
 const Template = () => {
   const [globalState, globalActions] = useGlobal();
+  //const [isEmpty, setIsEmpty] = useState(true);
+
+  const [answers, setAnswers] = useState([]);
+
   const [linkedinUrl, setLinkedinUrl] = useState(
-    "https://www.linkedin.com/in/loic-veillard"
+    "https://www.linkedin.com/in/loic-veillard,https://www.linkedin.com/in/bianca-schor/,https://www.linkedin.com/company/21430/, https://www.linkedin.com/company/2895666/, https://www.linkedin.com/company/2598135/, https://www.linkedin.com/company/10831358/, https://www.linkedin.com/company/973023/"
   );
   const [token, setToken] = useState("AQ...");
+  const [local, setLocal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [cancel, setCancel] = useState(false);
 
   useEffect(() => {
     /*async function fetchMyAPI() {
@@ -56,6 +66,16 @@ const Template = () => {
                 <Row className="align-items-center">
                   <Col xs="6">
                     <h3 className="mb-0">Linkedin tools</h3>
+                    <Checkbox
+                      checked={local}
+                      onChange={(e, v) => {
+                        setLocal(v);
+                        console.log("local", local);
+                      }}
+                    >
+                      {" "}
+                      Local server
+                    </Checkbox>
                   </Col>
                 </Row>
               </CardHeader>
@@ -76,7 +96,7 @@ const Template = () => {
                         className="form-control-label"
                         htmlFor="input-name"
                       >
-                        URL
+                        URL(s)
                       </label>
                       <Input
                         className="form-control-alternative"
@@ -85,53 +105,135 @@ const Template = () => {
                         onChange={(e) => setLinkedinUrl(e.target.value)}
                       />
                     </FormGroup>
-                    <FormGroup className="pull-right mt-4">
-                      {" "}
-                      <Button
-                        color="primary"
-                        onClick={async () => {
-                          console.log(token, linkedinUrl);
-                          let answer = await globalActions.server.GET(
-                            "/linkedin",
-                            false,
-                            {
-                              token,
-                              linkedinUrl,
-                            }
-                          );
-                          console.log(answer);
-                        }}
-                      >
-                        Individual test linkedin
-                      </Button>
-                      <Button
-                        color="danger"
-                        onClick={async () => {
-                          //it's a for as it has to be one by one
-                          for (let x of linkedinUrl.split(",")) {
-                            try {
-                              console.log(x);
-                              //await timeout(2000);
-                              let answer = await globalActions.server.GET(
-                                "/linkedin",
-                                false,
-                                {
-                                  token,
-                                  linkedinUrl: x.trim(),
-                                }
-                              );
-                              answer.res.data &&
-                                console.log(answer.res.data.data);
-                            } catch (err) {
-                              console.log("Error", x);
-                              await timeout(1000);
-                            }
-                          }
-                        }}
-                      >
-                        Stress test Linkedin
-                      </Button>
-                    </FormGroup>
+                    <Col>
+                      <FormGroup className="pull-right mt-4">
+                        {/*to-do make this button work*/}
+                        {isLoading && (
+                          <Button
+                            disabled={true}
+                            onClick={() => {
+                              setCancel(true);
+                              setIsLoading(false);
+                            }}
+                            color="danger"
+                          >
+                            can't cancel
+                          </Button>
+                        )}
+                        {!isLoading && (
+                          <Button
+                            color="primary"
+                            onClick={async () => {
+                              // if it is already loading and we click, it means we are cancelling
+
+                              setIsLoading(true);
+
+                              //clean on click
+                              //setIsEmpty(true);
+                              setAnswers([]);
+
+                              //it's a for as it has to be one by one
+                              for (let x of linkedinUrl.split(",")) {
+                                //changing isLoading to break will stop the loop
+                                console.log("cancel", cancel);
+                                if (cancel) {
+                                  console.log("request stopped");
+                                  setCancel(false);
+
+                                  break;
+                                } else
+                                  try {
+                                    //await timeout(2000);
+                                    let answer = await globalActions.server.GET(
+                                      "/linkedin",
+                                      local,
+                                      {
+                                        token,
+                                        linkedinUrl: x.trim(),
+                                      }
+                                    );
+
+                                    //functional update!
+                                    answer.res.data &&
+                                      setAnswers((answers) =>
+                                        answers.concat(answer)
+                                      );
+
+                                    // as the state is saved in the past, if we only run the else it will get the old answers
+                                    // this means that we will keep data between different runs of the code
+                                    // but we want to be really empty at each new run
+                                    /*if (isEmpty) {
+                                  console.log("this was the first loop!");
+                                  answer.res.data && setAnswers([answer]);
+                                  setIsEmpty(false);
+                                } else {
+                                  setIsEmpty(false);
+
+                                  answer.res.data &&
+                                    setAnswers(answers.concat(answer));
+                                } */
+
+                                    console.log("status", answer.status);
+                                    //even answers 8xx will be actually answes 200
+                                    if (answer.status !== 200) {
+                                      console.log(
+                                        "Loop stopped becaue of error with request: ",
+                                        x,
+                                        answer.res.data && answer.res.data
+                                      );
+                                      setIsLoading(false);
+
+                                      break;
+                                    }
+                                  } catch (err) {
+                                    console.log("Error", x);
+                                    console.log("Error", err);
+                                    setIsLoading(false);
+                                    //setIsEmpty(false);
+                                    //await timeout(1000);
+                                  }
+                              }
+                              setIsLoading(false);
+                            }}
+                          >
+                            {`Get Profiles  (${
+                              linkedinUrl.split(",").length
+                            } profiles)`}
+                          </Button>
+                        )}
+                      </FormGroup>
+                    </Col>
+                  </Col>
+                </Row>
+
+                <Row>
+                  <Col>
+                    {answers.length === 1 && (
+                      <FormGroup>
+                        <ControlLabel className="form-control-label">
+                          Answer
+                        </ControlLabel>{" "}
+                        <JsonViewer
+                          type="answer"
+                          name={answers[0].type}
+                          src={answers[0]}
+                          collapsed={true}
+                        />
+                      </FormGroup>
+                    )}
+                    {answers.length > 1 && (
+                      <FormGroup>
+                        <ControlLabel className="form-control-label">
+                          Answers ({answers.length} answers)
+                        </ControlLabel>{" "}
+                        <JsonViewer
+                          name="answers"
+                          permissions={{ copy: true }}
+                          src={answers}
+                          collapsed={true}
+                        />
+                      </FormGroup>
+                    )}
                   </Col>
                 </Row>
               </CardBody>
