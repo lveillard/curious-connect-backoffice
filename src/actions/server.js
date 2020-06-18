@@ -31,7 +31,7 @@ export const GET = async (store, dir, params, local) => {
 
   var config = {
     method: "get",
-    url: (!localServer ? SERVER_URL : LOCAL_URL) + dir,
+    url: (localServer ? LOCAL_URL : SERVER_URL) + dir,
     headers: {
       "Content-Type": "application/json",
       Authorization: "Bearer " + token,

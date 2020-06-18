@@ -42,7 +42,8 @@ const Server = () => {
   const [payload, setPayload] = useState({
     active: false,
     data: {
-      token: "AQ",
+      mail: "l.veillard@gmail.com",
+      token: "AQ...",
       linkedinUrl: "https://www.linkedin.com/in/loic-veillard/",
     },
   });
