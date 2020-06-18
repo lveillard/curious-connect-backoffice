@@ -19,6 +19,10 @@ const initialState = {
     bounceChecker: false,
     bulkSender: false,
   },
+  isProcessing: {
+    bounceChecker: { current: 0, total: 100 },
+    bulkSender: { current: 0, total: 100 },
+  },
   token: "",
   currentProgram: null,
   confirmedToken: false,
@@ -36,6 +40,7 @@ const initialState = {
   },
   server: { status: { local: false, server: false } },
   templates: [],
+  debug: { localServer: false },
 };
 
 export const useGlobal = useGlobalHook(React, initialState, actions);

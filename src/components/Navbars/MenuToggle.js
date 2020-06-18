@@ -28,6 +28,8 @@ import {
 
 import { useHistory } from "react-router-dom";
 
+import { Checkbox } from "rsuite";
+
 import { useGlobal } from "../../store";
 
 const MenuToggle = (props) => {
@@ -83,6 +85,11 @@ const MenuToggle = (props) => {
         <DropdownItem onClick={() => console.log(globalState)}>
           <i className="ni ni-sound-wave" />
           <span>State</span>
+        </DropdownItem>
+        <DropdownItem onClick={() => globalActions.server.setLocalServer()}>
+          <Checkbox checked={globalState.debug.localServer}>
+            LocalServer
+          </Checkbox>
         </DropdownItem>
         <DropdownItem divider />
         <DropdownItem href="#" onClick={(e) => logout(e)}>

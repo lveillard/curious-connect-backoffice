@@ -263,6 +263,17 @@ export const sendEmailsBulk = async (store) => {
     (x) => x.status === "Ready" && x.isSelected === true
   );
 
+  //set count to 0
+  store.setState({
+    isProcessing: {
+      ...store.state.isProcessing,
+      bulkSender: {
+        current: 0,
+        total: bulkReady.length,
+      },
+    },
+  });
+
   if (bulkReady.length > 0) {
     for (let x of bulkReady) {
       // put the message on loading
@@ -296,6 +307,18 @@ export const sendEmailsBulk = async (store) => {
       const answer = await store.actions.gapi.sendMessagePromise(MSG);
 
       const cb = store.actions.mailing.sendCallback(answer, x.id);
+
+      //update count +1
+      store.setState({
+        isProcessing: {
+          ...store.state.isProcessing,
+          bulkSender: {
+            current: store.state.isProcessing.bulkSender.current + 1,
+            total: bulkReady.length,
+          },
+        },
+      });
+
       console.log("reuslt:", cb);
       // TO-do: recharge the status to check that it went fine?
     }
@@ -375,14 +398,49 @@ export const checkBounced = async (store, record) => {
 };
 
 export const checkAllBounced = async (store) => {
+  //performance checks:
+  var start = Date.now();
+
   store.setState({
     isLoading: { ...store.state.isLoading, bounceChecker: true },
   });
 
+  var sentRecords = store.state.sentRecords;
+
+  //total to be checked:
+  store.setState({
+    isProcessing: {
+      ...store.state.isProcessing,
+      bounceChecker: { current: 0, total: sentRecords.length },
+    },
+  });
+
+  //count
+  var count = 0;
+
+  console.log("store", store.state);
+
   let checkedArray = await Promise.all(
-    store.state.sentRecords.map(async (x) => {
+    sentRecords.map(async (x) => {
       try {
+        // check if bounced
         let isBounced = await store.actions.mailing.checkBounced(x);
+
+        //
+        count++;
+
+        //once is checked, update the counter
+        //for performance, update only each 15 checks
+        count % 20 === 0 &&
+          store.setState({
+            isProcessing: {
+              ...store.state.isProcessing,
+              bounceChecker: {
+                current: count,
+                total: sentRecords.length,
+              },
+            },
+          });
         return isBounced;
       } catch (e) {
         console.log("Error en:", x);
@@ -391,6 +449,10 @@ export const checkAllBounced = async (store) => {
     })
   );
   console.log(checkedArray);
+
+  //performance checks
+  var delta = Date.now() - start;
+  console.log("TIMER: Bounce checker:", Math.floor(delta / 1000), " secs");
   store.setState({
     isLoading: { ...store.state.isLoading, bounceChecker: false },
   });

@@ -38,7 +38,6 @@ import "../assets/css/emailing.css";
 const Server = () => {
   const [globalState, globalActions] = useGlobal();
   const [url, setUrl] = useState("/users/me");
-  const [local, setLocal] = useState(false);
 
   const [payload, setPayload] = useState({
     active: false,
@@ -128,16 +127,6 @@ const Server = () => {
                         ? "Running"
                         : "Stopped"}
                     </Badge>
-
-                    <Checkbox
-                      checked={local}
-                      onChange={(e, v) => {
-                        setLocal(v);
-                      }}
-                    >
-                      {" "}
-                      Local
-                    </Checkbox>
                   </Col>
 
                   <Col className="text-right" xs="6">
@@ -294,7 +283,6 @@ const Server = () => {
                               setAnswer(
                                 await globalActions.server.GET(
                                   url,
-                                  local,
                                   payload.data
                                 )
                               );

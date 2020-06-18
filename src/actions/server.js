@@ -1,9 +1,21 @@
 import { SERVER_URL, LOCAL_URL } from "../utils/constants";
 import axios from "axios";
 
+export const setLocalServer = (store, value) => {
+  store.setState({
+    debug: {
+      ...store.state.debug,
+      localServer: value ? value : !store.state.debug.localServer,
+    },
+  });
+};
+
 export const POST = async (store, url) => {};
 
-export const GET = async (store, dir, local, params) => {
+export const GET = async (store, dir, params, local) => {
+  // if local is present, override the global debug.localSerer
+  const localServer = local || store.state.debug.localServer;
+
   const token = localStorage.getItem("token");
 
   console.log("params,", params, typeof params);
@@ -19,7 +31,7 @@ export const GET = async (store, dir, local, params) => {
 
   var config = {
     method: "get",
-    url: (!local ? SERVER_URL : LOCAL_URL) + dir,
+    url: (!localServer ? SERVER_URL : LOCAL_URL) + dir,
     headers: {
       "Content-Type": "application/json",
       Authorization: "Bearer " + token,
@@ -44,19 +56,25 @@ export const GET = async (store, dir, local, params) => {
     console.log("bad token or user without routes", err);
     return {
       res: err.response,
-      status: err.response.status,
-      message: err.response.data.message,
+      status: err.response && err.response.status,
+      message: err.response && err.response.data.message,
       type: "error",
     };
   }
 };
 
+//this one should be the only one using local as param
+// as it is actually independent from gloabal param debug.localServer
 export const isAvailable = async (store, local) => {
   const timeout = new Promise((resolve, reject) => {
     setTimeout(reject, 1000, "Request timed out");
   });
 
-  const request = await store.actions.server.GET("/test", local);
+  const request = await store.actions.server.GET(
+    "/ping",
+    { mode: "ping" },
+    local
+  );
 
   return Promise.race([timeout, request])
     .then((response) => {

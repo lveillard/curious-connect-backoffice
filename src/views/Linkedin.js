@@ -39,7 +39,6 @@ const Template = () => {
     "https://www.linkedin.com/in/loic-veillard,https://www.linkedin.com/in/bianca-schor/,https://www.linkedin.com/company/21430/, https://www.linkedin.com/company/2895666/, https://www.linkedin.com/company/2598135/, https://www.linkedin.com/company/10831358/, https://www.linkedin.com/company/973023/"
   );
   const [token, setToken] = useState("AQ...");
-  const [local, setLocal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [cancel, setCancel] = useState(false);
 
@@ -66,16 +65,6 @@ const Template = () => {
                 <Row className="align-items-center">
                   <Col xs="6">
                     <h3 className="mb-0">Linkedin tools</h3>
-                    <Checkbox
-                      checked={local}
-                      onChange={(e, v) => {
-                        setLocal(v);
-                        console.log("local", local);
-                      }}
-                    >
-                      {" "}
-                      Local server
-                    </Checkbox>
                   </Col>
                 </Row>
               </CardHeader>
@@ -146,7 +135,6 @@ const Template = () => {
                                     //await timeout(2000);
                                     let answer = await globalActions.server.GET(
                                       "/linkedin",
-                                      local,
                                       {
                                         token,
                                         linkedinUrl: x.trim(),
