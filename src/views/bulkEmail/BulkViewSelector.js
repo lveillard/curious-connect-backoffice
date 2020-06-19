@@ -16,9 +16,10 @@ const BulkViewSelector = () => {
 
   return (
     <>
-      <Nav tabs syle={{ background: "transparent" }}>
+      <Nav tabs style={{ background: "transparent" }}>
         <NavItem
           style={{
+            borderRight: "solid 1px #2e456c",
             background:
               globalState.subView.bulkEmail === "readyToSend"
                 ? "#152849"
@@ -29,6 +30,10 @@ const BulkViewSelector = () => {
             textAlign: "center",
             color: "white",
             cursor: "pointer",
+            borderNottom:
+              globalState.subView.bulkEmail === "readyToSend"
+                ? "unset"
+                : "2px solid #2e456c",
           }}
         >
           <NavLink
@@ -62,15 +67,19 @@ const BulkViewSelector = () => {
         </NavItem>
         <NavItem
           style={{
+            borderLeft: "1px solid #0c1b33",
             background:
               globalState.subView.bulkEmail === "sent" ? "#152849" : "#172d52",
-            borderRight: "solid 1px #5e72e4",
             borderTopRightRadius: "6px",
             borderTopLeftRadius: "6px",
             width: "50%",
             textAlign: "center",
             color: "white",
             cursor: "pointer",
+            borderNottom:
+              globalState.subView.bulkEmail === "sent"
+                ? "unset"
+                : "2px solid #2e456c",
           }}
         >
           <NavLink

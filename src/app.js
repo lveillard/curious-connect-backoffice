@@ -17,6 +17,10 @@ const App = () => {
   }
 
   useEffect(() => {
+    console.log("gapi status:", globalActions.gapi.gmail());
+  });
+
+  useEffect(() => {
     function handleResize() {
       const size = getSize();
       globalActions.config.setSize(size);

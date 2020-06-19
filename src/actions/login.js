@@ -116,6 +116,10 @@ export const logout = async (store) => {
 };
 
 export const getUser = async (store) => {
+  /*store.setState({ count: store.state.count + 1 || 1 });
+  console.log("Ciclo:", store.state.count);
+  console.log("getUser", store.actions.gapi.gmail());*/
+
   const token = localStorage.getItem("token");
   store.setState({ token: token });
   store.setState({ confirmedToken: false });
@@ -138,7 +142,11 @@ export const getUser = async (store) => {
       store.setState({ confirmedToken: true });
 
       //initialize gapi + check if already logged in
+      console.log("Step A.1", store.actions.gapi.gmail());
+
       store.actions.gapi.load();
+      console.log("Step C.1", store.actions.gapi.gmail());
+
       return true;
     } catch (err) {
       console.log("bad token:", err);

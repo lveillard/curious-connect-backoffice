@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 
-import EmailHeader from "components/Headers/EmailHeader.js";
 import JsonViewer from "../components/jsonViewer";
 
 import { useGlobal } from "../store";
 
-import { ControlLabel, Checkbox } from "rsuite";
+import { ControlLabel } from "rsuite";
 
 import {
   Button,
@@ -13,10 +12,8 @@ import {
   CardHeader,
   CardBody,
   FormGroup,
-  Form,
   Input,
   Container,
-  Alert as Info,
   Row,
   Col,
 } from "reactstrap";
@@ -206,6 +203,7 @@ const Template = () => {
                           name={answers[0].type}
                           src={answers[0]}
                           collapsed={true}
+                          permissions={{ copy: true }}
                         />
                       </FormGroup>
                     )}

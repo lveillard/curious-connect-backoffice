@@ -3,6 +3,16 @@ import { gapi, loadAuth2 } from "gapi-script";
 const SCOPES =
   "https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.compose https://www.googleapis.com/auth/gmail.send";
 
+export const addScopes = async (store, scope) => {
+  const options = new gapi.auth2.SigninOptionsBuilder({ scope: scope });
+
+  let auth2 = await loadAuth2(process.env.REACT_APP_CLIENT_ID, SCOPES);
+
+  const googleUser = auth2.currentUser.get();
+
+  return { options: options, googleUser: googleUser };
+};
+
 export const initClient = (store) => {
   gapi.client.init({
     apiKey: process.env.REACT_APP_API_KEY,
@@ -14,25 +24,62 @@ export const initClient = (store) => {
   });
 };
 
+export const listHistory = (store) => {
+  return new Promise((resolve, reject) => {
+    var thread = store.actions.gapi.gmail().users.history.list({
+      userId: "me",
+    });
+
+    thread.execute((answer) => {
+      resolve(answer);
+    });
+  });
+};
+
+export const gmail = (store) => {
+  if (!gapi.client) {
+    console.warn("gapi.client not loaded");
+    return null;
+  }
+
+  if (gapi.client.gmail) {
+    return gapi.client.gmail;
+  } else {
+    console.warn("gapi.client.gmail not loaded");
+    return null;
+  }
+};
+
 export const load = async (store) => {
   try {
     //to-do LOADING thing
 
+    console.group("gapi.load");
     //init the GAPI (not required to log in or check login, but yes for using gapi.client)
-    gapi.load("client:auth2", store.actions.gapi.initClient);
+    await gapi.load("client:auth2", store.actions.gapi.initClient);
+    console.log("Step B.1");
 
     // init auth2 object
     let auth2 = await loadAuth2(process.env.REACT_APP_CLIENT_ID, SCOPES);
+    console.log("Step B.2");
 
     //checking if already logged
     if (auth2.isSignedIn.get()) {
       store.setState({ gapiAuthed: true }); // Succès !
+      console.log("Step B.3");
+
       let auth = auth2;
       store.setState({ auth: auth.currentUser.get() });
-      store.setState({ guser: auth.currentUser.get().getBasicProfile() });
+      console.log("Step B.4");
 
-      //load senders
+      store.setState({ guser: auth.currentUser.get().getBasicProfile() });
+      console.log("Step B.5");
+
+      //load senders (too early , we need to do it after some how)
       store.actions.gapi.getSenders();
+      console.log("Step B.6");
+
+      console.groupEnd();
 
       //to-do LOADING done
     }
@@ -73,8 +120,9 @@ export const handleSignout = (store) => {
 }; */
 
 export const getLabels = (store) => {
-  gapi.client.gmail.users.labels
-    .list({
+  store.actions.gapi
+    .gmail()
+    .users.labels.list({
       userId: "me",
     })
     .then(function (response) {
@@ -90,7 +138,7 @@ export const getLabels = (store) => {
 };
 
 export const getDraft = (store, id, callback) => {
-  var draft = gapi.client.gmail.users.drafts.get({
+  var draft = store.actions.gapi.gmail().users.drafts.get({
     userId: "me",
     id: id,
     format: "raw",
@@ -107,15 +155,20 @@ export const getDraft = (store, id, callback) => {
 };
 
 export const getSenders = async (store) => {
-  let response = await store.actions.gapi.getSendersPromise();
-  let senders = response.result.sendAs;
-  store.setState({ senders: senders });
+  try {
+    let response = await store.actions.gapi.getSendersPromise();
+    let senders = response.result.sendAs;
+    store.setState({ senders: senders });
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 export const getSendersPromise = (store, raw) => {
   return new Promise((resolve, reject) => {
-    gapi.client.gmail.users.settings.sendAs
-      .list({
+    store.actions.gapi
+      .gmail()
+      .users.settings.sendAs.list({
         userId: "me",
       })
       .then((answer) => resolve(answer));
@@ -125,7 +178,7 @@ export const getSendersPromise = (store, raw) => {
 export const sendMessage = (store, raw, callback) => {
   //sending the message
 
-  var request = gapi.client.gmail.users.messages.send({
+  var request = store.actions.gapi.gmail().users.messages.send({
     userId: "me",
     resource: {
       raw: window
@@ -147,7 +200,7 @@ export const sendMessagePromise = (store, raw) => {
 
 export const getThread = (store, id) => {
   return new Promise((resolve, reject) => {
-    var thread = gapi.client.gmail.users.threads.get({
+    var thread = store.actions.gapi.gmail().users.threads.get({
       userId: "me",
       id: id,
     });

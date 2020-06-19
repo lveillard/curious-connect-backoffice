@@ -95,7 +95,6 @@ const BulkTable = () => {
             {/* Card header */}
             <CardHeader
               style={{
-                marginRight: "1px",
                 background: "#152849",
 
                 // background: globalState.subView.bulkEmail==="readyToSend" ? "#152849" : "#172d52",

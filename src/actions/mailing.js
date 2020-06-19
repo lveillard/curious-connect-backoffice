@@ -13,9 +13,16 @@ export const ReadyToSendSetConfig = (store, object) => {
 
 export const checkSenders = (store) => {
   if (!store.state.senders) {
-    console.log("error in checksenders");
+    console.log("No senders, loading...");
+    // then try to load them
+    try {
+      store.actions.gapi.getSenders();
+    } catch (err) {
+      console.log("Error loading senders");
+    }
     return false;
   }
+
   //find records with no matching senders
   const errors = store.state.readyToSendRecords.filter(
     (x) => !store.state.senders.some((y) => x.senderAddress === y.sendAsEmail)

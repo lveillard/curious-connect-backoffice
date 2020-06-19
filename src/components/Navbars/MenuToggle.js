@@ -86,7 +86,12 @@ const MenuToggle = (props) => {
           <i className="ni ni-sound-wave" />
           <span>State</span>
         </DropdownItem>
-        <DropdownItem onClick={() => globalActions.server.setLocalServer()}>
+        <DropdownItem
+          onClick={() => {
+            globalActions.server.setLocalServer();
+            globalActions.login.getUser();
+          }}
+        >
           <Checkbox checked={globalState.debug.localServer}>
             LocalServer
           </Checkbox>

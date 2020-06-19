@@ -15,11 +15,7 @@ export const POST = async (store, url) => {};
 export const GET = async (store, dir, params, local) => {
   // if local is present, override the global debug.localSerer
   const localServer = local || store.state.debug.localServer;
-
   const token = localStorage.getItem("token");
-
-  console.log("params,", params, typeof params);
-
   //to-do find a way to do this inmmutably
   var json = {};
 

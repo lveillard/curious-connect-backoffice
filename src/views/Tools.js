@@ -53,7 +53,7 @@ const Tools = () => {
     );
 
     //create draft
-    var request = gapi.client.gmail.users.drafts.create({
+    var request = globalActions.gapi.gmail().users.drafts.create({
       userId: "me",
       resource: {
         message: {
@@ -105,7 +105,7 @@ const Tools = () => {
     if (!gapi.client) {
       return null;
     }
-    var request = gapi.client.gmail.users.drafts.list({
+    var request = globalActions.gapi.gmail().users.drafts.list({
       userId: userId,
     });
     request.execute(function (resp) {
@@ -116,8 +116,9 @@ const Tools = () => {
   }
 
   function listThreads() {
-    gapi.client.gmail.users.threads
-      .list({
+    globalActions.gapi
+      .gmail()
+      .users.threads.list({
         userId: "me",
       })
       .then(function (response) {
@@ -399,6 +400,74 @@ const Tools = () => {
                     id="list_drafts"
                   >
                     List Drafts
+                  </Button>
+                </CardBody>
+              </Card>
+
+              <Card style={{ background: "#444" }} className="shadow mt-5">
+                <CardHeader className="bg-transparent">
+                  <Row className="align-items-center">
+                    <div className="col">
+                      <h6 className="text-uppercase text-muted ls-1 mb-1">
+                        Scopes
+                      </h6>
+                      <h2 className="mb-0 text-white">Add Scope </h2>
+                    </div>
+                  </Row>
+                </CardHeader>
+                <CardBody>
+                  <div style={{ color: "white" }}></div>
+                  <br />
+                  <Button
+                    onClick={async () => {
+                      const answer = await globalActions.gapi.addScopes(
+                        "https://www.googleapis.com/auth/gmail.settings.sharing"
+                      );
+
+                      console.log(globalState);
+
+                      answer.googleUser.grant(answer.options).then(
+                        function (success) {
+                          console.log(
+                            JSON.stringify({
+                              message: "success",
+                              value: success,
+                            })
+                          );
+                        },
+                        function (fail) {
+                          alert(
+                            JSON.stringify({ message: "fail", value: fail })
+                          );
+                        }
+                      );
+                    }}
+                  >
+                    Add scope
+                  </Button>
+                </CardBody>
+              </Card>
+
+              <Card style={{ background: "#444" }} className="shadow mt-5">
+                <CardHeader className="bg-transparent">
+                  <Row className="align-items-center">
+                    <div className="col">
+                      <h6 className="text-uppercase text-muted ls-1 mb-1">
+                        History
+                      </h6>
+                      <h2 className="mb-0 text-white"> List history </h2>
+                    </div>
+                  </Row>
+                </CardHeader>
+                <CardBody>
+                  <div style={{ color: "white" }}></div>
+                  <br />
+                  <Button
+                    onClick={() => {
+                      globalActions.gapi.listHistory();
+                    }}
+                  >
+                    List history
                   </Button>
                 </CardBody>
               </Card>

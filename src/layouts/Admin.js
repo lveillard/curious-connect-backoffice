@@ -13,6 +13,8 @@ import Profile from "../views/examples/Profile";
 import Tools from "../views/Tools";
 import BulkEmail from "../views/BulkEmail";
 import EmailGenerator from "../views/EmailGenerator";
+import EmailVerifier from "../views/EmailVerifier";
+
 import Templater from "../views/Templater";
 import Server from "../views/Server";
 import Students from "../views/Students";
@@ -66,6 +68,7 @@ const Admin = () => {
     EmailGenerator: EmailGenerator,
     Server: Server,
     Linkedin: Linkedin,
+    EmailVerifier: EmailVerifier,
   };
 
   const getRoutes = () => {
