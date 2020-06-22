@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import JsonViewer from "../components/jsonViewer";
+import JsonViewer from "../components/Common/JsonViewer";
 
 import { useGlobal } from "../store";
 
@@ -86,7 +86,7 @@ const Template = () => {
                       </label>
                       <Input
                         className="form-control-alternative"
-                        type="text"
+                        type="textarea"
                         value={linkedinUrl}
                         onChange={(e) => setLinkedinUrl(e.target.value)}
                       />

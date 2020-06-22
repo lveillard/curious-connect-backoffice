@@ -15,7 +15,7 @@ import {
 
 import { SERVER_URL } from "../utils/constants";
 
-import JsonViewer from "../components/jsonViewer";
+import JsonViewer from "../components/Common/JsonViewer";
 
 import { Input, ControlLabel, Checkbox } from "rsuite";
 

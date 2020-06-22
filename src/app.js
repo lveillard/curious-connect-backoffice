@@ -17,7 +17,7 @@ const App = () => {
   }
 
   useEffect(() => {
-    console.log("gapi status:", globalActions.gapi.gmail());
+    //console.log("gapi status:", globalActions.gapi.gmail());
   });
 
   useEffect(() => {

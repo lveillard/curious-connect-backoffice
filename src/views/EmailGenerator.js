@@ -16,6 +16,8 @@ import {
 } from "reactstrap";
 
 import { useGlobal } from "../store";
+import BulkEmailGenerator from "./emailGenerator/BulkMailGenerator";
+import SingleEmailGenerator from "./emailGenerator/SingleMailGenerator";
 
 const EmailGenerator = () => {
   const [globalState, globalActions] = useGlobal();
@@ -25,20 +27,20 @@ const EmailGenerator = () => {
   const [domain, setDomain] = useState("");
   const [activePostVariator, setActivePostVariator] = useState("");
 
+  const [isBulk, setIsBulk] = useState(false);
+
   useEffect(() => {
     /*async function fetchMyAPI() {
-
+ 
     }*/
   }, []);
 
   return (
     <>
-      <div className="bg-gradient-primary" style={{ height: "200px" }}>
-        {" "}
-      </div>
+      <div className="bg-gradient-primary" style={{ height: "200px" }}></div>
       <Container className="mt--7" fluid>
         <Row>
-          <Col className="order-xl-1 mb-5" xl="8">
+          <Col className="order-xl-1 mb-5" xl={isBulk ? "12" : "8"}>
             <Card className="bg-secondary shadow">
               <CardHeader className="bg-white border-0">
                 <Row className="align-items-center">
@@ -47,53 +49,16 @@ const EmailGenerator = () => {
                   </Col>
                   <Col className="text-right" xs="6">
                     <FormGroup>
-                      {" "}
-                      {false && (
-                        <Button
-                          color="danger"
-                          disabled={true || !name || !familyName || !domain}
-                          onClick={(e) => {
-                            e.preventDefault();
-
-                            globalActions.generator.hardGenerate(
-                              name,
-                              familyName,
-                              domain,
-                              activePostVariator
-                            );
-                          }}
-                          size="sm"
-                        >
-                          Hard-generate
-                        </Button>
-                      )}
                       <Button
                         color="primary"
-                        disabled={!name || !familyName || !domain}
                         onClick={async (e) => {
                           e.preventDefault();
-
-                          try {
-                            let answer = await globalActions.server.GET(
-                              "/generateEmail",
-                              {
-                                name,
-                                familyName,
-                                domain,
-                                activePostVariator,
-                              }
-                            );
-
-                            let { data } = answer.res;
-                            globalActions.generator.setProp("emailList", data);
-                          } catch (err) {
-                            console.log(err);
-                          }
+                          setIsBulk((bulk) => !bulk);
                         }}
                         size="sm"
                       >
-                        Generate
-                      </Button>{" "}
+                        {isBulk ? "individual" : "Bulk"}
+                      </Button>
                     </FormGroup>
                   </Col>
                 </Row>
@@ -107,83 +72,20 @@ const EmailGenerator = () => {
                     names
                     <br /> - You can use special letters like è, ô, ï...
                   </Info>
-                  <div className="pl-lg-4">
-                    <Row>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-name"
-                          >
-                            Name
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            id="input-name"
-                            placeholder="Raïmond-philippe Samuel"
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-last"
-                          >
-                            Family Name
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            id="input-last-name"
-                            placeholder="Tomlinson García"
-                            type="text"
-                            value={familyName}
-                            onChange={(e) => setFamilyName(e.target.value)}
-                          />
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-company-domain"
-                          >
-                            Company Domain
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            id="input-company-domain"
-                            placeholder="domain.xyz"
-                            type="text"
-                            value={domain}
-                            onChange={(e) => setDomain(e.target.value)}
-                          />
-                        </FormGroup>
-                      </Col>
-
-                      <Col lg="6">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-last"
-                          >
-                            Options
-                          </label>
-                          <Checkbox
-                            onChange={(e, v) => {
-                              setActivePostVariator(v);
-                            }}
-                          >
-                            Active dot variations
-                          </Checkbox>
-                        </FormGroup>
-                      </Col>
-                    </Row>
+                  <div className="">
+                    {isBulk ? (
+                      <Row>
+                        <Col>
+                          <BulkEmailGenerator />
+                        </Col>
+                      </Row>
+                    ) : (
+                      <Row>
+                        <Col>
+                          <SingleEmailGenerator />
+                        </Col>
+                      </Row>
+                    )}
                   </div>
                 </Form>
               </CardBody>
@@ -200,7 +102,6 @@ const EmailGenerator = () => {
                     </Col>
                     <Col className="text-right" xs="4">
                       <FormGroup>
-                        {" "}
                         <Button
                           color="warning"
                           disabled={!name || !familyName || !domain}
@@ -216,7 +117,7 @@ const EmailGenerator = () => {
                           size="sm"
                         >
                           Verify
-                        </Button>{" "}
+                        </Button>
                       </FormGroup>
                     </Col>
                   </Row>
