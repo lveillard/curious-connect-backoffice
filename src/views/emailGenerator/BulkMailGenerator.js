@@ -3,7 +3,11 @@ import React, { useEffect, useState } from "react";
 import { Checkbox } from "rsuite";
 import { Button, FormGroup, Row, Col } from "reactstrap";
 
-import DataSheet, { setCell, getCell } from "../../components/Common/DataSheet";
+import DataSheet, {
+  setCell,
+  getCell,
+  generateRows,
+} from "../../components/Common/DataSheet";
 
 import { useGlobal } from "../../store";
 
@@ -42,6 +46,15 @@ const BulkEmailGenerator = (props) => {
     []
   );
 
+  const [celus, setCelus] = useState(generateRows(columns, 2));
+  //const [key, setKey] = useState(0);
+  //const [bestGuess, setBestGuess] = useState("");
+  //const col = 3;
+
+  useEffect(() => {
+    globalActions.generator.setProp("bulkData", celus); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [celus]);
+
   useEffect(() => {
     /*async function fetchMyAPI() 
 
@@ -55,9 +68,7 @@ const BulkEmailGenerator = (props) => {
         <Col>
           <DataSheet
             data={globalState.mailGenerator.bulkData}
-            onChangeData={(modifiedCells) =>
-              globalActions.generator.setProp("bulkData", modifiedCells)
-            }
+            onChangeData={(modifications) => setCelus(modifications)}
             columns={columns}
           />
         </Col>
@@ -115,6 +126,7 @@ const BulkEmailGenerator = (props) => {
                   // eslint-disable-next-line no-unused-vars
                   let verifiedEmails = await Promise.all(
                     data.map(async (line, key) => {
+                      //for (const [key, line] of data.entries()) {
                       if (!line.name || !line.familyName || !line.domain) {
                         return false;
                       }
@@ -129,16 +141,11 @@ const BulkEmailGenerator = (props) => {
 
                       const result = answer.res.data;
                       const bestGuess = result.bestGuess.join(",");
-                      globalActions.generator.setProp(
-                        "bulkData",
-                        setCell(
-                          globalState.mailGenerator.bulkData,
-                          key + 1,
-                          3,
-                          bestGuess
-                        )
+                      console.log("result:", result);
+
+                      setCelus((celus) =>
+                        setCell(celus, key + 1, 3, bestGuess)
                       );
-                      return true;
                     })
                   );
                 } catch (err) {

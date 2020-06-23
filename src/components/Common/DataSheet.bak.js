@@ -23,26 +23,26 @@ export const getCell = (current, row, col) => {
   return current[row - 1][col];
 };
 
-export const generateRows = (columns, numberOfRows) => {
-  const RowVector = Array.from(Array(numberOfRows), (_, i) => i + 1);
-
-  const rows = RowVector.map((row) =>
-    columns.map((col) => {
-      return {
-        value: "",
-        expr: "",
-        row: row,
-        col: col.col,
-        key: row + ":" + col.col,
-        readOnly: col.readOnlyColumn ? true : false,
-      };
-    })
-  );
-
-  return rows;
-};
-
 export default (props) => {
+  const generateRows = (numberOfRows) => {
+    const RowVector = Array.from(Array(numberOfRows), (_, i) => i + 1);
+
+    const rows = RowVector.map((row) =>
+      props.columns.map((col) => {
+        return {
+          value: "",
+          expr: "",
+          row: row,
+          col: col.col,
+          key: row + ":" + col.col,
+          readOnly: col.readOnlyColumn ? true : false,
+        };
+      })
+    );
+
+    return rows;
+  };
+
   /*const generateTable = (columns, numberOfRows) => {
     const table = [columns].concat(generateRows(numberOfRows));
 
@@ -81,8 +81,9 @@ export default (props) => {
   }; */
 
   const onCellsChanged = (changes, additions) => {
-    //console.log("changes", changes);
-    //console.log("additions", additions);
+    console.log("changes", changes);
+    console.log("additions", additions);
+    const celus = props.data;
 
     //if additions > 0 => add columns
     const currentRows = celus.length;
@@ -91,43 +92,37 @@ export default (props) => {
     const newRows = lastRow - currentRows;
 
     if (newRows > 0) {
-      setCelus((celus) => celus.concat(generateRows(props.columns, newRows)));
+      props.changeData(props.data.concat(generateRows(newRows)));
 
       additions.map((x) =>
-        setCelus((celus) => updateRows(celus, x.row, x.col, x.value))
+        props.changeData(updateRows(props.data, x.row, x.col, x.value))
       );
     }
-
+    console.log("PROPS.DATA", props.data);
     changes.map((x) =>
-      setCelus((celus) => updateRows(celus, x.row, x.col, x.value))
+      props.updateData(setCell(props.data, x.row, x.col, x.value))
     );
+    console.log("PROPS.DATA", props.data);
   };
-
-  const initData =
-    props.data && props.data.length > 0
-      ? props.data
-      : generateRows(props.columns, 2);
-  const [celus, setCelus] = useState(() => initData);
-
   const changeParentData = () => {
-    props.onChangeData(celus);
+    //props.onChangeData(celus);
   };
 
   useEffect(() => {
-    changeParentData(celus);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [celus]);
+    const init =
+      props.data && props.data.length > 0 ? props.data : generateRows(2);
+    console.log("init", init);
+    props.updateData(init);
 
-  useEffect(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  });
+  }, []);
 
   return (
     <>
       <div
         className={"add-button"}
         onClick={() => {
-          setCelus((celus) => celus.concat(generateRows(props.columns, 1)));
+          //props.OnChangeData((celus) => celus.concat(generateRows(1)));
         }}
       >
         Add row
