@@ -34,3 +34,42 @@ export const useFileReader = (options) => {
 
   return [{ result, error, file, loading }, setFile];
 };
+
+export const objectMap = () => {
+  Object.defineProperty(Object.prototype, "oMap", {
+    enumerable: false,
+    value: function (mapEntriesCallback) {
+      return Object.fromEntries(
+        Object.entries(this).map(([key, value], index) => [
+          key,
+          mapEntriesCallback(value, key, this, index),
+        ])
+      );
+    },
+  });
+};
+
+export const objectFilter = () => {
+  Object.defineProperty(Object.prototype, "oFilter", {
+    enumerable: false,
+    value: function (predicate) {
+      return Object.keys(this)
+        .filter((key) => predicate(this[key]))
+        .reduce((res, key) => ((res[key] = this[key]), res), {});
+    },
+  });
+};
+
+export const StringClean = () => {
+  Object.defineProperty(String.prototype, "sClean", {
+    enumerable: false,
+    value: function () {
+      return this.toLowerCase()
+        .trim()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-zA-Z_-\s]/g, "")
+        .replace(/[_]/g, "-");
+    },
+  });
+};

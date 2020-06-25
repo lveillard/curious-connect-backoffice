@@ -9,6 +9,8 @@ import "assets/scss/argon-dashboard-react.scss";
 import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
 
+import { objectMap, objectFilter, StringClean } from "./utils/coreHelpers";
+
 import App from "./app";
 
 //Too many errors from dependencies
@@ -18,5 +20,10 @@ import App from "./app";
   </React.StrictMode>,
   document.getElementById("root")
 );*/
+
+//I live on danger
+objectMap();
+objectFilter();
+StringClean();
 
 ReactDOM.render(<App />, document.getElementById("root"));

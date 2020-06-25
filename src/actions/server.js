@@ -10,7 +10,26 @@ export const setLocalServer = (store, value) => {
   });
 };
 
-export const POST = async (store, url) => {};
+export const POST = async (store, dir, body, local) => {
+  const localServer = local || store.state.debug.localServer;
+  const token = localStorage.getItem("token");
+
+  const config = {
+    method: "post",
+    url: (localServer ? LOCAL_URL : SERVER_URL) + dir,
+    data: { body },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token,
+    },
+  };
+
+  try {
+    await axios.post(config);
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 export const GET = async (store, dir, params, local) => {
   // if local is present, override the global debug.localSerer
@@ -25,7 +44,7 @@ export const GET = async (store, dir, params, local) => {
     json = params;
   }
 
-  var config = {
+  const config = {
     method: "get",
     url: (localServer ? LOCAL_URL : SERVER_URL) + dir,
     headers: {

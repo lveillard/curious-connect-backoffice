@@ -42,6 +42,22 @@ const BulkEmailGenerator = (props) => {
         readOnlyColumn: true,
         width: "35%",
       },
+      {
+        value: "Type",
+        row: 0,
+        col: 4,
+        readOnly: true,
+        readOnlyColumn: true,
+        width: "15%",
+      },
+      {
+        value: "Info",
+        row: 0,
+        col: 5,
+        readOnly: true,
+        readOnlyColumn: true,
+        width: "10%",
+      },
     ],
     []
   );
@@ -50,6 +66,30 @@ const BulkEmailGenerator = (props) => {
   //const [key, setKey] = useState(0);
   //const [bestGuess, setBestGuess] = useState("");
   //const col = 3;
+
+  const handleGeneratorSuccess = (key, result) => {
+    const answer = result;
+
+    if (answer.acceptAll) {
+      setCelus((celus) => setCell(celus, key + 1, 4, "accept all"));
+    } else {
+      setCelus((celus) => setCell(celus, key + 1, 3, answer.bestGuess));
+      setCelus((celus) => setCell(celus, key + 1, 4, "Found!"));
+      setCelus((celus) => setCell(celus, key + 1, 5, answer.bestGuessPattern));
+    }
+    return answer;
+  };
+
+  const handleGeneratorError = (key, err, result) => {
+    const answer = result
+      ? result
+      : {
+          type: "error",
+          message: err ? err.message : "Error",
+        };
+    setCelus((celus) => setCell(celus, key + 1, 4, answer.message));
+    return answer;
+  };
 
   useEffect(() => {
     globalActions.generator.setProp("bulkData", celus); // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -77,7 +117,7 @@ const BulkEmailGenerator = (props) => {
         <Col>
           <FormGroup className="pull-right mt-4">
             <Button
-              color="primary"
+              color="danger"
               onClick={async (e) => {
                 e.preventDefault();
 
@@ -90,25 +130,42 @@ const BulkEmailGenerator = (props) => {
                     };
                   });
 
-                  let answer = await globalActions.server.GET(
-                    "/generateEmail/bulk",
-                    {
-                      data,
-                    }
-                  );
+                  const verifiedEmails = await Promise.all(
+                    data.map(async (line, key) => {
+                      /*<--- lines without enough data --->*/
+                      if (!line.name || !line.familyName || !line.domain) {
+                        handleGeneratorError(key, { msg: "missing data" });
+                        return;
+                      }
+                      /*<--- lines with enough data --->*/
+                      const answer = await globalActions.server.GET(
+                        "/generateVerifiedEmail/v2",
+                        {
+                          ...line,
+                          activePostVariator: true,
+                        }
+                      );
 
-                  let result = answer.res.data;
-                  console.log(result);
+                      console.log("result", answer);
+                      const result = answer.res.data;
+
+                      return answer.type === "error"
+                        ? handleGeneratorError(key, result)
+                        : handleGeneratorSuccess(key, result);
+                    })
+                  );
+                  console.log("finished", verifiedEmails);
                 } catch (err) {
                   console.log(err);
                 }
               }}
             >
-              {`Generate combinations`}
+              {`Generate probable email`}
             </Button>
 
             <Button
               color="primary"
+              disabled={true}
               onClick={async (e) => {
                 e.preventDefault();
 
@@ -121,15 +178,19 @@ const BulkEmailGenerator = (props) => {
                     };
                   });
 
-                  //now that we have the datasheet data we can loop it
-
-                  // eslint-disable-next-line no-unused-vars
-                  let verifiedEmails = await Promise.all(
+                  const verifiedEmails = await Promise.all(
                     data.map(async (line, key) => {
-                      //for (const [key, line] of data.entries()) {
                       if (!line.name || !line.familyName || !line.domain) {
-                        return false;
+                        const answer = {
+                          type: "error",
+                          message: "Missing data",
+                        };
+                        setCelus((celus) =>
+                          setCell(celus, key + 1, 4, answer.message)
+                        );
+                        return answer;
                       }
+
                       //console.log("dataki", data[key]);
                       const answer = await globalActions.server.GET(
                         "/generateVerifiedEmail",
@@ -140,14 +201,65 @@ const BulkEmailGenerator = (props) => {
                       );
 
                       const result = answer.res.data;
-                      const bestGuess = result.bestGuess.join(",");
-                      console.log("result:", result);
 
+                      if (answer.type === "error") {
+                        console.log("holi", result);
+                        setCelus((celus) =>
+                          setCell(celus, key + 1, 4, result.message)
+                        );
+                        return result;
+                      }
+
+                      const bestGuess = result.bestGuess.join(",");
+
+                      console.log("result:", {
+                        ...result,
+                        line: JSON.stringify(line),
+                      });
+
+                      //adding best guess
                       setCelus((celus) =>
                         setCell(celus, key + 1, 3, bestGuess)
                       );
+
+                      //adding info
+                      setCelus((celus) =>
+                        setCell(
+                          celus,
+                          key + 1,
+                          4,
+                          result.helpers.acceptAll
+                            ? "Accept All"
+                            : result.helpers.needRetry
+                            ? "Retry"
+                            : result.helpers.formats
+                            ? result.helpers.formats
+                            : "Got 0 info"
+                        )
+                      );
+
+                      return result;
                     })
                   );
+
+                  /*
+                  const paidwhoisArray = verifiedEmails.map(
+                    (x) => x.helpers && x.helpers.checked.payedWhois
+                  );
+                  */
+
+                  //adding one in the array and removing it at the end for avoiding type error
+
+                  /* const payedEmails =
+                    [1, ...paidwhoisArray].reduce((a, b) => a + b, 0) - 1;
+                  const formatsArray = verifiedEmails.map(
+                    (x) => x.helpers && x.helpers.formats
+                  );*/
+
+                  console.log("finished", verifiedEmails);
+                  /*
+                  console.log("payedWhois:", payedEmails);
+                  console.log("formatsUsed:", formatsArray);*/
                 } catch (err) {
                   console.log(err);
                 }

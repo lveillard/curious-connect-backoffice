@@ -51,7 +51,7 @@
     "classnames": "2.2.6",
     "dotenv": "^8.2.0",
     "gapi-script": "^1.0.2",
-    "mathjs": "^7.0.1",
+    "mathjs": "^7.0.2",
     "mimetext": "^0.2.1",
     "moment": "2.24.0",
     "node-sass": "^4.14.1",

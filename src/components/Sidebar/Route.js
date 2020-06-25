@@ -34,6 +34,7 @@ import {
   DropdownMenu,
   DropdownItem,
   UncontrolledDropdown,
+  UncontrolledCollapse,
   DropdownToggle,
   FormGroup,
   Form,
@@ -63,7 +64,6 @@ const Route = (props) => {
 
   return (
     <React.Fragment>
-      {" "}
       {props.route.component ? (
         <NavItem>
           <NavLink
@@ -79,24 +79,48 @@ const Route = (props) => {
           </NavLink>
         </NavItem>
       ) : (
-        //if it has children
-        <div key={key}>
-          <NavItem>
-            <NavLink
-              onClick={() => {
-                this.toggleDropdown(props.route.name);
-              }}
-            >
-              <i className={props.route.icon} />
-              {props.route.name}
-            </NavLink>
-          </NavItem>
+        true && (
+          //if it has children
+          <div //key={key}
+          >
+            <NavItem>
+              <NavLink
+                id={props.route.name}
+                onClick={() => {
+                  //this.toggleDropdown(props.route.name);
+                }}
+              >
+                <i className={props.route.icon} />
+                {props.route.name}
+              </NavLink>
+            </NavItem>
 
-          {
-            //this.state.dropdown[props.route.name]
-            true ? this.createChildren(props.route.children) : null
-          }
-        </div>
+            <UncontrolledCollapse toggler={"#" + props.route.name}>
+              {props.route.children.map((x, key) => {
+                return (
+                  <NavItem key={key}>
+                    <NavLink
+                      to={x.layout + x.path}
+                      tag={NavLinkRRD}
+                      onClick={() =>
+                        globalActions.config.setConfig("toggledSidebar", false)
+                      }
+                      activeClassName="active"
+                    >
+                      <i className={"ml-3 " + x.icon} />
+                      {x.name}
+                    </NavLink>
+                  </NavItem>
+                );
+              })}
+            </UncontrolledCollapse>
+
+            {
+              //this.state.dropdown[props.route.name]
+              //true ? this.createChildren(props.route.children) : null
+            }
+          </div>
+        )
       )}
     </React.Fragment>
   );

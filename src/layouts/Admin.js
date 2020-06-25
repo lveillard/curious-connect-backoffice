@@ -20,6 +20,8 @@ import Server from "../views/Server";
 import Students from "../views/Students";
 import Linkedin from "../views/Linkedin";
 
+import Campaign from "../views/Campaign";
+
 import ToDo from "../views/ToDo";
 
 import "../assets/css/admin.css";
@@ -69,34 +71,9 @@ const Admin = () => {
     Server: Server,
     Linkedin: Linkedin,
     EmailVerifier: EmailVerifier,
+    Campaign: Campaign,
   };
 
-  const getRoutes = () => {
-    if (globalState.user) {
-      //children
-      let childrenRoutes = globalState.user.routes
-        .filter((x) => x.children)
-        .map((x) => x.children)[0];
-
-      let mainRoutes = globalState.user.routes;
-
-      let allRoutes = mainRoutes
-        .concat(childrenRoutes)
-        .filter((x) => x !== undefined);
-
-      return allRoutes
-        .filter((x) => x.layout === "/admin")
-        .map((x, key) => {
-          return (
-            <Route
-              path={x.layout + x.path}
-              component={views[x.component]}
-              key={key}
-            />
-          );
-        });
-    }
-  };
   return (
     <>
       {globalState.user && globalState.user.routes ? (
@@ -140,7 +117,33 @@ const Admin = () => {
               )}
 
             <Switch>
-              {getRoutes(globalState.user.routes)}
+              {/*<--- NORMAL ROUTES ---> */}
+              {globalState.user.routes
+                .filter((y) => y.component)
+                .map((x, key) => {
+                  return (
+                    <Route
+                      path={x.layout + x.path}
+                      component={views[x.component]}
+                      key={key}
+                    />
+                  );
+                })}
+              {/*<--- CHILDREN ROUTES ---> */}
+              {globalState.user.routes
+                .filter((array) => array.children)
+                .map((subarray) =>
+                  subarray.children.map((z, keyz) => {
+                    return (
+                      <Route
+                        path={z.layout + z.path}
+                        component={views[z.component]}
+                        key={keyz}
+                      />
+                    );
+                  })
+                )}
+
               <Redirect from="*" to="/admin/index" />
             </Switch>
             <Container fluid>

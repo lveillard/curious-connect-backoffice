@@ -125,7 +125,6 @@ const Template = () => {
                                 if (cancel) {
                                   console.log("request stopped");
                                   setCancel(false);
-
                                   break;
                                 } else
                                   try {

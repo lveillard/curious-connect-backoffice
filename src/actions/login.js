@@ -1,12 +1,11 @@
-import { SERVER_URL } from "../utils/constants";
+import { SERVER_URL, LOCAL_URL } from "../utils/constants";
 
 import axios from "axios";
-
 import { Alert } from "rsuite";
 
-const post = (email, password) => {
+export const post = (store, email, password) => {
   return axios.post(
-    `${SERVER_URL}/users/login`,
+    `${store.state.debug.localServer ? LOCAL_URL : SERVER_URL}/users/login`,
     {
       email,
       password,
@@ -45,7 +44,10 @@ export const login = async (store, credentials) => {
 
   if (!localStorage.getItem("token")) {
     try {
-      const { data } = await post(credentials.email, credentials.password);
+      const { data } = await store.actions.login.post(
+        credentials.email,
+        credentials.password
+      );
       localStorage.setItem("token", data.token);
       const user = data.user;
       store.setState({ user });
@@ -129,12 +131,15 @@ export const getUser = async (store) => {
     return false;
   } else {
     try {
-      const answer = await axios.get(`${SERVER_URL}/users/me`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
-        },
-      });
+      const answer = await axios.get(
+        `${store.state.debug.localServer ? LOCAL_URL : SERVER_URL}/users/me`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
 
       const { data } = answer;
       const user = data;

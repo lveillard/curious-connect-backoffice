@@ -1,22 +1,5 @@
-/*!
-
-=========================================================
-* Argon Dashboard React - v1.1.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-react
-* Copyright 2019 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 /*eslint-disable*/
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink as NavLinkRRD, Link, useLocation } from "react-router-dom";
 // nodejs library to set properties for components
 import { PropTypes } from "prop-types";
@@ -31,6 +14,7 @@ import {
   CardBody,
   CardTitle,
   Collapse,
+  UncontrolledCollapse,
   DropdownMenu,
   DropdownItem,
   UncontrolledDropdown,
