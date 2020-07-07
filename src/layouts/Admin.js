@@ -18,6 +18,8 @@ import EmailVerifier from "../views/EmailVerifier";
 import Templater from "../views/Templater";
 import Server from "../views/Server";
 import Students from "../views/Students";
+import Kanban from "../views/Kanban";
+
 import Linkedin from "../views/Linkedin";
 
 import Campaign from "../views/Campaign";
@@ -72,6 +74,7 @@ const Admin = () => {
     Linkedin: Linkedin,
     EmailVerifier: EmailVerifier,
     Campaign: Campaign,
+    Kanban: Kanban,
   };
 
   return (
