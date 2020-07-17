@@ -163,7 +163,7 @@ const Template = () => {
                                       console.log(
                                         "Loop stopped becaue of error with request: ",
                                         x,
-                                        answer.res.data && answer.res.data
+                                        answer.res && answer.res.data
                                       );
                                       setIsLoading(false);
 

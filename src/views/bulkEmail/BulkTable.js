@@ -317,7 +317,9 @@ const BulkTable = () => {
                         </th>
                         <th scope="row">
                           {" "}
-                          {x.company.length < 25
+                          {!x.company
+                            ? "error"
+                            : x.company.length < 25
                             ? x.company
                             : x.company.slice(0, 24) + "..."}
                         </th>

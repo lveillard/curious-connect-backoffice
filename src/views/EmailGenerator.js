@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-import { Checkbox } from "rsuite";
 import {
   Button,
   Card,
@@ -8,7 +7,6 @@ import {
   CardBody,
   FormGroup,
   Form,
-  Input,
   Container,
   Alert as Info,
   Row,
@@ -20,13 +18,6 @@ import BulkEmailGenerator from "./emailGenerator/BulkMailGenerator";
 import SingleEmailGenerator from "./emailGenerator/SingleMailGenerator";
 
 const EmailGenerator = () => {
-  const [globalState, globalActions] = useGlobal();
-
-  const [name, setName] = useState("");
-  const [familyName, setFamilyName] = useState("");
-  const [domain, setDomain] = useState("");
-  const [activePostVariator, setActivePostVariator] = useState("");
-
   const [isBulk, setIsBulk] = useState(false);
 
   useEffect(() => {
@@ -70,7 +61,7 @@ const EmailGenerator = () => {
                     - You can use complex names or family names like
                     "Jean-Philippe" <br /> - You can use up to 3 names / family
                     names
-                    <br /> - You can use special letters like è, ô, ï...
+                    <br /> - You can use special characters like è, ô, ï...
                   </Info>
                   <div className="">
                     {isBulk ? (
@@ -92,7 +83,7 @@ const EmailGenerator = () => {
             </Card>
           </Col>
 
-          {globalState.mailGenerator.emailList.length > 0 && (
+          {/*globalState.mailGenerator.emailList.length > 0 && (
             <Col className="order-xl-2 mb-5" xl="4">
               <Card className="bg-secondary shadow">
                 <CardHeader className="bg-white border-0">
@@ -142,7 +133,7 @@ const EmailGenerator = () => {
                 </CardBody>
               </Card>
             </Col>
-          )}
+                      ) */}
         </Row>
       </Container>
     </>

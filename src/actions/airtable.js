@@ -19,20 +19,30 @@ export const getPrograms = async (store) => {
     const { data } = answer;
 
     //set the programs
-    store.setState({ programs: data.programs });
+    store.setState({
+      programs: data.programs,
+    });
     // select first value by default
     store.actions.routes.setCurrentProgram(data.programs[0]);
   } catch (err) {
     console.log(err);
   }
   store.setState({
-    isLoading: { ...store.state.isLoading, airtable: false },
+    isLoading: {
+      ...store.state.isLoading,
+      airtable: false,
+    },
   });
 };
 
 export const getStudents = (store) => {
-  store.setState({ isLoading: { ...store.state.isLoading, airtable: true } });
-
+  store.setState({
+    isLoading: {
+      ...store.state.isLoading,
+      airtable: true,
+    },
+  });
+  console.log("toy buscando tudenss");
   let students = [];
 
   let query = store.state.currentProgram
@@ -80,10 +90,15 @@ export const getStudents = (store) => {
           return;
         } else {
           store.setState({
-            isLoading: { ...store.state.isLoading, airtable: false },
+            isLoading: {
+              ...store.state.isLoading,
+              airtable: false,
+            },
           });
 
-          store.setState({ students: students });
+          store.setState({
+            students: students,
+          });
         }
       }
     );
@@ -113,7 +128,10 @@ export const updateField = (store, id, field, value) => {
 export const getReadyToSendEmails = (store, filter) => {
   // loading
   store.setState({
-    isLoading: { ...store.state.isLoading, readyToSendRecords: true },
+    isLoading: {
+      ...store.state.isLoading,
+      readyToSendRecords: true,
+    },
   });
 
   // as we are refreshing, reset last pack of emails
@@ -140,7 +158,12 @@ export const getReadyToSendEmails = (store, filter) => {
       : null;
 
   const selectFinal = formula
-    ? { ...selectBase, ...{ filterByFormula: formula } }
+    ? {
+        ...selectBase,
+        ...{
+          filterByFormula: formula,
+        },
+      }
     : selectBase;
 
   let emails = [];
@@ -182,7 +205,10 @@ export const getReadyToSendEmails = (store, filter) => {
           return;
         } else {
           store.setState({
-            isLoading: { ...store.state.isLoading, readyToSendRecords: false },
+            isLoading: {
+              ...store.state.isLoading,
+              readyToSendRecords: false,
+            },
           });
 
           store.setState({
@@ -198,7 +224,10 @@ export const getReadyToSendEmails = (store, filter) => {
 export const getSentEmails = (store) => {
   // loading
   store.setState({
-    isLoading: { ...store.state.isLoading, sentRecords: true },
+    isLoading: {
+      ...store.state.isLoading,
+      sentRecords: true,
+    },
   });
 
   // as we are refreshing, reset last pack of emails
@@ -224,24 +253,26 @@ export const getSentEmails = (store) => {
         store.state.currentProgram.programCodeShort +
         "', {sender.email} = '" +
         store.state.bulkSender.currentStudent.emailSender +
-        "')"
-      : // only currentStudent
-      store.state.bulkSender.currentStudent
+        "')" // only currentStudent
+      : store.state.bulkSender.currentStudent
       ? "{sender.email} = '" +
         store.state.bulkSender.currentStudent.emailSender +
-        "'"
-      : //only current program
-      store.state.currentProgram
+        "'" //only current program
+      : store.state.currentProgram
       ? "{sender.programCodeShort} = '" +
         store.state.currentProgram.programCodeShort +
-        "'"
-      : //if none of them
-        null;
+        "'" //if none of them
+      : null;
 
   console.log("formula", formula);
 
   const selectFinal = formula
-    ? { ...selectBase, ...{ filterByFormula: formula } }
+    ? {
+        ...selectBase,
+        ...{
+          filterByFormula: formula,
+        },
+      }
     : selectBase;
 
   let emails = [];
@@ -293,7 +324,10 @@ export const getSentEmails = (store) => {
 
           // STOP THE LOADING
           store.setState({
-            isLoading: { ...store.state.isLoading, sentRecords: false },
+            isLoading: {
+              ...store.state.isLoading,
+              sentRecords: false,
+            },
           });
 
           console.log("getSentEmails-records", store.state.sentRecords);

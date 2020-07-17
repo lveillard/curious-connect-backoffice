@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
 
-import { Button } from "reactstrap";
-
-import EmailHeader from "components/Headers/EmailHeader.js";
-
 import { useGlobal } from "../store";
 
 import Board from "react-trello";
+
+import "../assets/css/kanban.css";
 
 //steps:
 // 1) Copy Kanban
@@ -86,7 +84,7 @@ const Kanban = () => {
         laneDraggable={false}
         data={data}
         style={{ background: "#efefec" }}
-        laneStyle={{ background: "#efefec" }}
+        laneStyle={{ background: "#efefec", paddingBottom: "400px" }}
       />
     </>
   );

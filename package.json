@@ -28,6 +28,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
     "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && npm start",
     "compile-sass": "node-sass src/assets/scss/argon-dashboard-react.scss src/assets/css/argon-dashboard-react.css",
     "minify-sass": "node-sass src/assets/scss/argon-dashboard-react.scss src/assets/css/argon-dashboard-react.min.css --output-style compressed",
@@ -75,6 +76,7 @@
     "react-virtualized": "^9.21.2",
     "reactstrap": "8.4.1",
     "rsuite": "^4.7.5",
+    "source-map-explorer": "^2.4.2",
     "styled-components": "^5.1.1",
     "use-global-hook": "^0.1.12"
   },
