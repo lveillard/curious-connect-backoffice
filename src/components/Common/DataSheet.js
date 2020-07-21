@@ -54,6 +54,7 @@ export default (props) => {
   const updateRows = (current, changedRow, changedCol, newValue) => {
     //const RowVector = Array.from(Array(current.length - 1), (_, i) => i + 1);
     const RowVector = Array.from(Array(current.length), (_, i) => i + 1);
+
     const rows = RowVector.map((r) =>
       props.columns.map((c) => {
         return {

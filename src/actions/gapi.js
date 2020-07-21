@@ -157,7 +157,9 @@ export const getDraft = (store, id, callback) => {
 export const getSenders = async (store) => {
   try {
     let response = await store.actions.gapi.getSendersPromise();
-    let senders = response.result.sendAs;
+    let senders = response.result.sendAs.filter(
+      (x) => x.verificationStatus === "accepted"
+    );
     store.setState({ senders: senders });
   } catch (err) {
     console.log(err);

@@ -42,7 +42,6 @@ export const getStudents = (store) => {
       airtable: true,
     },
   });
-  console.log("toy buscando tudenss");
   let students = [];
 
   let query = store.state.currentProgram

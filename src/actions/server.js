@@ -65,6 +65,7 @@ export const GET = async (store, dir, params, local) => {
         answer.data && answer.data.type === "error"
           ? answer.data.message
           : "it worked!",
+      req: json,
     };
   } catch (err) {
     console.log("Error response:", err.response);

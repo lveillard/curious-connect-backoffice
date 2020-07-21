@@ -105,6 +105,11 @@ table.data-grid {
 .sheet-container table.data-grid tr th.cell {
   font-size: 12px;
 }
+.data-grid-container .data-grid .cell .value-viewer,
+.data-grid-container .data-grid .cell .data-editor {
+  display: block;
+  width: 100%;
+}
 div.divider {
   margin: 40px 0px;
   height: 1px;
@@ -119,18 +124,13 @@ pre {
 }
 
 .add-button {
-  float: right;
   border-radius: 0;
-  background: #ccc;
   border-radius: 2px;
-  padding: 2px 20px;
-  background: #e63946;
-  color: white;
+  height: 30px;
   cursor: pointer;
   font-size: 9px;
-}
-.add-button:hover {
-  background: #f17d86;
+  padding: 0px 10px;
+  border: 1px solid #cad1d7;
 }
 
 .data-grid-container .data-grid .cell {
