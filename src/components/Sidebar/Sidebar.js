@@ -96,6 +96,42 @@ const Sidebar = () => {
           </NavbarBrand>
         ) : null}
 
+        {/*Space selector*/}
+        {
+          // if you don't have access to any program => then there is no select
+          globalState.programs && (
+            <Container
+              style={
+                globalState.config.size.width >= 768
+                  ? {
+                      width: "100%",
+                      padding: "0px 0px 10px 0px",
+                    }
+                  : { width: "60%" }
+              }
+            >
+              {" "}
+              {/* Disabled while loading sentRecords or they will override asynchronously */}
+              <Select
+                className="selector"
+                classNamePrefix="select"
+                isDisabled={globalState.isLoading.sentRecords}
+                isLoading={false}
+                value={globalState.currentProgram}
+                isClearable
+                placeHolder="Programs"
+                isSearchable
+                onChange={(selected, type) => {
+                  globalActions.routes.setCurrentProgram(selected);
+                  if (type.action === "clear")
+                    globalActions.routes.setCurrentProgram(null);
+                }}
+                options={globalState.programs}
+              />
+            </Container>
+          )
+        }
+
         {/*Program selector*/}
         {
           // if you don't have access to any program => then there is no select

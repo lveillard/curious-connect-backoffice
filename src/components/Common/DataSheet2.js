@@ -14,23 +14,19 @@ import {
 import "react-datasheet/lib/react-datasheet.css";
 import "./dataSheet.css";
 
-export const addRows = (modifier, data, nRows) => {
-  modifier(data.concat([...Array(parseInt(nRows)).keys()].map((x) => [])));
+export const addRows = (data, nRows) => {
+  return data.concat([...Array(parseInt(nRows)).keys()].map((x) => []));
 };
 
-export const resetRows = (modifier) => {
-  modifier([...Array(parseInt(2)).keys()].map((x) => []));
+export const resetRows = () => {
+  return [...Array(parseInt(2)).keys()].map((x) => []);
 };
 
-export const setRow = (modifier, data, row, modifications) => {
-  console.log("data", data);
-  console.log("modifications", modifications);
-  console.log("row", row);
-
+export const setRow = (data, row, modifications) => {
   const newData = data.map((r, i) => {
     return row === i ? { ...r, ...modifications } : r;
   });
-  modifier(newData);
+  return newData;
 };
 
 export const getRow = (data, row) => {
@@ -92,7 +88,7 @@ export default (props) => {
 
   return (
     <>
-      <Row style={{ marginTop: "50px", marginBottom: "20px" }}>
+      <Row style={{ marginBottom: "20px" }}>
         <Col> </Col>
         <Col style={{ maxWidth: "200px" }} xs={5}>
           <InputGroup>
@@ -104,7 +100,7 @@ export default (props) => {
               onKeyPress={(event) => {
                 if (event.key === "Enter") {
                   event.preventDefault();
-                  addRows(props.onChangeData, props.data, newRows);
+                  props.onChangeData((data) => addRows(data, newRows));
                 }
               }}
             />
@@ -113,7 +109,7 @@ export default (props) => {
                 color="primary"
                 onClick={(e) => {
                   e.preventDefault();
-                  addRows(props.onChangeData, props.data, newRows);
+                  props.onChangeData((data) => addRows(data, newRows));
                 }}
                 onSubmit={(e) => e.preventDefault()}
                 className={"add-button"}
@@ -124,7 +120,7 @@ export default (props) => {
                 color="danger"
                 onClick={(e) => {
                   e.preventDefault();
-                  resetRows(props.onChangeData);
+                  props.onChangeData((data) => resetRows(data));
                 }}
                 onSubmit={(e) => e.preventDefault()}
                 className={"add-button"}
