@@ -294,6 +294,16 @@ const BulkEmailGenerator = props => {
 
             <ButtonGroup>
               <Button
+                href={`data:text/json;charset=utf-8,${encodeURIComponent(
+                  JSON.stringify({ data: globalState.mailGenerator.data })
+                )}`}
+                download="table.json"
+                color="secondary"
+              >
+                {`Download JSON`}
+              </Button>
+
+              <Button
                 color="primary"
                 disabled={isLoading}
                 onClick={async e => {
@@ -378,15 +388,6 @@ const BulkEmailGenerator = props => {
                 }}
               >
                 {`Generate email`}
-              </Button>
-              <Button
-                href={`data:text/json;charset=utf-8,${encodeURIComponent(
-                  JSON.stringify({ data: globalState.mailGenerator.data })
-                )}`}
-                download="table.json"
-                color="secondary"
-              >
-                {`Download JSON`}
               </Button>
             </ButtonGroup>
           </FormGroup>
