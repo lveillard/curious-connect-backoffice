@@ -8,32 +8,32 @@ import DataSheet2, { setRow } from "../../components/Common/DataSheet2";
 
 import { useGlobal } from "../../store";
 
-const BulkEmailGenerator = (props) => {
+const BulkEmailGenerator = props => {
   const initCols = React.useMemo(
     () => [
       {
         value: "Name",
         key: "name",
         col: 0,
-        readOnly: true,
+        readOnly: true
       },
       {
         value: "Family Name",
         key: "familyName",
         col: 1,
-        readOnly: true,
+        readOnly: true
       },
       {
         value: "Domain",
         key: "domain",
         col: 2,
-        readOnly: true,
+        readOnly: true
       },
       {
         value: "Company",
         key: "company",
         col: 3,
-        readOnly: true,
+        readOnly: true
       },
       {
         value: "Generated",
@@ -41,7 +41,7 @@ const BulkEmailGenerator = (props) => {
         col: 4,
         readOnly: true,
         readOnlyColumn: true,
-        width: "35%",
+        width: "35%"
       },
       {
         value: "Type",
@@ -49,7 +49,7 @@ const BulkEmailGenerator = (props) => {
         col: 5,
         readOnly: true,
         readOnlyColumn: true,
-        width: "12%",
+        width: "12%"
       },
       {
         value: "Info",
@@ -57,7 +57,7 @@ const BulkEmailGenerator = (props) => {
         col: 6,
         readOnly: true,
         readOnlyColumn: true,
-        width: "10%",
+        width: "10%"
       },
       {
         value: "Source",
@@ -65,8 +65,8 @@ const BulkEmailGenerator = (props) => {
         col: 7,
         readOnly: true,
         readOnlyColumn: true,
-        width: "9%",
-      },
+        width: "9%"
+      }
     ],
     []
   );
@@ -87,12 +87,12 @@ const BulkEmailGenerator = (props) => {
   const handleGeneratorSuccess = (key, result) => {
     const answer = result;
 
-    setData((data) =>
+    setData(data =>
       setRow(data, key, {
         source: answer.bestGuessSource,
         info: answer.bestGuessPattern,
         type: answer.acceptAll ? answer.acceptAll : "Found!",
-        generated: answer.bestGuess,
+        generated: answer.bestGuess
       })
     );
     return answer;
@@ -103,15 +103,15 @@ const BulkEmailGenerator = (props) => {
       ? result
       : {
           type: "error",
-          message: err ? err.message : "Error",
+          message: err ? err.message : "Error"
         };
 
-    setData((data) =>
+    setData(data =>
       setRow(data, key, {
         generated: answer.bestGuess,
         type: answer.message,
         source: answer.bestGuessSource,
-        info: answer.bestGuessPattern,
+        info: answer.bestGuessPattern
       })
     );
 
@@ -129,19 +129,19 @@ const BulkEmailGenerator = (props) => {
             data={globalState.mailGenerator.data}
             columns={cols}
             setIsLoading={setIsLoading}
-            onChangeData={(modifications) => setData(modifications)}
+            onChangeData={modifications => setData(modifications)}
             //onChangeData={(modifications) => setCelus(modifications)}
           />
           <Button
             color="success"
             onClick={() =>
               setRow(
-                (modifications) => setData(modifications),
+                modifications => setData(modifications),
                 globalState.mailGenerator.data,
                 1,
                 {
                   domain: "hello",
-                  type: "hallo",
+                  type: "hallo"
                 }
               )
             }
@@ -157,7 +157,7 @@ const BulkEmailGenerator = (props) => {
             <Checkbox
               checked={skipFree}
               onChange={(e, v) => {
-                setSkipFree((value) => !value);
+                setSkipFree(value => !value);
               }}
             >
               Skip free checks
@@ -165,7 +165,7 @@ const BulkEmailGenerator = (props) => {
             <Checkbox
               checked={skipUnreachable}
               onChange={(e, v) => {
-                setSkipUnreachable((value) => !value);
+                setSkipUnreachable(value => !value);
               }}
             >
               Dodge errors
@@ -176,10 +176,10 @@ const BulkEmailGenerator = (props) => {
                 const newValue = {
                   ...cols[2],
                   value: !isDomain ? "Domain" : "Company",
-                  key: !isDomain ? "domain" : "companyName",
+                  key: !isDomain ? "domain" : "companyName"
                 };
                 //setCols((cols) => Object.assign([], cols, { 2: newValue }));
-                setIsDomain((value) => !value);
+                setIsDomain(value => !value);
               }}
             >
               Use domain
@@ -188,14 +188,14 @@ const BulkEmailGenerator = (props) => {
             <Button
               color="primary"
               disabled={isLoading}
-              onClick={async (e) => {
+              onClick={async e => {
                 e.preventDefault();
 
                 try {
                   const data = globalState.mailGenerator.data;
                   setIsLoading(true);
 
-                  const verifiedEmails = await Promise.all(
+                  const verifiedEmailsPromise = Promise.all(
                     data.map(async (line, key) => {
                       /*<--- lines without enough data --->*/
                       if (
@@ -219,8 +219,8 @@ const BulkEmailGenerator = (props) => {
                             generics: !skipFree,
                             freeChecks: !skipFree,
                             checkTool: "debounce", // debounce
-                            leadGenTool: "skrappio", //skrappio },
-                          },
+                            leadGenTool: "skrappio" //skrappio },
+                          }
                         }
                       );
 
@@ -232,6 +232,31 @@ const BulkEmailGenerator = (props) => {
                         : handleGeneratorSuccess(key, result);
                     })
                   );
+
+                  let cancelled = false;
+                  (async () => {
+                    while (!cancelled) {
+                      const logs = await globalActions.server.GET("/logs/1000");
+                      const logsArr = logs.res.data.logs;
+                      if (logsArr !== null) {
+                        if (
+                          Object.prototype.toString.call(logsArr) ===
+                          "[object Array]"
+                        ) {
+                          logsArr.map(x =>
+                            console.log(`${x.level}`, x.message)
+                          );
+                        } else {
+                          console.log("Log:", logsArr);
+                        }
+                      }
+                      await new Promise(r => setTimeout(r, 1000)); // 2 second delay
+                    }
+                  })();
+
+                  const verifiedEmails = await verifiedEmailsPromise;
+                  cancelled = true;
+
                   setIsLoading(false);
                   console.log("finished", verifiedEmails);
                 } catch (err) {
