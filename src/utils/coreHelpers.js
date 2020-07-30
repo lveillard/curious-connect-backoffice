@@ -2,6 +2,30 @@ import { useEffect, useState } from "react";
 
 const noop = () => {};
 
+export const readFile = (file) => {
+  return new Promise((resolve, reject) => {
+    const fileReader = new FileReader();
+    fileReader.onload = () => {
+      resolve(fileReader.result.split(/base64,/)[1]);
+    };
+    fileReader.onerror = () => {
+      reject(fileReader.error);
+    };
+    fileReader.readAsDataURL(file);
+  });
+};
+
+export const b64DecodeUnicode = (str) => {
+  // Going backwards: from bytestream, to percent-encoding, to original string.
+  return decodeURIComponent(
+    atob(str)
+      .split("")
+      .map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join("")
+  );
+};
 export const useFileReader = (options) => {
   const { method = "readAsText", onload: onloadHook = noop } = options;
   const [file, setFile] = useState(null);
@@ -33,6 +57,20 @@ export const useFileReader = (options) => {
   }, [file]);
 
   return [{ result, error, file, loading }, setFile];
+};
+
+export const loadJson = async (event) => {
+  if (event.target.files) {
+    const fileName = event.target.files[0].name;
+    try {
+      const fileContent = await readFile(event.target.files[0]);
+      return JSON.parse(b64DecodeUnicode(fileContent).replace(/NaN/g, "0"))
+        .data;
+    } catch (error) {
+      // Show an error to the user... not a log 😁
+      console.log(error);
+    }
+  }
 };
 
 export const objectMap = () => {

@@ -39,7 +39,8 @@ const Tools = () => {
 
   const handleInputChange = (value, event) => {
     event.persist();
-    setInputs((inputs) => ({ ...inputs, [event.target.name]: value }));
+    //it was target.name before
+    setInputs((inputs) => ({ ...inputs, [event.target.firstName]: value }));
   };
 
   function createDraft(userId, email, callback) {

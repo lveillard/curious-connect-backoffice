@@ -11,6 +11,9 @@ export const setLocalServer = (store, value) => {
 };
 
 export const POST = async (store, dir, body, local) => {
+  console.log("dir", dir);
+  console.log("body", body);
+
   const localServer = local || store.state.debug.localServer;
   const token = localStorage.getItem("token");
 
@@ -25,9 +28,9 @@ export const POST = async (store, dir, body, local) => {
   };
 
   try {
-    await axios.post(config);
+    await axios(config);
   } catch (err) {
-    console.log(err);
+    console.log("axios post error", err);
   }
 };
 

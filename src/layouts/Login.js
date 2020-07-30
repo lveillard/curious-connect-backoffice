@@ -59,7 +59,7 @@ const Login = () => {
 
   const handleInputChange = (value, event) => {
     event.persist();
-    setInputs((inputs) => ({ ...inputs, [event.target.name]: value }));
+    setInputs((inputs) => ({ ...inputs, [event.target.firstName]: value }));
   };
 
   const errorMessage = missingData ? "This field is required" : null;

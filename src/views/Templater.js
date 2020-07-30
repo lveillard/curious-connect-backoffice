@@ -41,7 +41,7 @@ const Templater = () => {
 
   const handleInputChange = (value, event) => {
     event.persist();
-    setInputs((inputs) => ({ ...inputs, [event.target.name]: value }));
+    setInputs((inputs) => ({ ...inputs, [event.target.firstName]: value }));
   };
 
   const setInput = (input, value) => {
