@@ -24,11 +24,6 @@ const SenderUpload = () => {
   const [globalState, globalActions] = useGlobal();
   const [file, setFile] = useState(null);
 
-  useEffect(() => {
-    /*async function fetchMyAPI() {
-    }*/
-  }, []);
-
   return (
     <>
       {globalState.bulkSender.currentStudent ? (
@@ -45,11 +40,16 @@ const SenderUpload = () => {
                 disabled={!file}
                 onClick={async (e) => {
                   e.preventDefault();
-                  const translated = file.data;
+                  const translated = file
+                    .filter((y) => y.type)
+                    .map((x) => {
+                      return {
+                        ...x,
+                        record: globalState.bulkSender.currentStudent.record,
+                      };
+                    });
                   console.log(translated);
-                  /*await globalActions.server.POST("/sender", {
-                    ...file,
-                  });*/
+                  await globalActions.server.POST("/sender", translated);
                 }}
                 size="sm"
               >
@@ -79,9 +79,7 @@ const SenderUpload = () => {
                     name="file"
                     id="file"
                     onChange={async (v, e) => {
-                      const received = await loadJson(e);
-                      setFile(received);
-                      console.log(received);
+                      setFile(await loadJson(e));
                     }}
                   />
                 </FormGroup>
@@ -93,15 +91,8 @@ const SenderUpload = () => {
         <Card>
           <CardHeader className="text-center border-0 pt-8 pt-md-4 pb-0">
             <div className="d-flex justify-content-between">
-              <b> JSON upload</b>
-              <Button
-                disabled={true}
-                className="float-right"
-                onClick={(e) => {
-                  e.preventDefault();
-                }}
-                size="sm"
-              >
+              <b>JSON upload</b>
+              <Button disabled={true} className="float-right" size="sm">
                 Load
               </Button>
             </div>

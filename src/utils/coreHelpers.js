@@ -64,8 +64,9 @@ export const loadJson = async (event) => {
     const fileName = event.target.files[0].name;
     try {
       const fileContent = await readFile(event.target.files[0]);
-      return JSON.parse(b64DecodeUnicode(fileContent).replace(/NaN/g, "0"))
-        .data;
+      return JSON.parse(
+        b64DecodeUnicode(fileContent).replace(/NaN/g, "undefined")
+      ).data;
     } catch (error) {
       // Show an error to the user... not a log 😁
       console.log(error);

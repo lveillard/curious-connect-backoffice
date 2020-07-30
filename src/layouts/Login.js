@@ -34,10 +34,14 @@ const Login = () => {
   let history = useHistory();
 
   const [globalState, globalActions] = useGlobal();
-  const [inputs, setInputs] = useState({
+  /*const [inputs, setInputs] = useState({
     password: "formatricesaccess",
     email: "formatrices@curious-connect.com",
-  });
+  });*/
+
+  const [password, setPassword] = useState("formatricesaccess");
+  const [email, setEmail] = useState("formatrices@curious-connect.com");
+
   const [missingData] = useState();
 
   useEffect(() => {
@@ -50,17 +54,12 @@ const Login = () => {
     if (globalState) {
     }
     e.preventDefault();
-    let test = await globalActions.login.login(inputs);
+    let test = await globalActions.login.login({ password, email });
     if (test) {
       history.replace("/admin");
     } else {
     }
   }
-
-  const handleInputChange = (value, event) => {
-    event.persist();
-    setInputs((inputs) => ({ ...inputs, [event.target.firstName]: value }));
-  };
 
   const errorMessage = missingData ? "This field is required" : null;
 
@@ -107,9 +106,11 @@ const Login = () => {
                         </span>{" "}
                       </InputGroup.Addon>
                       <Input
-                        value={inputs.email}
+                        value={email}
                         onChange={(value, event) =>
-                          handleInputChange(value, event)
+                          //handleInputChange(value, event)
+                          //console.log(value)
+                          setEmail(value)
                         }
                         name="email"
                         autoFocus={true}
@@ -127,9 +128,10 @@ const Login = () => {
                       </InputGroup.Addon>
 
                       <Input
-                        value={inputs.password}
+                        value={password}
                         onChange={(value, event) =>
-                          handleInputChange(value, event)
+                          //handleInputChange(value, event)
+                          setPassword(value)
                         }
                         name="password"
                         type="password"
@@ -137,8 +139,7 @@ const Login = () => {
                     </InputGroup>
                     <div
                       style={{
-                        display:
-                          missingData && !inputs.password ? "block" : "none",
+                        display: missingData && !password ? "block" : "none",
                         color: "red",
                         marginTop: 6,
                       }}
@@ -158,8 +159,8 @@ const Login = () => {
                         disabled={
                           globalState.status === "LOADING" ||
                           missingData ||
-                          !inputs.password ||
-                          !inputs.email
+                          !password ||
+                          !email
                         }
                       >
                         {globalState.status === "LOADING" ? (

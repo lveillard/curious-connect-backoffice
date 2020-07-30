@@ -75,6 +75,7 @@ export const getStudents = (store) => {
               .replace(/(\r\n|\n|\r)/gm, "\n"),
             emailSignature: x.get("email.signature"),
             files: x.get("cv"),
+            record: x.getId(),
           };
         });
 

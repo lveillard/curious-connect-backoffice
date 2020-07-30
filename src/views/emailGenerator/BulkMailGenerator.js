@@ -91,16 +91,12 @@ const BulkEmailGenerator = (props) => {
   const [skipUnreachable, setSkipUnreachable] = useState(false);
   const [skipFree, setSkipFree] = useState(false);
 
-  const [file, setFile] = useState(false);
-
   const [cols, setCols] = useState(initCols);
   const [scraperID, setScraperID] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
 
   const [data, setData] = useState([[], []]);
-
-  //const modifier = (data) => globalActions.generator.setProp("data", data);
 
   const handleGeneratorSuccess = (key, result) => {
     const answer = result;
@@ -198,8 +194,7 @@ const BulkEmailGenerator = (props) => {
                     const { data } = await axios.get(url.data);
                     const hm = await JSON.parse(data.replace(/NaN/g, "0")).data;
                     console.log(hm);
-                    console.log([hm[0], hm[1]]);
-                    globalActions.generator.setProp("data", hm);
+                    setData(hm);
                   }}
                 >
                   {`Load Json`}
@@ -217,6 +212,7 @@ const BulkEmailGenerator = (props) => {
               id="file"
               onChange={async (v, e) => {
                 setData(await loadJson(e));
+                //console.log("data", data);
               }}
             />
           </FormGroup>
