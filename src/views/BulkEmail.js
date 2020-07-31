@@ -8,6 +8,7 @@ import { useGlobal } from "../store";
 
 import BulkTable from "./bulkEmail/BulkTable";
 import StudentMail from "./common/StudentMail";
+import SenderUpload from "./common/SenderUpload";
 
 import "../assets/css/bulk-emailing.css";
 
@@ -34,12 +35,20 @@ const BulkEmail = (props) => {
       {globalState.gapiAuthed && (
         <Container className="mt--7" fluid>
           <Row>
-            <Col className="order-xl-2 mb-5 mb-xl-0" xl="4">
-              <StudentMail />
-            </Col>
-
-            <Col className="order-xl-1" xl="8">
+            <Col className="order-xl-1 mb-5 mb-xl-0" xl="8">
               <BulkTable />
+            </Col>
+            <Col className="order-xl-2 " xl="4">
+              <Row>
+                <Col>
+                  <StudentMail />
+                </Col>
+              </Row>
+              <Row className="mt-5">
+                <Col>
+                  <SenderUpload />
+                </Col>
+              </Row>
             </Col>
           </Row>
         </Container>

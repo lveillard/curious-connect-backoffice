@@ -75,6 +75,7 @@ export const getStudents = (store) => {
               .replace(/(\r\n|\n|\r)/gm, "\n"),
             emailSignature: x.get("email.signature"),
             files: x.get("cv"),
+            record: x.getId(),
           };
         });
 
@@ -176,7 +177,7 @@ export const getReadyToSendEmails = (store, filter) => {
             id: x.id,
             status: x.get("status") === "SendBO" ? "Loaded" : x.get("status"),
             errorMessage: x.get("error.message"),
-            company: x.get("target.companyName"),
+            company: x.get("target.companyNameClean"),
             targetAddress: x.get("target.email"),
             senderAddress: x.get("sender.email")[0],
             senderFullName: x.get("sender.fullName"),
@@ -284,7 +285,7 @@ export const getSentEmails = (store) => {
           return {
             id: x.id,
             status: x.get("status"),
-            company: x.get("target.companyName"),
+            company: x.get("target.companyNameClean"),
             targetAddress: x.get("target.email"),
             senderAddress: x.get("sender.email")[0],
             senderFullName: x.get("sender.fullName"),

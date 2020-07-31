@@ -25,9 +25,9 @@ export const POST = async (store, dir, body, local) => {
   };
 
   try {
-    await axios.post(config);
+    await axios(config);
   } catch (err) {
-    console.log(err);
+    console.log("axios post error", err);
   }
 };
 
