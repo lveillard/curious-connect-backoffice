@@ -99,7 +99,7 @@ const Login = () => {
                   <FormGroup>
                     <ControlLabel>Email address</ControlLabel>
 
-                    <InputGroup>
+                    <InputGroup style={{ width: "100%" }}>
                       <InputGroup.Addon>
                         {" "}
                         <span role="img" aria-label="email">
@@ -118,7 +118,7 @@ const Login = () => {
                   </FormGroup>
                   <FormGroup>
                     <ControlLabel>Password</ControlLabel>
-                    <InputGroup>
+                    <InputGroup style={{ width: "100%" }} l>
                       <InputGroup.Addon>
                         {" "}
                         <span role="img" aria-label="key">

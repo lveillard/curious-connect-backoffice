@@ -12,6 +12,8 @@ import TimeLine from "../views/TimeLine";
 import Profile from "../views/examples/Profile";
 import Tools from "../views/Tools";
 import BulkEmail from "../views/BulkEmail";
+import Scoring from "../views/Scoring";
+
 import EmailGenerator from "../views/EmailGenerator";
 import EmailVerifier from "../views/EmailVerifier";
 
@@ -75,6 +77,7 @@ const Admin = () => {
     EmailVerifier: EmailVerifier,
     Campaign: Campaign,
     Kanban: Kanban,
+    Scoring: Scoring,
   };
 
   return (
