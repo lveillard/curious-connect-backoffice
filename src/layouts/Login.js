@@ -95,15 +95,14 @@ const Login = () => {
                 bordered
               >
                 <Form fluid>
-                  <FormGroup>
+                  <FormGroup fluid>
                     <ControlLabel>Email address</ControlLabel>
 
-                    <InputGroup>
+                    <InputGroup style={{ width: "100%" }}>
                       <InputGroup.Addon>
-                        {" "}
                         <span role="img" aria-label="email">
                           📧
-                        </span>{" "}
+                        </span>
                       </InputGroup.Addon>
                       <Input
                         value={email}
@@ -119,7 +118,7 @@ const Login = () => {
                   </FormGroup>
                   <FormGroup>
                     <ControlLabel>Password</ControlLabel>
-                    <InputGroup>
+                    <InputGroup style={{ width: "100%" }}>
                       <InputGroup.Addon>
                         {" "}
                         <span role="img" aria-label="key">
