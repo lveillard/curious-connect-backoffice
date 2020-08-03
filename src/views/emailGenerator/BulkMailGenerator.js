@@ -96,7 +96,7 @@ const BulkEmailGenerator = (props) => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [data, setData] = useState([[], []]);
+  const [data, setData] = useState([{}, {}]);
 
   const handleGeneratorSuccess = (key, result) => {
     const answer = result;
@@ -144,6 +144,7 @@ const BulkEmailGenerator = (props) => {
             columns={cols}
             setIsLoading={setIsLoading}
             onChangeData={(modifications) => setData(modifications)}
+            controls
             //onChangeData={(modifications) => setCelus(modifications)}
           />
           {false && (
