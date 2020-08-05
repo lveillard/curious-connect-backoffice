@@ -36,9 +36,102 @@ const Scoring = () => {
   const [file, setFile] = useState(null);
   const [stats, setStats] = useState({});
 
-  const [positions, setPositions] = useState([{}, {}]);
-  const [titles, setTitles] = useState([{}, {}]);
-  const [negatives, setNegatives] = useState("[]");
+  const initHierarchy = [
+    {
+      value: "head",
+      weight: 1,
+    },
+    {
+      value: "manager",
+      weight: 1,
+    },
+    {
+      value: "director",
+      weight: 1,
+    },
+    {
+      value: "directeur",
+      weight: 1,
+    },
+    {
+      value: "leader",
+      weight: 1,
+    },
+    {
+      value: "lead",
+      weight: 1,
+    },
+    {
+      value: "senior",
+      weight: 0.9,
+    },
+    {
+      value: "responsable",
+      weight: 0.9,
+    },
+    {
+      value: "president",
+      weight: 0.8,
+    },
+    {
+      value: "founder",
+      weight: 0.8,
+    },
+    {
+      value: "co-founder",
+      weight: 0.8,
+    },
+    {
+      value: "chef",
+      weight: 0.8,
+    },
+    {
+      value: "chief",
+      weight: 0.8,
+    },
+    {
+      value: "global",
+      weight: 0.7,
+    },
+    {
+      value: "international",
+      weight: 0.7,
+    },
+    {
+      value: "regional",
+      weight: 0.7,
+    },
+    {
+      value: "chargé",
+      weight: 0.6,
+    },
+    {
+      value: "ceo",
+      weight: 0.6,
+    },
+    {
+      value: "analyste",
+      weight: 0.5,
+    },
+    {
+      value: "assistant",
+      weight: 0.5,
+    },
+    {
+      value: "board",
+      weight: 0.3,
+    },
+  ];
+
+  const [hierarchyFilters, setHierarchyFilters] = useState(initHierarchy);
+  const [positionFilters, setPositionFilters] = useState([{}, {}]);
+  const [negativeFilters, setNegativeFilters] = useState(
+    "stagiaire, alternant"
+  );
+
+  const sortBy = (obj, by, num = 1) => {
+    return obj.sort((a, b) => (a[by] > b[by] ? -num : b[by] > a[by] ? num : 0));
+  };
 
   const initCols = React.useMemo(
     () => [
@@ -53,6 +146,7 @@ const Scoring = () => {
         key: "weight",
         col: 1,
         readOnly: true,
+        width: "25%",
       },
     ],
     []
@@ -61,12 +155,28 @@ const Scoring = () => {
 
   useEffect(() => {
     if (file) {
+      console.log("file", file);
       setStats({
-        lines: file.length,
-        companies: new Set(file.map((x) => x.companyId)).size,
+        lines: file.data.length,
+        companies: new Set(file.data.map((x) => x.companyId || x.CompanyID))
+          .size,
       });
     }
   }, [file]);
+
+  //autoSort
+  useEffect(() => {
+    if (hierarchyFilters) {
+      setHierarchyFilters((values) => sortBy(values, "weight"));
+    }
+  }, [hierarchyFilters]);
+
+  //autoSort
+  useEffect(() => {
+    if (positionFilters) {
+      setPositionFilters((values) => sortBy(values, "weight"));
+    }
+  }, [positionFilters]);
 
   const H5 = <h5 className="mb-2 "></h5>;
 
@@ -86,12 +196,26 @@ const Scoring = () => {
                     <FormGroup>
                       <Button
                         color="primary"
+                        disabled={!file}
                         onClick={async (e) => {
                           e.preventDefault();
-                          console.log(file);
+                          const omit = (key, { [key]: _, ...obj }) => obj;
+
+                          await globalActions.server.POST("/test", {
+                            ...file,
+                            filters: {
+                              hierarchy: hierarchyFilters,
+                              position: positionFilters,
+                              negative: negativeFilters.split(",").map((x) => {
+                                return { value: x.trim() };
+                              }),
+                            },
+                          });
                         }}
                         size="sm"
-                      ></Button>
+                      >
+                        Calculate!
+                      </Button>
                     </FormGroup>
                   </Col>
                 </Row>
@@ -136,13 +260,13 @@ const Scoring = () => {
                         {" "}
                         <FormGroup>
                           <ControlLabel className="form-control-label">
-                            Position (Head, Lead...)
+                            Hierarchy (Head, Lead...)
                           </ControlLabel>
                           <DataSheet2
-                            data={positions}
+                            data={hierarchyFilters}
                             columns={cols}
                             onChangeData={(modifications) =>
-                              setPositions(modifications)
+                              setHierarchyFilters(modifications)
                             }
                           />
                         </FormGroup>
@@ -157,10 +281,10 @@ const Scoring = () => {
                             Title (BDR, Sales, Dev Frontend...)
                           </ControlLabel>
                           <DataSheet2
-                            data={titles}
+                            data={positionFilters}
                             columns={cols}
                             onChangeData={(modifications) =>
-                              setTitles(modifications)
+                              setPositionFilters(modifications)
                             }
                           />
                         </FormGroup>{" "}
@@ -175,8 +299,12 @@ const Scoring = () => {
                             Negative Scoring
                           </ControlLabel>
                           <Input
-                            value={negatives}
-                            onChange={(value, event) => setNegatives(value)}
+                            value={negativeFilters}
+                            onChange={(value, event) =>
+                              setNegativeFilters(
+                                value.replace(/,(\s)?/g, ", ").trim()
+                              )
+                            }
                             name="negatives"
                             componentClass="textarea"
                             style={{ resize: "auto" }}

@@ -39,6 +39,10 @@ export const useFileReader = (options) => {
     reader.onloadstart = () => {
       setLoading(true);
     };
+    reader.onabort = () => {
+      console.log("aborted");
+      setLoading(false);
+    };
     reader.onloadend = () => {
       setLoading(false);
     };
@@ -59,16 +63,29 @@ export const useFileReader = (options) => {
   return [{ result, error, file, loading }, setFile];
 };
 
+export const omit = (key, { [key]: _, ...obj }) => obj;
+
 export const loadJson = async (event) => {
   if (event.target.files) {
     const fileName = event.target.files[0].name;
     try {
       const fileContent = await readFile(event.target.files[0]);
-      const json = JSON.parse(
-        b64DecodeUnicode(fileContent).replace(/NaN/g, "undefined")
-      );
+      const cleaned = b64DecodeUnicode(fileContent)
+        .replace(/undefined/g, "0")
+        .replace(/"undefined"/g, "0")
+        .replace(/NaN/g, "0");
+      const json = JSON.parse(cleaned);
 
-      return json.data ? json.data : json;
+      return json.type
+        ? // if is from the scrapper
+          json
+        : // if comes from phantombuster
+          {
+            type: "phantom",
+            query: json[0].query,
+            timestamp: json[0].timestamp,
+            data: json.map((x) => (({ query, timestamp, ...obj }) => obj)(x)),
+          };
     } catch (error) {
       // Show an error to the user... not a log 😁
       console.log(error);

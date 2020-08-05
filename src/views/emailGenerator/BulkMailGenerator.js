@@ -301,7 +301,7 @@ const BulkEmailGenerator = (props) => {
                           }
                         );
 
-                        console.log("result", answer);
+                        //console.log("result", answer);
                         const result = answer.res.data;
 
                         return answer.type === "error"
@@ -323,6 +323,7 @@ const BulkEmailGenerator = (props) => {
                             "[object Array]"
                           ) {
                             logsArr
+                              // file deepcode ignore NoZeroReturnedInSort: <never two timestamps will be the same here (and then it exploded XD )>
                               .sort((a, b) =>
                                 a.timeStamp < b.timeStamp ? 1 : -1
                               )

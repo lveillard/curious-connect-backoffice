@@ -135,8 +135,10 @@ pre {
 
 .data-grid-container .data-grid .cell {
   height: 24px !important;
+  text-align: center;
 }
 
 .data-grid-container .data-grid .cell > input {
   height: 24px !important;
+  text-align: center;
 }

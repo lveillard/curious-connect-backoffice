@@ -44,6 +44,8 @@ const Server = () => {
     data: {
       mail: "l.veillard@gmail.com",
       token: "AQ...",
+      filterUrl: "https://www.linkedin.com/sales....",
+      fileName: "result.json",
       linkedinUrl: "https://www.linkedin.com/in/loic-veillard/",
     },
   });
@@ -245,6 +247,7 @@ const Server = () => {
                             name={answer.type}
                             src={answer}
                             collapsed={true}
+                            permissions={{ copy: true }}
                           />
                         </FormGroup>
                       )}
@@ -282,10 +285,15 @@ const Server = () => {
                             try {
                               setAnswer({ type: "loading..." });
                               setAnswer(
-                                await globalActions.server.GET(
-                                  url,
-                                  payload.data
-                                )
+                                reqMode.value === "GET"
+                                  ? await globalActions.server.GET(
+                                      url,
+                                      payload.data
+                                    )
+                                  : await globalActions.server.POST(
+                                      url,
+                                      payload.data
+                                    )
                               );
                             } catch (err) {
                               console.log(err);
