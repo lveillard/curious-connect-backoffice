@@ -9,7 +9,12 @@ import "assets/scss/argon-dashboard-react.scss";
 import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
 
-import { objectMap, objectFilter, StringClean } from "./utils/coreHelpers";
+import {
+  objectMap,
+  objectFilter,
+  StringClean,
+  objectFlatten,
+} from "./utils/coreHelpers";
 
 import App from "./app";
 

@@ -25,9 +25,27 @@ export const POST = async (store, dir, body, local) => {
   };
 
   try {
-    await axios(config);
+    const answer = await axios(config);
+    return {
+      res: answer,
+      type: answer.data.type || "success",
+      status:
+        (answer.res && answer.res.status) || answer.status || "status error",
+      message:
+        answer.data && answer.data.type === "error"
+          ? answer.data.message
+          : "it worked!",
+      req: body,
+    };
   } catch (err) {
-    console.log("axios post error", err);
+    console.log("Error response:", err.response);
+    console.log("bad token or user without routes", err);
+    return {
+      res: err.response,
+      status: err.response && err.response.status,
+      message: err.response && err.response.data.message,
+      type: "error",
+    };
   }
 };
 
@@ -58,7 +76,7 @@ export const GET = async (store, dir, params, local) => {
     const answer = await axios(config);
     return {
       res: answer,
-      type: answer.data.type || "success",
+      type: answer.data.type || answer.data.answerType || "success",
       status:
         (answer.res && answer.res.status) || answer.status || "status error",
       message:

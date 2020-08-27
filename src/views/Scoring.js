@@ -23,11 +23,16 @@ import DataSheet2, { setRow } from "../components/Common/DataSheet2";
 
 import "../assets/css/emailing.css";
 
-//steps:
-// 1) Copy Scoring
-// 2) Update Admin.js => Import + update variable views
-// 3) Update routes in the code server curious-connect-server.herokuapp.com
-// 4) grant the route permission to somebody in the mongodb
+const flatten = (object, prefix = "") =>
+  Object.keys(object).reduce(
+    (prev, element) =>
+      object[element] &&
+      typeof object[element] === "object" &&
+      !Array.isArray(object[element])
+        ? { ...prev, ...flatten(object[element], `${prefix}${element}.`) }
+        : { ...prev, ...{ [`${prefix}${element}`]: object[element] } },
+    {}
+  );
 
 const Scoring = () => {
   const [globalState, globalActions] = useGlobal();
@@ -129,6 +134,9 @@ const Scoring = () => {
     "stagiaire, alternant"
   );
 
+  const [scored, setScored] = useState({ profiles: [] });
+  const [data, setData] = useState();
+
   const sortBy = (obj, by, num = 1) => {
     return obj.sort((a, b) => (a[by] > b[by] ? -num : b[by] > a[by] ? num : 0));
   };
@@ -152,6 +160,42 @@ const Scoring = () => {
     []
   );
   const [cols, setCols] = useState(initCols);
+
+  const ResultCols = React.useMemo(
+    () => [
+      {
+        value: "Name",
+        key: "fullName",
+        col: 0,
+        readOnly: true,
+        readOnlyColumn: true,
+      },
+      {
+        value: "Full Position",
+        key: "fullPosition",
+        col: 1,
+        readOnly: true,
+        readOnlyColumn: true,
+        width: "50%",
+      },
+      {
+        value: "Company",
+        key: "companyName",
+        col: 1,
+        readOnly: true,
+        readOnlyColumn: true,
+      },
+      {
+        value: "Score",
+        key: "scoring.total",
+        col: 1,
+        readOnly: true,
+        readOnlyColumn: true,
+        width: "8%",
+      },
+    ],
+    []
+  );
 
   useEffect(() => {
     if (file) {
@@ -185,32 +229,40 @@ const Scoring = () => {
       <div className="bg-gradient-primary" style={{ height: "200px" }}></div>
       <Container className="mt--7" fluid>
         <Row>
-          <Col className="order-xl-1 mb-5" xl="6">
+          <Col className="order-xl-1 mb-5" xl="12">
             <Card className="bg-secondary shadow">
               <CardHeader className="bg-white border-0">
                 <Row className="align-items-center">
                   <Col xs="6">
                     <h3 className="mb-0">Load file</h3>
                   </Col>
-                  <Col className="text-right" xs="6">
+                  <Col className="text-right" xs="12">
                     <FormGroup>
                       <Button
                         color="primary"
-                        disabled={!file}
+                        disabled={
+                          !file || !positionFilters || !hierarchyFilters
+                        }
                         onClick={async (e) => {
                           e.preventDefault();
-                          const omit = (key, { [key]: _, ...obj }) => obj;
+                          const result = await globalActions.server.POST(
+                            "/test",
+                            {
+                              ...file,
+                              filters: {
+                                hierarchy: hierarchyFilters,
+                                position: positionFilters,
+                                negative: negativeFilters
+                                  .split(",")
+                                  .map((x) => {
+                                    return { value: x.trim() };
+                                  }),
+                              },
+                            }
+                          );
 
-                          await globalActions.server.POST("/test", {
-                            ...file,
-                            filters: {
-                              hierarchy: hierarchyFilters,
-                              position: positionFilters,
-                              negative: negativeFilters.split(",").map((x) => {
-                                return { value: x.trim() };
-                              }),
-                            },
-                          });
+                          console.log("result", result);
+                          setData(result.res.data.profiles);
                         }}
                         size="sm"
                       >
@@ -319,31 +371,64 @@ const Scoring = () => {
               </CardBody>
             </Card>
           </Col>
-          <Col className="order-xl-2 mb-5" xl="6">
+        </Row>
+        <Row>
+          <Col className="order-xl-2 mb-5" xl="12">
             <Card className="bg-secondary shadow">
               <CardHeader className="bg-white border-0">
                 <Row className="align-items-center">
                   <Col xs="6">
-                    <h3 className="mb-0">Score filters</h3>
+                    <h3 className="mb-0">Results</h3>
                   </Col>
                   <Col className="text-right" xs="6">
-                    <FormGroup>
-                      <Button
-                        color="primary"
-                        onClick={async (e) => {
-                          e.preventDefault();
-                        }}
-                        size="sm"
-                      ></Button>
-                    </FormGroup>
+                    <FormGroup></FormGroup>
                   </Col>
                 </Row>
               </CardHeader>
               <CardBody>
                 <Form>
-                  <h6 className="heading-small text-muted">Target data</h6>
+                  <h6 className="heading-small text-muted">Top 50 results</h6>
                   <div className=""></div>
                 </Form>
+                <Row>
+                  {" "}
+                  <Col>
+                    {" "}
+                    {data && (
+                      <FormGroup>
+                        <ControlLabel className="form-control-label">
+                          Top 50
+                        </ControlLabel>
+                        <DataSheet2
+                          data={data.slice(0, 50).map((x) => {
+                            return { ...x, "scoring.total": x.scoring.total };
+                          })}
+                          columns={ResultCols}
+                        />
+                      </FormGroup>
+                    )}
+                  </Col>
+                </Row>
+                <Row>
+                  {" "}
+                  <Col>
+                    {" "}
+                    <Button
+                      className="float-right"
+                      color="primary"
+                      href={`data:text/json;charset=utf-8,${encodeURIComponent(
+                        JSON.stringify({
+                          step: "scored",
+                          mode: "bo",
+                          data: data,
+                        })
+                      )}`}
+                      download="scored.json"
+                    >
+                      {`Download JSON`}
+                    </Button>{" "}
+                  </Col>
+                </Row>
               </CardBody>
             </Card>
           </Col>

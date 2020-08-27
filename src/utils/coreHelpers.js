@@ -1,3 +1,4 @@
+/* eslint-disable no-extend-native */
 import { useEffect, useState } from "react";
 
 const noop = () => {};
@@ -76,8 +77,8 @@ export const loadJson = async (event) => {
         .replace(/NaN/g, "0");
       const json = JSON.parse(cleaned);
 
-      return json.type
-        ? // if is from the scrapper
+      return json.type || json.mode
+        ? // if is from the scrapper or the bo scoring
           json
         : // if comes from phantombuster
           {

@@ -40,7 +40,7 @@ const SenderUpload = () => {
                 disabled={!file}
                 onClick={async (e) => {
                   e.preventDefault();
-                  const translated = file
+                  const translated = file.data
                     .filter((y) => y.type)
                     .map((x) => {
                       return {

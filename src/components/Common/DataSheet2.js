@@ -196,12 +196,11 @@ export default (props) => {
   );
 
   useEffect(() => {
-    sheetRef.current &&
-      sheetRef.current.addEventListener("keydown", handleUserKeyPress);
+    const ref = sheetRef.current;
+    ref && ref.addEventListener("keydown", handleUserKeyPress);
 
     return () => {
-      sheetRef.current &&
-        sheetRef.current.removeEventListener("keydown", handleUserKeyPress);
+      ref && ref.removeEventListener("keydown", handleUserKeyPress);
     };
   }, [handleUserKeyPress]);
 
@@ -287,17 +286,23 @@ export default (props) => {
         {" "}
         <Col>
           <div ref={sheetRef}>
-            <Datasheet
-              data={[props.columns].concat(
-                prepareData(props.data, props.columns)
-              )}
-              valueRenderer={(cell) => cell.value}
-              dataRenderer={(cell) => cell.expr}
-              onCellsChanged={onCellsChange}
-              dataEditor={props.dataEditor || MainEditor}
-              selected={selected}
-              onSelect={(selected) => setSelected(selected)}
-            />
+            {props.data && props.columns ? (
+              <Datasheet
+                data={[props.columns].concat(
+                  prepareData(props.data, props.columns)
+                )}
+                valueRenderer={(cell) => cell.value}
+                dataRenderer={(cell) => cell.expr}
+                onCellsChanged={onCellsChange}
+                dataEditor={props.dataEditor || MainEditor}
+                selected={selected}
+                onSelect={(selected) => setSelected(selected)}
+              />
+            ) : (
+              <>
+                <div> Missing data or columns ... </div>
+              </>
+            )}
           </div>
         </Col>
       </Row>

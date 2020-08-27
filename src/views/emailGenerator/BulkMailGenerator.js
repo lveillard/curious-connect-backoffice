@@ -97,6 +97,7 @@ const BulkEmailGenerator = (props) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [data, setData] = useState([{}, {}]);
+  const [file, setFile] = useState([{}, {}]);
 
   const handleGeneratorSuccess = (key, result) => {
     const answer = result;
@@ -133,6 +134,7 @@ const BulkEmailGenerator = (props) => {
   };
 
   useEffect(() => {
+    //console.log("data", data);
     globalActions.generator.setProp("data", data); // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
   return (
@@ -207,12 +209,18 @@ const BulkEmailGenerator = (props) => {
               Import JSON
             </label>
             <Uploader
-              color="primary"
               type="file"
               name="file"
               id="file"
               onChange={async (v, e) => {
-                setData(await loadJson(e));
+                const downloaded = await loadJson(e);
+                console.log("downloaded", downloaded);
+                setFile(downloaded);
+                const topOnes = downloaded.data
+                  ? downloaded.data.filter((x) => x.order === 1)
+                  : downloaded.filter((x) => x.order === 1);
+                console.log("topOnes", topOnes[0]);
+                setData(topOnes);
                 //console.log("data", data);
               }}
             />
@@ -220,6 +228,7 @@ const BulkEmailGenerator = (props) => {
         </Col>
         <Col>
           <FormGroup className="pull-right mt-4">
+            <label className="form-control-label">Options</label>
             <Checkbox
               checked={skipFree}
               onChange={(e, v) => {
@@ -254,12 +263,20 @@ const BulkEmailGenerator = (props) => {
             <ButtonGroup>
               <Button
                 href={`data:text/json;charset=utf-8,${encodeURIComponent(
-                  JSON.stringify({ data: globalState.mailGenerator.data })
+                  JSON.stringify({
+                    step: "generatedEmails",
+                    mode: "bo",
+                    data: globalState.mailGenerator.data,
+                  })
                 )}`}
-                download="table.json"
+                download="generated.json"
                 color="secondary"
               >
-                {`Download JSON`}
+                {`Download JSON (${
+                  globalState.mailGenerator.data &&
+                  globalState.mailGenerator.data.filter((x) => x.generated)
+                    .length
+                })`}
               </Button>
 
               <Button

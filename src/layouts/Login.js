@@ -94,8 +94,8 @@ const Login = () => {
                 }
                 bordered
               >
-                <Form fluid>
-                  <FormGroup fluid>
+                <Form>
+                  <FormGroup>
                     <ControlLabel>Email address</ControlLabel>
 
                     <InputGroup style={{ width: "100%" }}>

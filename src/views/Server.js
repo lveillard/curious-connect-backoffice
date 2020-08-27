@@ -308,8 +308,9 @@ const Server = () => {
                 </Row>
                 <Row>
                   {" "}
-                  <h6 className="heading-small text-muted">Target data</h6>
+                  <h6 className="heading-small text-muted">Result</h6>
                 </Row>
+                <div> {JSON.stringify(answer)} </div>
               </CardBody>
             </Card>
           </Col>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Card, Container } from "reactstrap";
+import { Card, Container, Input } from "reactstrap";
 
 import EmailHeader from "components/Headers/EmailHeader.js";
 
@@ -30,6 +30,10 @@ const ToDo = () => {
           <li> Todo view </li>
           <li> Airtable data: retrieve from express and not client</li>
           <li> Make candidate view for formatrices</li>
+          <Input
+            type="textarea"
+            value="c={...a,data: a.data.map(x=> {return {...x,companyDomain:(d.filter(filtro=>filtro&&filtro.name===x.companyName)[0])?(d.filter(filtro=>filtro&&filtro.name===x.companyName)[0].website):(d.filter(filtro=>filtro&&filtro.name===x.companyName)[0])}})}"
+          />
         </Card>
       </Container>
     </>
