@@ -25,7 +25,7 @@ const StudentMail = () => {
                   globalState.bulkSender.currentStudent &&
                   globalState.bulkSender.currentStudent.files[0].url
                 }
-                download="hello"
+                download="student.json"
                 onClick={(e) => {
                   e.preventDefault();
 
