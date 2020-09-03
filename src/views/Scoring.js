@@ -300,6 +300,14 @@ const Scoring = () => {
                       <div>
                         <h5> Profiles: {stats.lines} </h5>
                         <h5> Companies: {stats.companies} </h5>
+                        {stats.companies && stats.companies < 25 && (
+                          <h5>
+                            {" "}
+                            Required companies on Part I:{" More than "}
+                            {Math.floor((25 / stats.companies) * 350)}
+                            {" companies"}
+                          </h5>
+                        )}
                       </div>
                     )}
                   </Col>
@@ -313,7 +321,7 @@ const Scoring = () => {
                         {" "}
                         <FormGroup>
                           <ControlLabel className="form-control-label">
-                            Hierarchy (Head, Lead...)
+                            Hierarchy (Head, Lead...) [Min: 0 || Max: 1]
                           </ControlLabel>
                           <DataSheet2
                             data={hierarchyFilters}
@@ -331,7 +339,8 @@ const Scoring = () => {
                         {" "}
                         <FormGroup>
                           <ControlLabel className="form-control-label">
-                            Title (BDR, Sales, Dev Frontend...)
+                            Title (BDR, Sales, Dev Frontend...) [Min: 1 || Max:
+                            4]
                           </ControlLabel>
                           <DataSheet2
                             data={positionFilters}
@@ -365,7 +374,42 @@ const Scoring = () => {
                           />
                         </FormGroup>
                       </Col>{" "}
-                      <Col> selectors </Col>
+                      <Col></Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        {" "}
+                        <Button
+                          className="float-right"
+                          color="primary"
+                          disabled={
+                            !file || !positionFilters || !hierarchyFilters
+                          }
+                          onClick={async (e) => {
+                            e.preventDefault();
+                            const result = await globalActions.server.POST(
+                              "/test",
+                              {
+                                ...file,
+                                filters: {
+                                  hierarchy: hierarchyFilters,
+                                  position: positionFilters,
+                                  negative: negativeFilters
+                                    .split(",")
+                                    .map((x) => {
+                                      return { value: x.trim() };
+                                    }),
+                                },
+                              }
+                            );
+
+                            console.log("result", result);
+                            setData(result.res.data.profiles);
+                          }}
+                        >
+                          Calculate!
+                        </Button>
+                      </Col>
                     </Row>
                   </Col>
                 </Row>
