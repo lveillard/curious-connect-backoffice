@@ -202,8 +202,9 @@ const Scoring = () => {
       console.log("file", file);
       setStats({
         lines: file.data.length,
-        companies: new Set(file.data.map((x) => x.companyId || x.CompanyID))
-          .size,
+        companies: new Set(
+          file.data.map((x) => x.companyId || x.CompanyID || x.companyID)
+        ).size,
       });
     }
   }, [file]);
