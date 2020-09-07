@@ -28,6 +28,8 @@ import Campaign from "../views/Campaign";
 
 import ToDo from "../views/ToDo";
 
+import Scraper from "../views/Scraper";
+
 import "../assets/css/admin.css";
 
 import { Loader, Panel } from "rsuite";
@@ -78,6 +80,7 @@ const Admin = () => {
     Campaign: Campaign,
     Kanban: Kanban,
     Scoring: Scoring,
+    Scraper: Scraper,
   };
 
   return (
