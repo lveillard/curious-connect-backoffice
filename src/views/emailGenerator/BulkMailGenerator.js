@@ -2,16 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { Input as Uploader } from "rsuite";
 
-import {
-  Button,
-  ButtonGroup,
-  FormGroup,
-  Input,
-  InputGroup,
-  InputGroupAddon,
-  Row,
-  Col,
-} from "reactstrap";
+import { Button, ButtonGroup, FormGroup, Row, Col } from "reactstrap";
 
 import { Loader, Checkbox } from "rsuite";
 
@@ -20,8 +11,6 @@ import DataSheet2, { setRow } from "../../components/Common/DataSheet2";
 import { useGlobal } from "../../store";
 
 import { loadJson } from "../../utils/coreHelpers";
-
-import axios from "axios";
 
 const BulkEmailGenerator = (props) => {
   const initCols = React.useMemo(
@@ -88,11 +77,10 @@ const BulkEmailGenerator = (props) => {
 
   const [globalState, globalActions] = useGlobal();
   const [isDomain, setIsDomain] = useState(true);
-  const [skipUnreachable, setSkipUnreachable] = useState(false);
+  const [skipUnreachable, setSkipUnreachable] = useState(true);
   const [skipFree, setSkipFree] = useState(false);
 
   const [cols, setCols] = useState(initCols);
-  const [scraperID, setScraperID] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -173,38 +161,6 @@ const BulkEmailGenerator = (props) => {
       <Row>
         <Col className="mt-4">
           <FormGroup>
-            <label className="form-control-label" htmlFor="input-ID">
-              Curiosity scraper
-            </label>
-            <InputGroup>
-              <Input
-                id="input-ID"
-                type="text"
-                placeholder="process ID"
-                style={{ maxWidth: "107px" }}
-                value={scraperID}
-                onChange={(e) => setScraperID(e.target.value)}
-              />
-              <InputGroupAddon addonType="prepend">
-                <Button
-                  id="button-download-json"
-                  color="primary"
-                  onClick={async () => {
-                    const url = await axios.get(
-                      "http://ec2-52-47-90-214.eu-west-3.compute.amazonaws.com:5000/get_json_final?id_request=6"
-                    );
-                    console.log("url", url.data);
-                    const { data } = await axios.get(url.data);
-                    const hm = await JSON.parse(data.replace(/NaN/g, "0")).data;
-                    console.log(hm);
-                    setData(hm);
-                  }}
-                >
-                  {`Load Json`}
-                </Button>
-              </InputGroupAddon>
-            </InputGroup>
-
             <label className="form-control-label mt-4" htmlFor="id">
               Import JSON
             </label>
@@ -269,7 +225,11 @@ const BulkEmailGenerator = (props) => {
                     data: globalState.mailGenerator.data,
                   })
                 )}`}
-                download="generated.json"
+                download={
+                  file && file.bdCode
+                    ? `${file.bdCode}-generated.json`
+                    : "generated.json"
+                }
                 color="secondary"
               >
                 {`Download JSON (${

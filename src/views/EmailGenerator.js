@@ -18,7 +18,7 @@ import BulkEmailGenerator from "./emailGenerator/BulkMailGenerator";
 import SingleEmailGenerator from "./emailGenerator/SingleMailGenerator";
 
 const EmailGenerator = () => {
-  const [isBulk, setIsBulk] = useState(false);
+  const [isBulk, setIsBulk] = useState(true);
 
   useEffect(() => {
     /*async function fetchMyAPI() {

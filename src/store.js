@@ -32,6 +32,7 @@ const initialState = {
   sentMetrics: { companies: 0, bounced: 0, sentCount: 0, limits: 0 },
   subView: { bulkEmail: "readyToSend" },
   mailGenerator: { emailList: [], bulkData: [], data: [] },
+  scoring: {},
   readyToSendRecords: [],
   readyToSendConfig: {
     atLeastOneSelected: false,

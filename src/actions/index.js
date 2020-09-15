@@ -9,6 +9,7 @@ import * as generator from "./generator";
 import * as helpers from "./helpers";
 import * as bulkSender from "./bulkSender";
 import * as server from "./server";
+import * as scoring from "./scoring";
 
 export {
   login,
@@ -22,4 +23,5 @@ export {
   generator,
   helpers,
   server,
+  scoring,
 };
