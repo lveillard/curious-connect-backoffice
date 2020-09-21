@@ -25,13 +25,26 @@ export const checkSenders = (store) => {
 
   //find records with no matching senders
   const errors = store.state.readyToSendRecords.filter(
-    (x) => !store.state.senders.some((y) => x.senderAddress === y.sendAsEmail)
+    (x) =>
+      !store.state.senders.some(
+        (y) =>
+          x.senderAddress.toLowerCase().trim() ===
+          y.sendAsEmail.toLowerCase().trim()
+      )
   );
 
   //find records with marching senders: probably there is a better way to do this XD
   const good = store.state.readyToSendRecords.filter((x) =>
-    store.state.senders.some((y) => x.senderAddress === y.sendAsEmail)
+    store.state.senders.some(
+      (y) =>
+        x.senderAddress.toLowerCase().trim() ===
+        y.sendAsEmail.toLowerCase().trim()
+    )
   );
+
+  console.log("readyToSend", store.state.readyToSendRecords);
+  console.log("good", good);
+  console.log("errors", errors);
 
   //set all not matched to errors
   errors.map((x) =>

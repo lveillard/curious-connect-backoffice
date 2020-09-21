@@ -340,7 +340,12 @@ const BulkTable = () => {
                         </td>
                         <td>
                           <Whisper
-                            style={x.errorMessage && { cursor: "pointer" }}
+                            style={
+                              x.errorMessage &&
+                              console.log(x.errorMessage) && {
+                                cursor: "pointer",
+                              }
+                            }
                             placement="right"
                             trigger="hover"
                             speaker={

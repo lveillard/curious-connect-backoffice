@@ -264,7 +264,10 @@ const BulkEmailGenerator = (props) => {
                         const answer = await globalActions.server.GET(
                           "/generateVerifiedEmail/v2",
                           {
-                            ...line,
+                            firstName: line.firstName,
+                            lastName: line.lastName,
+                            companyDomain: line.companyDomain,
+                            companyName: line.companyName,
                             options: {
                               findDomain: !isDomain,
                               ignoreUnreachable: skipUnreachable,
